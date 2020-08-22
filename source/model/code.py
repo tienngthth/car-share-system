@@ -4,7 +4,7 @@ import json
 class Code():
     def __init__(self, raw_data):
         self.__raw_data = raw_data
-        self.decoded_content = Code.decode_content(raw_data)
+        self.__decoded_content = self.decode_content(self.__raw_data)
         self.__time_stamp = datetime.datetime.now()
 
     @staticmethod
@@ -13,7 +13,7 @@ class Code():
 
     @staticmethod
     def parse_json(content):
-        return json.load(content)
+        return json.loads(content)
 
     #Getters and setters
     @property
