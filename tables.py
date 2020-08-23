@@ -34,7 +34,8 @@ def createCarTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Car")
     cursor.execute(
         "CREATE TABLE Car ("
-            "ID VARCHAR(10) UNIQUE NOT NULL," 
+            "ID VARCHAR(10) UNIQUE NOT NULL,"
+            "MacAddress VARCHAR(30)," 
             "Brand VARCHAR(20),"
             "Type VARCHAR(20)," 
             "Location VARCHAR(100)," 
@@ -67,13 +68,15 @@ def createBacklogTable(cursor):
     cursor.execute(
         "CREATE TABLE Backlog ("
             "ID VARCHAR(10) UNIQUE NOT NULL,"
-            "EngineerID VARCHAR(10)," 
+            "EngineerID VARCHAR(10),"
+            "SignedID VARCHAR(10)," 
             "CarID VARCHAR(10)," 
             "Date DATETIME," 
             "Status VARCHAR(20)," 
             "Description VARCHAR(100),"
             "PRIMARY KEY(ID),"
             "FOREIGN KEY (EngineerID) REFERENCES Staff(ID),"
+            "FOREIGN KEY (SignedID) REFERENCES Staff(ID),"
             "FOREIGN KEY (CarID) REFERENCES Car(ID)"
         ")"
     )
