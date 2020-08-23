@@ -28,11 +28,11 @@ class Server:
         print("Connected to {}".format(client_address))
       
     #Send message
-    def send_messaage(self, message):
+    def send_message(self, message):
         self.__connection.sendall(message)
 
     #Retrieve and decode the latest message
-    def receive_messaage(self):
+    def receive_message(self):
         return self.__socket.recv(1024).decode('UTF-8')
 
     #End connection

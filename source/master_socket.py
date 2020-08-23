@@ -2,18 +2,33 @@
 # -*- coding: utf-8 -*-
 from model.client import Client
 from model.server import Server
+from model.code import Code
+from model.account import Account
 
 server = Server()
+credential = 1
+car_status = 2
+message = {}
 
 # Function to call when Pi is a server
 def run_server():
     #Receive message from client -> validate/update car status
-    pass
+    try:
+        message = Code.parse_json(server.receive_message())
+        if message["type"] == credential:
+            validate_crendential()
+        elif message["type"] == car_status:
+            update_car_status()
+    except:
+        pass
+
 
 # Validate credential
 def validate_crendential():
-    #Validate credential -> send result to client
-    pass
+    if Account.verify_password(message["username"], message["password"]):
+        server.send_message("valid")
+    else:
+        server.send_message("invalid")
 
 # Validate credential
 def update_car_status():
