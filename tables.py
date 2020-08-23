@@ -5,7 +5,7 @@ def createCustomerTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Customer")
     cursor.execute(
         "CREATE TABLE Customer ("
-            "ID VARCHAR(10) UNIQUE NOT NULL," 
+            "ID INT NOT NULL AUTO_INCREMENT," 
             "Username VARCHAR(30),"
             "Password VARCHAR(20)," 
             "FirstName VARCHAR(20)," 
@@ -19,7 +19,7 @@ def createStaffTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Staff")
     cursor.execute(
         "CREATE TABLE Staff ("
-            "ID VARCHAR(10) UNIQUE NOT NULL," 
+            "ID INT NOT NULL AUTO_INCREMENT," 
             "Username VARCHAR(30),"
             "Password VARCHAR(20)," 
             "FirstName VARCHAR(20)," 
@@ -34,7 +34,7 @@ def createCarTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Car")
     cursor.execute(
         "CREATE TABLE Car ("
-            "ID VARCHAR(10) UNIQUE NOT NULL,"
+            "ID INT NOT NULL AUTO_INCREMENT,"
             "MacAddress VARCHAR(30)," 
             "Brand VARCHAR(20),"
             "Type VARCHAR(20)," 
@@ -51,9 +51,9 @@ def createBookingTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Booking")
     cursor.execute(
         "CREATE TABLE Booking ("
-            "ID VARCHAR(10) UNIQUE NOT NULL,"
-            "CustomerID VARCHAR(10)," 
-            "CarID VARCHAR(10)," 
+            "ID INT NOT NULL AUTO_INCREMENT,"
+            "CustomerID INT," 
+            "CarID INT," 
             "RentTime DATETIME," 
             "ReturnTime DATETIME," 
             "TotalCost INT,"
@@ -67,10 +67,10 @@ def createBacklogTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Backlog")
     cursor.execute(
         "CREATE TABLE Backlog ("
-            "ID VARCHAR(10) UNIQUE NOT NULL,"
-            "EngineerID VARCHAR(10),"
-            "SignedID VARCHAR(10)," 
-            "CarID VARCHAR(10)," 
+            "ID INT NOT NULL AUTO_INCREMENT,"
+            "EngineerID INT,"
+            "SignedID INT," 
+            "CarID INT," 
             "Date DATETIME," 
             "Status VARCHAR(20)," 
             "Description VARCHAR(100),"
