@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, datetime, timedelta
 import connect
 
 def addSampleCustomers(cursor):
@@ -9,6 +9,7 @@ def addSampleCustomers(cursor):
     cursor.execute(sql, customer1)
     cursor.execute(sql, customer2)
     cursor.execute(sql, customer3)
+    cursor.connection.commit()
 
 def addSampleStaffs(cursor):
     sql = "INSERT INTO Staff (Username, Password, FirstName, LastName, Email, UserType) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -20,6 +21,7 @@ def addSampleStaffs(cursor):
     cursor.execute(sql, manager)
     cursor.execute(sql, engineer1)
     cursor.execute(sql, engineer2)
+    cursor.connection.commit()
 
 def addSampleCars(cursor):
     sql = "INSERT INTO Car (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
@@ -43,6 +45,7 @@ def addSampleCars(cursor):
     cursor.execute(sql, car8)
     cursor.execute(sql, car9)
     cursor.execute(sql, car10)
+    cursor.connection.commit()
 
 def addSampleBooking(cursor):
     sql = "INSERT INTO Booking (CustomerID, CarID, RentTime, ReturnTime, TotalCost) VALUES (%s, %s, %s, %s, %s)"
@@ -50,6 +53,7 @@ def addSampleBooking(cursor):
     booking2 = (3, 5, "2020-8-23 09:00:00", "2020-8-27 09:00:00", 384)
     cursor.execute(sql, booking1)
     cursor.execute(sql, booking2)
+    cursor.connection.commit()
 
 def addSampleBacklog(cursor):
     sql = "INSERT INTO Backlog (EngineerID, SignedID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -59,6 +63,7 @@ def addSampleBacklog(cursor):
     cursor.execute(sql, backlog1)
     cursor.execute(sql, backlog2)
     cursor.execute(sql, backlog3)
+    cursor.connection.commit()
 
 def selectFromCustomer(cursor):
     print("Customer table:")

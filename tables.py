@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, datetime, timedelta
 import connect
 
 def createCustomerTable(cursor):
@@ -14,6 +14,7 @@ def createCustomerTable(cursor):
             "PRIMARY KEY(ID)"
         ")"
     )
+    cursor.connection.commit()
                 
 def createStaffTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Staff")
@@ -29,6 +30,7 @@ def createStaffTable(cursor):
             "PRIMARY KEY(ID)"
         ")"
     )
+    cursor.connection.commit()
 
 def createCarTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Car")
@@ -46,6 +48,7 @@ def createCarTable(cursor):
             "PRIMARY KEY(ID)"
         ")"
     )
+    cursor.connection.commit()
 
 def createBookingTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Booking")
@@ -62,6 +65,7 @@ def createBookingTable(cursor):
             "FOREIGN KEY (CarID) REFERENCES Car(ID)"
         ")"
     )
+    cursor.connection.commit()
 
 def createBacklogTable(cursor):
     cursor.execute("DROP TABLE IF EXISTS Backlog")
@@ -80,6 +84,7 @@ def createBacklogTable(cursor):
             "FOREIGN KEY (CarID) REFERENCES Car(ID)"
         ")"
     )
+    cursor.connection.commit()
 
 def createAllTables():
     #Connect to the database
