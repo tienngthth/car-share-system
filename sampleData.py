@@ -49,10 +49,20 @@ def addSampleCars(cursor):
 
 def addSampleBooking(cursor):
     sql = "INSERT INTO Booking (CustomerID, CarID, RentTime, ReturnTime, TotalCost) VALUES (%s, %s, %s, %s, %s)"
-    booking1 = (1, 1, "2020-8-22 10:00:00", "2020-8-24 10:00:00", 96)
-    booking2 = (3, 5, "2020-8-23 09:00:00", "2020-8-27 09:00:00", 384)
+    booking1 = (1, 1, "2020-8-21 10:00:00", "2020-8-24 10:00:00", 144)
+    booking2 = (3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480)
+    booking3 = (2, 2, "2020-8-22 09:30:00", "2020-8-26 09:30:00", 288)
+    booking4 = (3, 6, "2020-8-23 15:45:00", "2020-8-28 15:45:00", 240)
+    booking5 = (1, 10, "2020-8-23 14:30:00", "2020-8-27 14:30:00", 192)
+    booking6 = (2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504)
+    booking7 = (1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96)
     cursor.execute(sql, booking1)
     cursor.execute(sql, booking2)
+    cursor.execute(sql, booking3)
+    cursor.execute(sql, booking4)
+    cursor.execute(sql, booking5)
+    cursor.execute(sql, booking6)
+    cursor.execute(sql, booking7)
     cursor.connection.commit()
 
 def addSampleBacklog(cursor):
