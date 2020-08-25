@@ -40,6 +40,5 @@ def executeQueries():
     selectFromCar(cursor)
     selectFromBooking(cursor)
     selectFromBacklog(cursor)
-    print("Done")
 
 executeQueries()
