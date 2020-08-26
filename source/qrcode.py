@@ -1,6 +1,7 @@
 import cv2
 from model.code import Code
 from model.camera import Camera
+from model.database import Database
 
 def validate_code(code, found_codes):
 	if code not in found_codes:
@@ -10,10 +11,13 @@ def validate_code(code, found_codes):
 			print(user_info["user_type"])
 			if (user_info["user_type"] == "engineer"):
 				# close ticket + retrieve engineer info
-				# scan QR code -> Engineer ìno -> what's next?
+				# scan QR code -> Engineer ino -> what's next?
 				pass
 		except:
 			pass
+
+def close_backlog():
+	backlog = Database.update_record("")
 
 def start_scanning():
 	Camera.start_camera()
