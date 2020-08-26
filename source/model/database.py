@@ -56,6 +56,22 @@ class Database:
         Database.conn.commit()
         Database.conn.close()
 
+    #Delete record 
+    @staticmethod
+    def delete_record_by_id(tb_name, record_id):
+        Database.setup_connection()      
+        Database.curs.execute("DELETE FROM " + tb_name + " WHERE ID = %s", record_id)
+        Database.conn.commit()
+        Database.conn.close()
+
+    #Update record 
+    @staticmethod
+    def update_record_by_id(tb_name, update_fields, values):
+        Database.setup_connection()      
+        Database.curs.execute("UPDATE " + tb_name + " SET " + update_fields + " WHERE ID = %s", values) 
+        Database.conn.commit()
+        Database.conn.close()
+
     @staticmethod
     def execute_command(command):
         Database.setup_connection()      
