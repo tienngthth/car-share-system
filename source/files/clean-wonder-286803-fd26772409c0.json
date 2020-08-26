@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "clean-wonder-286803",
+  "private_key_id": "fd26772409c0f8a166ffc782014de6c9234c94f8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCfSXjNnFegqxjF\nZO2UBCdzTm8YwfKpj9rX6u3TuFuIKd7lijnI/G63/sjwRWkf8qHvi5Va+9MM5M17\nK4x5W65fdXqoxLLNqip6I6PHyxBDQ8bjNANW8G5vKeCoeT8+dHjB+Rygnh7YvkCQ\nDPKuGiNnGbFfMaGskQsNsU5eYqw7jRL6HdbcOwPy2SIEXBdxYe/mMc15TmHpukln\ng/i4Nxf+UxhQ0usMkgsPaUrvBSphgA40usU5WkvL9mCPZ2Bo/lf0GmTtK2g758Hn\neg5OIQoLMU3P6xEX1BImZeUljlgcnCYwlhLDxiioHLoyj87IKF0ffFvBs3+UIPxV\nKUWAEsTlAgMBAAECggEAAXnuD1S1ttEsD/eFIwViS/z13CK1bHQBp9VMyaOmm4Y2\nvoMSKesw3eST/kxmFR+9AXGHkasrtmjIsei4ZgVQTAMUjeRgp6IgrBRkrJG8Izd1\np0MUNJ01CviE/LGDwVS35xuP+NeBZy74/d4GFbMKbv8roxQXla4vnPuMQ6UubzNi\ncFMU95iXkGBFd/4jUNE2q8n2b25Ndvi+y25KgEERWGt3uCOvItqg+/XjhIwHAO7q\nNythUKyKRqHfF/nQiFsyh4NUF2OODPQuryQqAZfmaIqm0EEHQ4F2y+Iqpi5urG1y\nV6WW6otHpD1Ymc4aOUhpHzJuhy9dA2VquoxU5CniWQKBgQDbdPvUWQiDZvFg4kZJ\nQAMp2hwb2TO2FCbY4CHmsHaQWb0fLVdloKVIZVvImu3DiSF5ds3VO1J8xltQBa4H\nkmdT8PknJysXBO9dKN34CyCOqNdrhCjZwnnSM2YTw0ACFnGIW9SYtcnSc9SHn+BQ\nvbGyRXAT52zoL5Tr+0HJS0qdfQKBgQC5z4++WsKd1erqfuaHK6CoK7QDiCzF/tb2\n6QvHmzY7Gn0YwpouHx1OJeVM+a0S4GlhEZQgzYR+mm0q2MFPjxAGTGECRXcn1Z5s\n5D+9b0Vf7KGouXzL5ufKrxHYnO2po4Z0jYhNElpPa45VYKHACEywzd4h77PrMhTq\nKqBCN1MBiQKBgGjmx4XetToSmCkmoFBdX+W+k5cgQR61DUi4ApyCF3qy2rsvckpq\n+vbbNH90x1ijkTO9fXCC9dAdBQMAZArMicXPN1nm2Csducl/QnNR5lMrFCYZu2k0\nFAVNemrR9yPIVKbItpv0sa9+nMXjv1b5BhrgJE3vXtix/e67YNv2uIkFAoGAfih4\nb4VOGD5TJu4MdYBgr24k5jUCOVii+bgXgGpY8t40S6htaJ1Fl3bRbmcjZOqrgfWe\nfnsr143gSzQqZGs9NRmM0C78DTbUPxjmUieHke6ngFiYbBUWEh613j4Ge6SEuQQT\npEiuurfLRxq6GBlKgMz2YlJO9YTmgGt6rhrEKAkCgYEAkQUPy2kPSYoPbXOBSZEE\nBtgcCoj9xe3wlKKeJXqwz8WnlBHxL/Yizup+IgA0H8Vk6xTgBoZcL5hNjrAYa81O\nyi47IDZH4IOfULBUfZkT9WI3ES4tAqOM8YC5EIiEHs8jYwemit6/qSAQZuCnvZOh\nTq/XY6yvu9E3fSbkAver+PY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "tien-nguyen@clean-wonder-286803.iam.gserviceaccount.com",
+  "client_id": "115113167802820347510",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tien-nguyen%40clean-wonder-286803.iam.gserviceaccount.com"
+}
