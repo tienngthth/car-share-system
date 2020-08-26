@@ -57,8 +57,8 @@ def create_booking_table():
             ReturnTime DATETIME, 
             TotalCost INT,
             PRIMARY KEY(ID),
-            FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
@@ -74,9 +74,9 @@ def create_backlog_table():
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
-            FOREIGN KEY (AssignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (SignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (AssignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (SignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
