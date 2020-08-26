@@ -1,7 +1,7 @@
 import pymysql, datetime, timedelta
 import connect
 
-def createCustomerTable(cursor):
+def create_customer_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS Customer")
     cursor.execute("""
         CREATE TABLE Customer (
@@ -16,7 +16,7 @@ def createCustomerTable(cursor):
     )
     cursor.connection.commit()
                 
-def createStaffTable(cursor):
+def create_staff_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS Staff")
     cursor.execute("""
         CREATE TABLE Staff (
@@ -32,7 +32,7 @@ def createStaffTable(cursor):
     )
     cursor.connection.commit()
 
-def createCarTable(cursor):
+def create_car_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS Car")
     cursor.execute("""
         CREATE TABLE Car (
@@ -50,7 +50,7 @@ def createCarTable(cursor):
     )
     cursor.connection.commit()
 
-def createBookingTable(cursor):
+def create_booking_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS Booking")
     cursor.execute("""
         CREATE TABLE Booking (
@@ -67,7 +67,7 @@ def createBookingTable(cursor):
     )
     cursor.connection.commit()
 
-def createBacklogTable(cursor):
+def create_backlog_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS Backlog")
     cursor.execute("""
         CREATE TABLE Backlog (
@@ -86,19 +86,20 @@ def createBacklogTable(cursor):
     )
     cursor.connection.commit()
 
-def createAllTables():
+def create_all_tables():
     #Connect to the database
-    cursor = connect.connectToDatabase().cursor()
+    cursor = connect.connect_to_database().cursor()
     #Drop these tables first because they are related to other tables
     cursor.execute("DROP TABLE IF EXISTS Booking")
     cursor.execute("DROP TABLE IF EXISTS Backlog")
     #Create tables one by one
-    createCustomerTable(cursor)
-    createStaffTable(cursor)
-    createCarTable(cursor)
-    createBookingTable(cursor)
-    createBacklogTable(cursor)
+    create_customer_table(cursor)
+    create_staff_table(cursor)
+    create_car_table(cursor)
+    create_booking_table(cursor)
+    create_backlog_table(cursor)
+    cursor.close()
     print("Tables succesfully created")
 
-createAllTables()
+create_all_tables()
 

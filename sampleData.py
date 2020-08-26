@@ -1,7 +1,7 @@
 import pymysql, datetime, timedelta
 import connect
 
-def addSampleCustomers(cursor):
+def add_sample_customers(cursor):
     sql = "INSERT INTO Customer (Username, Password, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)"
     customer1 = ("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com")
     customer2 = ("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com")
@@ -11,7 +11,7 @@ def addSampleCustomers(cursor):
     cursor.execute(sql, customer3)
     cursor.connection.commit()
 
-def addSampleStaffs(cursor):
+def add_sample_staffs(cursor):
     sql = "INSERT INTO Staff (Username, Password, FirstName, LastName, Email, UserType) VALUES (%s, %s, %s, %s, %s, %s)"
     admin = ("Cuong_Nguyen", "11111111abcd", "Cuong", "Nguyen", "cuong@gmail.com", "Admin")
     manager = ("Tien_Nguyen", "abcd22222222", "Tien", "Nguyen", "tien222@gmail.com", "Manager")
@@ -23,7 +23,7 @@ def addSampleStaffs(cursor):
     cursor.execute(sql, engineer2)
     cursor.connection.commit()
 
-def addSampleCars(cursor):
+def add_sample_cars(cursor):
     sql = "INSERT INTO Car (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     car1 = (None, "Ford", "Sedan", "28 Do Xuan Hop", "Unavailable", "White", 4, 2)
     car2 = (None, "BMW", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3)
@@ -47,7 +47,7 @@ def addSampleCars(cursor):
     cursor.execute(sql, car10)
     cursor.connection.commit()
 
-def addSampleBooking(cursor):
+def add_sample_booking(cursor):
     sql = "INSERT INTO Booking (CustomerID, CarID, RentTime, ReturnTime, TotalCost) VALUES (%s, %s, %s, %s, %s)"
     booking1 = (1, 1, "2020-8-21 10:00:00", "2020-8-24 10:00:00", 144)
     booking2 = (3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480)
@@ -65,7 +65,7 @@ def addSampleBooking(cursor):
     cursor.execute(sql, booking7)
     cursor.connection.commit()
 
-def addSampleBacklog(cursor):
+def add_sample_backlog(cursor):
     sql = "INSERT INTO Backlog (EngineerID, SignedID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
     backlog1 = (1, 1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel")
     backlog2 = (1, 2, "4", "2020-8-22 15:45:00", "Done", "Replace the windshield")
@@ -75,15 +75,16 @@ def addSampleBacklog(cursor):
     cursor.execute(sql, backlog3)
     cursor.connection.commit()
 
-def addSampleData():
+def add_sample_data():
     #Connect to the database
-    cursor = connect.connectToDatabase().cursor()
+    cursor = connect.connect_to_database().cursor()
     #Add sample data to tables
-    addSampleCustomers(cursor)
-    addSampleStaffs(cursor)
-    addSampleCars(cursor)
-    addSampleBooking(cursor)
-    addSampleBacklog(cursor)
+    add_sample_customers(cursor)
+    add_sample_staffs(cursor)
+    add_sample_cars(cursor)
+    add_sample_booking(cursor)
+    add_sample_backlog(cursor)
+    cursor.close()
     print("Data successfully added")
 
-addSampleData()
+add_sample_data()
