@@ -1,10 +1,10 @@
 import pymysql, datetime, timedelta
 import connect
 
-def create_customer_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Customer")
+def create_customers_table(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Customers")
     cursor.execute("""
-        CREATE TABLE Customer (
+        CREATE TABLE Customers (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
             Password VARCHAR(20), 
@@ -16,10 +16,10 @@ def create_customer_table(cursor):
     )
     cursor.connection.commit()
                 
-def create_staff_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Staff")
+def create_staffs_table(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Staffs")
     cursor.execute("""
-        CREATE TABLE Staff (
+        CREATE TABLE Staffs (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
             Password VARCHAR(20), 
@@ -32,10 +32,10 @@ def create_staff_table(cursor):
     )
     cursor.connection.commit()
 
-def create_car_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Car")
+def create_cars_table(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Cars")
     cursor.execute("""
-        CREATE TABLE Car (
+        CREATE TABLE Cars (
             ID INT NOT NULL AUTO_INCREMENT,
             MacAddress VARCHAR(30),
             Brand VARCHAR(20),
@@ -50,10 +50,10 @@ def create_car_table(cursor):
     )
     cursor.connection.commit()
 
-def create_booking_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Booking")
+def create_bookings_table(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Bookings")
     cursor.execute("""
-        CREATE TABLE Booking (
+        CREATE TABLE Bookings (
             ID INT NOT NULL AUTO_INCREMENT,
             CustomerID INT,
             CarID INT,
@@ -61,16 +61,16 @@ def create_booking_table(cursor):
             ReturnTime DATETIME, 
             TotalCost INT,
             PRIMARY KEY(ID),
-            FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         )"""
     )
     cursor.connection.commit()
 
-def create_backlog_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Backlog")
+def create_backlogs_table(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Backlogs")
     cursor.execute("""
-        CREATE TABLE Backlog (
+        CREATE TABLE Backlogs (
             ID INT NOT NULL AUTO_INCREMENT,
             EngineerID INT,
             SignedID INT,
@@ -79,26 +79,30 @@ def create_backlog_table(cursor):
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
-            FOREIGN KEY (EngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (SignedID) REFERENCES Staff(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (EngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (SignedID) REFERENCES Staffs(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         )"""
     )
     cursor.connection.commit()
 
 def create_all_tables():
     #Connect to the database
-    cursor = connect.connect_to_database().cursor()
+    connection = connect.connect_to_database()
+    cursor = connection.cursor()
     #Drop these tables first because they are related to other tables
-    cursor.execute("DROP TABLE IF EXISTS Booking")
-    cursor.execute("DROP TABLE IF EXISTS Backlog")
+    cursor.execute("DROP TABLE IF EXISTS Bookings")
+    cursor.execute("DROP TABLE IF EXISTS Backlogs")
     #Create tables one by one
-    create_customer_table(cursor)
-    create_staff_table(cursor)
-    create_car_table(cursor)
-    create_booking_table(cursor)
-    create_backlog_table(cursor)
+    create_customers_table(cursor)
+    create_staffs_table(cursor)
+    create_cars_table(cursor)
+    create_bookings_table(cursor)
+    create_backlogs_table(cursor)
+
+    #CLose connection
     cursor.close()
+    connection.close()
     print("Tables succesfully created")
 
 create_all_tables()

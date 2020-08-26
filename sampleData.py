@@ -1,28 +1,28 @@
 import pymysql, datetime, timedelta
 import connect
 
-def add_sample_customers(cursor, customer):
-    sql = "INSERT INTO Customer (Username, Password, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)"
+def add_sample_customer(cursor, customer):
+    sql = "INSERT INTO Customers (Username, Password, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, customer)
     cursor.connection.commit()
 
-def add_sample_staffs(cursor, staff):
-    sql = "INSERT INTO Staff (Username, Password, FirstName, LastName, Email, UserType) VALUES (%s, %s, %s, %s, %s, %s)"
+def add_sample_staff(cursor, staff):
+    sql = "INSERT INTO Staffs (Username, Password, FirstName, LastName, Email, UserType) VALUES (%s, %s, %s, %s, %s, %s)"
     cursor.execute(sql, staff)
     cursor.connection.commit()
 
-def add_sample_cars(cursor, car):
-    sql = "INSERT INTO Car (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+def add_sample_car(cursor, car):
+    sql = "INSERT INTO Cars (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     cursor.execute(sql, car)
     cursor.connection.commit()
 
 def add_sample_booking(cursor, booking):
-    sql = "INSERT INTO Booking (CustomerID, CarID, RentTime, ReturnTime, TotalCost) VALUES (%s, %s, %s, %s, %s)"
+    sql = "INSERT INTO Bookings (CustomerID, CarID, RentTime, ReturnTime, TotalCost) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, booking)
     cursor.connection.commit()
 
 def add_sample_backlog(cursor, backlog):
-    sql = "INSERT INTO Backlog (EngineerID, SignedID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO Backlogs (EngineerID, SignedID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
     cursor.execute(sql, backlog)
     cursor.connection.commit()
 
@@ -62,28 +62,29 @@ def add_sample_data():
 
 
     #Connect to the database
-    cursor = connect.connect_to_database().cursor()
+    connection = connect.connect_to_database()
+    cursor = connection.cursor()
 
     #Add customers to table
-    add_sample_customers(cursor, customer1)
-    add_sample_customers(cursor, customer2)
-    add_sample_customers(cursor, customer3)
+    add_sample_customer(cursor, customer1)
+    add_sample_customer(cursor, customer2)
+    add_sample_customer(cursor, customer3)
     #Add staffs to table
-    add_sample_staffs(cursor, admin)
-    add_sample_staffs(cursor, manager)
-    add_sample_staffs(cursor, engineer1)
-    add_sample_staffs(cursor, engineer2)
+    add_sample_staff(cursor, admin)
+    add_sample_staff(cursor, manager)
+    add_sample_staff(cursor, engineer1)
+    add_sample_staff(cursor, engineer2)
     #Add cars to table
-    add_sample_cars(cursor, car1)
-    add_sample_cars(cursor, car2)
-    add_sample_cars(cursor, car3)
-    add_sample_cars(cursor, car4)
-    add_sample_cars(cursor, car5)
-    add_sample_cars(cursor, car6)
-    add_sample_cars(cursor, car7)
-    add_sample_cars(cursor, car8)
-    add_sample_cars(cursor, car9)
-    add_sample_cars(cursor, car10)
+    add_sample_car(cursor, car1)
+    add_sample_car(cursor, car2)
+    add_sample_car(cursor, car3)
+    add_sample_car(cursor, car4)
+    add_sample_car(cursor, car5)
+    add_sample_car(cursor, car6)
+    add_sample_car(cursor, car7)
+    add_sample_car(cursor, car8)
+    add_sample_car(cursor, car9)
+    add_sample_car(cursor, car10)
     #Add bookings to table
     add_sample_booking(cursor, booking1)
     add_sample_booking(cursor, booking2)
@@ -99,6 +100,7 @@ def add_sample_data():
 
     #Close connection
     cursor.close()
+    connection.close()
     print("Data successfully added")
 
 add_sample_data()
