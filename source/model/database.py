@@ -72,6 +72,7 @@ class Database:
         Database.conn.commit()
         Database.conn.close()
 
+    #Any command 
     @staticmethod
     def execute_command(command):
         Database.setup_connection()      
@@ -79,7 +80,7 @@ class Database:
         Database.conn.commit()
         Database.conn.close()
 
-    #Retrieve data by equation
+    #Retrieve data by equation, #Count, avg, sum, ...
     @staticmethod
     def execute_equation(equation, tb_name, extra = ""):
         Database.setup_connection()
