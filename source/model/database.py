@@ -58,17 +58,17 @@ class Database:
 
     #Delete record 
     @staticmethod
-    def delete_record_by_id(tb_name, record_id):
+    def delete_record(tb_name, update_conditions, values):
         Database.setup_connection()      
-        Database.curs.execute("DELETE FROM " + tb_name + " WHERE ID = %s", record_id)
+        Database.curs.execute("DELETE FROM " + tb_name + " WHERE " + update_conditions, values)
         Database.conn.commit()
         Database.conn.close()
 
     #Update record 
     @staticmethod
-    def update_record_by_id(tb_name, update_fields, values):
+    def update_record(tb_name, update_fields, update_conditions, values):
         Database.setup_connection()      
-        Database.curs.execute("UPDATE " + tb_name + " SET " + update_fields + " WHERE ID = %s", values) 
+        Database.curs.execute("UPDATE " + tb_name + " SET " + update_fields + " WHERE " + update_conditions, values) 
         Database.conn.commit()
         Database.conn.close()
 
