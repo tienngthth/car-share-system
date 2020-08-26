@@ -66,7 +66,7 @@ def addSampleBooking(cursor):
     cursor.connection.commit()
 
 def addSampleBacklog(cursor):
-    sql = "INSERT INTO Backlog (EngineerID, SignedID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO Backlog (AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description) VALUES (%s, %s, %s, %s, %s, %s)"
     backlog1 = (1, 1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel")
     backlog2 = (1, 2, "4", "2020-8-22 15:45:00", "Done", "Replace the windshield")
     backlog3 = (2, None, "7", "2020-8-23 11:15:00", "Not done", "Change the oil")
