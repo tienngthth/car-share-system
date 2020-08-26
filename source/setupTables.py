@@ -100,5 +100,3 @@ def createAllTables():
     createBacklogTable(cursor)
     print("Tables succesfully created")
 
-createAllTables()
-

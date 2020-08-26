@@ -86,4 +86,3 @@ def addSampleData():
     addSampleBacklog(cursor)
     print("Data successfully added")
 
-addSampleData()
