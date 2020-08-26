@@ -81,8 +81,8 @@ def create_backlog_table():
     )
 
 def create_all_tables():
-    Database.execute_command("DROP TABLE IF EXISTS Booking")
-    Database.execute_command("DROP TABLE IF EXISTS Backlog")
+    Database.execute_command("DROP TABLE IF EXISTS Bookings")
+    Database.execute_command("DROP TABLE IF EXISTS Backlogs")
 
     #Create tables one by one
     create_customer_table()
