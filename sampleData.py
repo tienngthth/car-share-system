@@ -31,11 +31,13 @@ def add_sample_data():
     customer1 = ("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com")
     customer2 = ("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com")
     customer3 = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com")
+    customer4 = ("Tommy", "2468abc1234", "Tommy", "Nguyen", "tommy24@gmail.com")
     #Staffs
     admin = ("Cuong_Nguyen", "11111111abcd", "Cuong", "Nguyen", "cuong@gmail.com", "Admin")
     manager = ("Tien_Nguyen", "abcd22222222", "Tien", "Nguyen", "tien222@gmail.com", "Manager")
     engineer1 = ("Minh33", "ab33333333cd", "Minh", "Nguyen", "minh456@gmail.com", "Engineer")
     engineer2 = ("Tom", "abcdefgh", "Tom", "Nguyen", "tom@gmail.com", "Engineer")
+    engineer3 = ("Tam2", "abcdefghijk", "Tam", "Thanh", "tamthanh@gmail.com", "Engineer")
     #Cars
     car1 = (None, "Ford", "Sedan", "28 Do Xuan Hop", "Unavailable", "White", 4, 2)
     car2 = (None, "BMW", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3)
@@ -56,9 +58,9 @@ def add_sample_data():
     booking6 = (2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504)
     booking7 = (1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96)
     #Backlogs
-    backlog1 = (1, 1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel")
-    backlog2 = (1, 2, "4", "2020-8-22 15:45:00", "Done", "Replace the windshield")
-    backlog3 = (2, None, "7", "2020-8-23 11:15:00", "Not done", "Change the oil")
+    backlog1 = (1, 1, 3, "2020-8-21 10:30:00", "Done", "Car ran out of fuel")
+    backlog2 = (1, 2, 4, "2020-8-22 15:45:00", "Done", "Replace the windshield")
+    backlog3 = (2, None, 7, "2020-8-23 11:15:00", "Not done", "Change the oil")
 
 
     #Connect to the database
@@ -69,11 +71,13 @@ def add_sample_data():
     add_sample_customer(cursor, customer1)
     add_sample_customer(cursor, customer2)
     add_sample_customer(cursor, customer3)
+    add_sample_customer(cursor, customer4)
     #Add staffs to table
     add_sample_staff(cursor, admin)
     add_sample_staff(cursor, manager)
     add_sample_staff(cursor, engineer1)
     add_sample_staff(cursor, engineer2)
+    add_sample_staff(cursor, engineer3)
     #Add cars to table
     add_sample_car(cursor, car1)
     add_sample_car(cursor, car2)
