@@ -1,10 +1,9 @@
-import pymysql, datetime, timedelta
-import connect
+from model.database import Database
 
-def createCustomerTable(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Customer")
-    cursor.execute("""
-        CREATE TABLE Customer (
+def create_customer_table():
+    Database.create_table(
+        "Customer", 
+        """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
             Password VARCHAR(20), 
@@ -12,14 +11,13 @@ def createCustomerTable(cursor):
             LastName VARCHAR(20),
             Email VARCHAR(50),
             PRIMARY KEY(ID)
-        )"""
+        ) """
     )
-    cursor.connection.commit()
                 
-def createStaffTable(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Staff")
-    cursor.execute("""
-        CREATE TABLE Staff (
+def create_staff_table():
+    Database.create_table(
+        "Staff", 
+        """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
             Password VARCHAR(20), 
@@ -28,14 +26,13 @@ def createStaffTable(cursor):
             Email VARCHAR(50),
             UserType VARCHAR(10),
             PRIMARY KEY(ID)
-        )"""
+        ) """
     )
-    cursor.connection.commit()
 
-def createCarTable(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Car")
-    cursor.execute("""
-        CREATE TABLE Car (
+def create_car_table():
+    Database.create_table(
+        "Car", 
+        """ (
             ID INT NOT NULL AUTO_INCREMENT,
             MacAddress VARCHAR(30),
             Brand VARCHAR(20),
@@ -46,14 +43,13 @@ def createCarTable(cursor):
             Seat INT,
             Cost INT,
             PRIMARY KEY(ID)
-        )"""
+        ) """
     )
-    cursor.connection.commit()
 
-def createBookingTable(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Booking")
-    cursor.execute("""
-        CREATE TABLE Booking (
+def create_booking_table():
+    Database.create_table(
+        "Booking", 
+        """ (
             ID INT NOT NULL AUTO_INCREMENT,
             CustomerID INT,
             CarID INT,
@@ -63,17 +59,16 @@ def createBookingTable(cursor):
             PRIMARY KEY(ID),
             FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
             FOREIGN KEY (CarID) REFERENCES Car(ID)
-        )"""
+        ) """
     )
-    cursor.connection.commit()
 
-def createBacklogTable(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Backlog")
-    cursor.execute("""
-        CREATE TABLE Backlog (
+def create_backlog_table():
+    Database.create_table(
+        "Backlog", 
+        """ (
             ID INT NOT NULL AUTO_INCREMENT,
-            EngineerID INT,
-            SignedID INT,
+            AssignedEngineerID INT,
+            SignedEngineerID INT,
             CarID INT,
             Date DATETIME, 
             Status VARCHAR(20),
@@ -82,21 +77,18 @@ def createBacklogTable(cursor):
             FOREIGN KEY (EngineerID) REFERENCES Staff(ID),
             FOREIGN KEY (SignedID) REFERENCES Staff(ID),
             FOREIGN KEY (CarID) REFERENCES Car(ID)
-        )"""
+        ) """
     )
-    cursor.connection.commit()
 
-def createAllTables():
-    #Connect to the database
-    cursor = connect.connectToDatabase().cursor()
-    #Drop these tables first because they are related to other tables
-    cursor.execute("DROP TABLE IF EXISTS Booking")
-    cursor.execute("DROP TABLE IF EXISTS Backlog")
+def create_all_tables():
+    Database.execute_command("DROP TABLE IF EXISTS Booking")
+    Database.execute_command("DROP TABLE IF EXISTS Backlog")
+
     #Create tables one by one
-    createCustomerTable(cursor)
-    createStaffTable(cursor)
-    createCarTable(cursor)
-    createBookingTable(cursor)
-    createBacklogTable(cursor)
+    create_customer_table()
+    create_staff_table()
+    create_car_table()
+    create_booking_table()
+    create_backlog_table()
     print("Tables succesfully created")
 

@@ -24,7 +24,7 @@ class Database:
 
     #Create a new table
     @staticmethod
-    def create_table(columns, tb_name):
+    def create_table(tb_name, columns):
         Database.setup_connection()
         Database.curs.execute("DROP TABLE IF EXISTS "+ tb_name)
         Database.curs.execute("CREATE TABLE " + tb_name + columns)
@@ -53,5 +53,12 @@ class Database:
     def insert_record(values, parameters, tb_name):
         Database.setup_connection()      
         Database.curs.execute("INSERT INTO " + tb_name + " values" + values, parameters)
+        Database.conn.commit()
+        Database.conn.close()
+
+    @staticmethod
+    def execute_command(command):
+        Database.setup_connection()      
+        Database.curs.execute(command)
         Database.conn.commit()
         Database.conn.close()
