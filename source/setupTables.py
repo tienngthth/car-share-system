@@ -74,8 +74,8 @@ def create_backlog_table():
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
-            FOREIGN KEY (EngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (SignedID) REFERENCES Staff(ID),
+            FOREIGN KEY (AssignedEngineerID) REFERENCES Staff(ID),
+            FOREIGN KEY (SignedEngineerID) REFERENCES Staff(ID),
             FOREIGN KEY (CarID) REFERENCES Car(ID)
         ) """
     )

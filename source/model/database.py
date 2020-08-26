@@ -20,7 +20,7 @@ class Database:
             password='s3747274',
             db='demo_database'
         )
-        Database.cursor = Database.conn.cursor()
+        Database.curs = Database.conn.cursor()
 
     #Create a new table
     @staticmethod
@@ -28,7 +28,7 @@ class Database:
         Database.setup_connection()
         Database.curs.execute("DROP TABLE IF EXISTS "+ tb_name)
         Database.curs.execute("CREATE TABLE " + tb_name + columns)
-        Database.cursor.connection.commit()
+        Database.curs.connection.commit()
         Database.conn.close()
 
     #Retrieve record
@@ -50,7 +50,7 @@ class Database:
 
     #Insert record 
     @staticmethod
-    def insert_record(values, parameters, tb_name):
+    def insert_record(tb_name, values, parameters):
         Database.setup_connection()      
         Database.curs.execute("INSERT INTO " + tb_name + " values" + values, parameters)
         Database.conn.commit()

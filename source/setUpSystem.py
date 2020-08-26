@@ -1,6 +1,6 @@
-from setupSampleRecord import createAllTables
-from setupTables import addSampleData
+from setupSampleRecord import add_sample_data
+from setupTables import create_all_tables
 
 if __name__ == "__main__":
-    createAllTables()
-    addSampleData()
+    create_all_tables()
+    add_sample_data()
