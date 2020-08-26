@@ -2,35 +2,35 @@ from model.database import Database
 
 def add_sample_customer(customer):
     Database.insert_record(
-        "Customer(Username, Password, FirstName, LastName, Email)",
+        "Customers (Username, Password, FirstName, LastName, Email)",
         "(%s, %s, %s, %s, %s)",
         customer
     )
 
 def add_sample_staff(staff):
     Database.insert_record(
-        "Staff (Username, Password, FirstName, LastName, Email, UserType)",
+        "Staffs (Username, Password, FirstName, LastName, Email, UserType)",
         "(%s, %s, %s, %s, %s, %s)",
         staff
     )
 
 def add_sample_car(car):
     Database.insert_record(
-        "Car (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost)",
+        "Cars (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost)",
         "(%s, %s, %s, %s, %s, %s, %s, %s)",
         car
     )
 
 def add_sample_booking(booking):
     Database.insert_record(
-        "Booking (CustomerID, CarID, RentTime, ReturnTime, TotalCost)",
+        "Bookings (CustomerID, CarID, RentTime, ReturnTime, TotalCost)",
         "(%s, %s, %s, %s, %s)",
         booking
     )
 
 def add_sample_backlog(backlog):
     Database.insert_record(
-        "Backlog (AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description)",
+        "Backlogs (AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description)",
         "(%s, %s, %s, %s, %s, %s)",
         backlog
     )
