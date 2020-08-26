@@ -62,3 +62,19 @@ class Database:
         Database.curs.execute(command)
         Database.conn.commit()
         Database.conn.close()
+
+    #Retrieve data by equation
+    @staticmethod
+    def execute_equation(equation, tb_name, extra = ""):
+        Database.setup_connection()
+        rows = Database.curs.execute(
+            "SELECT " 
+            + equation
+            + " FROM "
+            + tb_name
+            + extra
+        )
+        for row in rows:
+            return_value = row
+        Database.conn.close()
+        return return_value[0]
