@@ -1,6 +1,7 @@
 import re
 from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
+from database import Database
 
 class Account(ABC):
     def __init__(self, username, password, email, first_name, last_name):
@@ -16,7 +17,8 @@ class Account(ABC):
         return hash.sha256_crypt.hash(raw_input)
 
     @staticmethod
-    def verify_password(input_password, username):
+    def verify_password(input_password, username, use_type):
+        if user_type == "staff" and Database.select_record("Staff", )
         #retrieve password from database by username
         encryptedPassword = ""
         return hash.sha256_crypt.verify(input_password, encryptedPassword)
