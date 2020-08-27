@@ -2,7 +2,7 @@ from model.database import Database
 
 def create_customer_table():
     Database.create_table(
-        "Customer", 
+        "Customers", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
@@ -16,7 +16,7 @@ def create_customer_table():
                 
 def create_staff_table():
     Database.create_table(
-        "Staff", 
+        "Staffs", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
@@ -31,7 +31,7 @@ def create_staff_table():
 
 def create_car_table():
     Database.create_table(
-        "Car", 
+        "Cars", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             MacAddress VARCHAR(30),
@@ -48,7 +48,7 @@ def create_car_table():
 
 def create_booking_table():
     Database.create_table(
-        "Booking", 
+        "Bookings", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             CustomerID INT,
@@ -64,7 +64,7 @@ def create_booking_table():
 
 def create_backlog_table():
     Database.create_table(
-        "Backlog", 
+        "Backlogs", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             AssignedEngineerID INT,
@@ -81,8 +81,8 @@ def create_backlog_table():
     )
 
 def create_all_tables():
-    Database.execute_command("DROP TABLE IF EXISTS Booking")
-    Database.execute_command("DROP TABLE IF EXISTS Backlog")
+    Database.execute_command("DROP TABLE IF EXISTS Bookings")
+    Database.execute_command("DROP TABLE IF EXISTS Backlogs")
 
     #Create tables one by one
     create_customer_table()

@@ -56,9 +56,42 @@ class Database:
         Database.conn.commit()
         Database.conn.close()
 
+    #Delete record 
+    @staticmethod
+    def delete_record(tb_name, update_conditions, values):
+        Database.setup_connection()      
+        Database.curs.execute("DELETE FROM " + tb_name + " WHERE " + update_conditions, values)
+        Database.conn.commit()
+        Database.conn.close()
+
+    #Update record 
+    @staticmethod
+    def update_record(tb_name, update_fields, update_conditions, values):
+        Database.setup_connection()      
+        Database.curs.execute("UPDATE " + tb_name + " SET " + update_fields + " WHERE " + update_conditions, values) 
+        Database.conn.commit()
+        Database.conn.close()
+
+    #Any command 
     @staticmethod
     def execute_command(command):
         Database.setup_connection()      
         Database.curs.execute(command)
         Database.conn.commit()
         Database.conn.close()
+
+    #Retrieve data by equation, #Count, avg, sum, ...
+    @staticmethod
+    def execute_equation(equation, tb_name, extra = ""):
+        Database.setup_connection()
+        rows = Database.curs.execute(
+            "SELECT " 
+            + equation
+            + " FROM "
+            + tb_name
+            + extra
+        )
+        for row in rows:
+            return_value = row
+        Database.conn.close()
+        return return_value[0]
