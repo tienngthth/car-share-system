@@ -35,7 +35,7 @@ class Database:
     @staticmethod
     def select_record(columns, tb_name, extra = ""):
         Database.setup_connection()
-        rows = Database.curs.execute(
+        Database.curs.execute(
             "SELECT " 
             + columns 
             + " FROM "
@@ -43,8 +43,8 @@ class Database:
             + extra
         )
         return_value = []
-        for row in rows:
-            return_value.append(row)
+        for row in Database.curs:
+            return_value.append(row[0])
         Database.conn.close()
         return return_value
 
