@@ -31,7 +31,8 @@ class Account(ABC):
         existed_username = Database.execute_equation(
             "COUNT(*)", 
             user_type, 
-            "WHERE username=" + username
+            "WHERE username=%s",
+            username
         ) > 0
         if not existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
             return True

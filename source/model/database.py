@@ -78,3 +78,20 @@ class Database:
             return_value = row
         Database.conn.close()
         return return_value[0]
+
+    #Retrieve data by equation
+    @staticmethod
+    def execute_equation_parameterized(equation, tb_name, values extra = ""):
+        Database.setup_connection()
+        rows = Database.curs.execute(
+            "SELECT " 
+            + equation
+            + " FROM "
+            + tb_name
+            + extra
+            , value
+        )
+        for row in rows:
+            return_value = row
+        Database.conn.close()
+        return return_value[0]
