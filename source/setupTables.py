@@ -10,7 +10,8 @@ def create_customer_table():
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
-            PRIMARY KEY(ID)
+            Phone VARCHAR(20),
+            PRIMARY KEY(ID, Email, Phone)
         ) """
     )
                 

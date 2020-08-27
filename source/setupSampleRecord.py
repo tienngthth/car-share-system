@@ -2,8 +2,8 @@ from model.database import Database
 
 def add_sample_customer(customer):
     Database.insert_record(
-        "Customers (Username, Password, FirstName, LastName, Email)",
-        "(%s, %s, %s, %s, %s)",
+        "Customers (Username, Password, FirstName, LastName, Email, Phone)",
+        "(%s, %s, %s, %s, %s, %s)",
         customer
     )
 
@@ -83,9 +83,9 @@ def create_sample_customers_data():
     #Customers
     global customers 
     customers = []
-    customers.append(("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com"))
-    customers.append(("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com"))
-    customers.append(("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com"))
+    customers.append(("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com", "0987654321"))
+    customers.append(("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com", "0912345678"))
+    customers.append(("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com", "09087561234"))
 
 def add_sample_data():
     create_sample_staffs_data()
