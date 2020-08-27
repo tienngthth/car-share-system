@@ -2,7 +2,7 @@ import cv2
 from model.code import Code
 from model.camera import Camera
 from model.database import Database
-
+ap_mac_addr = "DC:A6:32:4A:0C:41"
 def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)
@@ -10,14 +10,19 @@ def validate_code(code, found_codes):
 			user_info = Code.parse_json(code)
 			print(user_info["user_type"])
 			if (user_info["user_type"] == "engineer"):
-				# close ticket + retrieve engineer info
-				# scan QR code -> Engineer ino -> what's next?
-				pass
+				close_backlog(user_info["engineer_id"])
 		except:
 			pass
 
-def close_backlog():
-	backlog = Database.update_record("")
+# Close ticket and save signed engineer id
+def close_backlog(signed_engineer_ID):
+	car_id = Database.select_record(" CarID ", " Cars ", " MacAddress = %s", ap_mac_addr)
+	Database.update_record(
+		" Backlogs ", 
+		" signed_engineer_ID = %s, Status = Done ", 
+		" CarID = %s"
+		,  (signed_engineer_ID, car_id)
+	)
 
 def start_scanning():
 	Camera.start_camera()

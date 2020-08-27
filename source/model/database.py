@@ -33,7 +33,7 @@ class Database:
 
     #Retrieve record
     @staticmethod
-    def select_record(columns, tb_name, extra = ""):
+    def select_record_paramterized(columns, tb_name, values, extra = ""):
         Database.setup_connection()
         rows = Database.curs.execute(
             "SELECT " 
@@ -41,6 +41,7 @@ class Database:
             + " FROM "
             + tb_name
             + extra
+            , values
         )
         return_value = []
         for row in rows:
