@@ -2,7 +2,7 @@ import pymysql, datetime, timedelta
 import connect
 
 def add_sample_customer(cursor, customer):
-    sql = "INSERT INTO Customers (Username, Password, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)"
+    sql = "INSERT INTO Customers (Username, Password, FirstName, LastName, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s)"
     cursor.execute(sql, customer)
     cursor.connection.commit()
 
@@ -28,10 +28,10 @@ def add_sample_backlog(cursor, backlog):
 
 def add_sample_data():
     #Customers
-    customer1 = ("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com")
-    customer2 = ("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com")
-    customer3 = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com")
-    customer4 = ("Tommy", "2468abc1234", "Tommy", "Nguyen", "tommy24@gmail.com")
+    customer1 = ("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com", "111111111111")
+    customer2 = ("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com", "112233445566")
+    customer3 = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com", "13572468910")
+    customer4 = ("Tommy", "2468abc1234", "Tommy", "Nguyen", "tommy24@gmail.com", "0987654321")
     #Staffs
     admin = ("Cuong_Nguyen", "11111111abcd", "Cuong", "Nguyen", "cuong@gmail.com", "Admin")
     manager = ("Tien_Nguyen", "abcd22222222", "Tien", "Nguyen", "tien222@gmail.com", "Manager")

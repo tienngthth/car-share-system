@@ -11,7 +11,8 @@ def create_customers_table(cursor):
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
-            PRIMARY KEY(ID)
+            Phone VARCHAR(20),
+            PRIMARY KEY(ID, Email, Phone)
         )"""
     )
     cursor.connection.commit()

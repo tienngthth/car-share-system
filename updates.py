@@ -3,7 +3,7 @@ import connect
 
 def update_customers_table(cursor, updated_values):
     sql = """UPDATE Customers
-             SET Username = %s, Password = %s, FirstName = %s, LastName = %s, Email = %s
+             SET Username = %s, Password = %s, FirstName = %s, LastName = %s, Email = %s, Phone = %s
              WHERE ID = %s"""
     cursor.execute(sql, updated_values)
     cursor.connection.commit()
@@ -38,7 +38,7 @@ def update_backlogs_table(cursor, updated_values):
 
 def update_all():
     #Updated values
-    updated_customer = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh123@gmail.com", 3)
+    updated_customer = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh123@gmail.com", "13572486901", 3)
     updated_staff = ("Minh34", "ab33333333cd", "Minh", "Nguyen", "minh456@gmail.com", "Engineer", 3)
     updated_car = (None, "Toyota", "Sedan", "600 Nguyen Van Linh", "Available", "White", 4, 2, 6)
     updated_booking = (1, 10, "2020-8-23 14:30:00", "2020-8-27 15:30:00", 192, 5)
