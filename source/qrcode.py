@@ -19,7 +19,7 @@ def close_backlog(signed_engineer_ID):
 	car_id = Database.select_record(" CarID ", " Cars ", " MacAddress = %s", ap_mac_addr)
 	Database.update_record(
 		" Backlogs ", 
-		" signed_engineer_ID = %s, Status = Done ", 
+		" SignedEngineerID = %s, Status = Done ", 
 		" CarID = %s"
 		,  (signed_engineer_ID, car_id)
 	)
