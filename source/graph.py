@@ -4,13 +4,14 @@ from model.database import Database
 app = Flask(__name__)
 
 def make_profit_line_chart():
-    labels = Database.select_record("DATE(RentTime) AS Date", "Bookings", " GROUP BY DATE(RentTime)")
-    values = Database.select_record("SUM(TotalCost) AS Daily_Profit", "Bookings", " GROUP BY DATE(RentTime)")
+    labels = Database.select_record("DATE(RentTime) AS Date", "Bookings", " WHERE Status = 'Booked' GROUP BY DATE(RentTime)")
+    values = Database.select_record("SUM(TotalCost) AS Daily_Profit", "Bookings", " WHERE Status = 'Booked' GROUP BY DATE(RentTime)")
     return labels, values
 
 def make_booked_car_bar_chart():
-    labels = Database.select_record("CarID", "Bookings", " GROUP BY CarID")
-    values = Database.select_record("SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)) as Booked_time", "Bookings", " GROUP BY CarID")
+    labels = Database.select_record("CarID", "Bookings", " WHERE Status = 'Booked' GROUP BY CarID")
+    values = Database.select_record("SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)) as Booked_time", 
+    "Bookings", " WHERE Status = 'Booked' GROUP BY CarID")
     return labels, values
 
 def make_backlog_pie_chart():

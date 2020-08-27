@@ -57,6 +57,7 @@ def create_booking_table():
             RentTime DATETIME, 
             ReturnTime DATETIME, 
             TotalCost INT,
+            Status VARCHAR(10),
             PRIMARY KEY(ID),
             FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
             FOREIGN KEY (CarID) REFERENCES Cars(ID)

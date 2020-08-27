@@ -23,8 +23,8 @@ def add_sample_car(car):
 
 def add_sample_booking(booking):
     Database.insert_record(
-        "Bookings (CustomerID, CarID, RentTime, ReturnTime, TotalCost)",
-        "(%s, %s, %s, %s, %s)",
+        "Bookings (CustomerID, CarID, RentTime, ReturnTime, TotalCost, Status)",
+        "(%s, %s, %s, %s, %s, %s)",
         booking
     )
 
@@ -49,27 +49,27 @@ def create_sample_cars_data():
     global cars 
     cars = []
     cars.append((None, "Ford", "Sedan", "28 Do Xuan Hop", "Unavailable", "White", 4, 2))
-    cars.append((None, "BMW", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
+    cars.append((None, "BMW", "Minivan", "702 Nguyen Van Linh", "Unavailable", "Blue", 2, 3))
     cars.append((None, "Audi", "Sedan", "702 Nguyen Van Linh", "Available", "Black", 4, 2))
     cars.append((None, "Toyota", "Truck", "702 Nguyen Van Linh", "Available", "Blue", 2, 4))
     cars.append((None, "Ford", "Truck", "65 Nguyen Huu Tho", "Unavailable", "Yellow", 2, 4))
-    cars.append((None, "Toyota", "Sedan", "702 Nguyen Van Linh", "Available", "White", 4, 2))
-    cars.append((None, "BMW", "Truck", "702 Nguyen Van Linh", "Available", "Black", 2, 4))
+    cars.append((None, "Toyota", "Sedan", "702 Nguyen Van Linh", "Unavailable", "White", 4, 2))
+    cars.append((None, "BMW", "Truck", "702 Nguyen Van Linh", "To be repaired", "Black", 2, 4))
     cars.append((None, "Audi", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
     cars.append((None, "Ford", "Minivan", "702 Nguyen Van Linh", "Available", "White", 2, 3))
-    cars.append((None, "BMW", "Sedan", "702 Nguyen Van Linh", "Available", "Yellow", 4, 2))
+    cars.append((None, "BMW", "Sedan", "702 Nguyen Van Linh", "Unavailable", "Yellow", 4, 2))
    
 def create_sample_bookings_data():
     #Bookings
     global bookings 
     bookings = []
-    bookings.append((1, 1, "2020-8-21 10:00:00", "2020-8-24 10:00:00", 144))
-    bookings.append((3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480))
-    bookings.append((2, 2, "2020-8-22 09:30:00", "2020-8-26 09:30:00", 288))
-    bookings.append((3, 6, "2020-8-23 15:45:00", "2020-8-28 15:45:00", 240))
-    bookings.append((1, 10, "2020-8-23 14:30:00", "2020-8-27 14:30:00", 192))
-    bookings.append((2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504))
-    bookings.append((1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96))
+    bookings.append((1, 1, "2020-8-21 10:00:00", "2020-8-24 10:00:00", 144, "booked"))
+    bookings.append((3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480, "booked"))
+    bookings.append((2, 2, "2020-8-22 09:30:00", "2020-8-26 09:30:00", 288, "booked"))
+    bookings.append((3, 6, "2020-8-23 15:45:00", "2020-8-28 15:45:00", 240, "booked"))
+    bookings.append((1, 10, "2020-8-23 14:30:00", "2020-8-27 14:30:00", 192, "booked"))
+    bookings.append((2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504, "cancelled"))
+    bookings.append((1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96, "booked"))
 
 def create_sample_backlogs_data():
     #Backlogs
