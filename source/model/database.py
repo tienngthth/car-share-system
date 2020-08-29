@@ -31,16 +31,31 @@ class Database:
         Database.curs.connection.commit()
         Database.conn.close()
 
-    #Retrieve record
+    #Create record 
     @staticmethod
-    def select_record(columns, tb_name, extra = ""):
+    def insert_record_parameterized(tb_name, values, parameters):
+        Database.setup_connection()      
+        Database.curs.execute(
+            "INSERT INTO " 
+            + tb_name 
+            + " values" 
+            + values
+            , parameters
+        )
+        Database.conn.commit()
+        Database.conn.close()
+
+    #Read record
+    @staticmethod
+    def select_record_parameterized(columns, tb_name, conditions, parameters):
         Database.setup_connection()
         rows = Database.curs.execute(
             "SELECT " 
             + columns 
             + " FROM "
             + tb_name
-            + extra
+            + conditions
+            , parameters
         )
         return_value = []
         for row in rows:
@@ -48,49 +63,73 @@ class Database:
         Database.conn.close()
         return return_value
 
-    #Insert record 
+    #Read record
     @staticmethod
-    def insert_record(tb_name, values, parameters):
+    def select_record(columns, tb_name, conditions = ""):
+        Database.setup_connection()
+        rows = Database.curs.execute(
+            "SELECT " 
+            + columns 
+            + " FROM "
+            + tb_name
+            + conditions
+        )
+        return_value = []
+        for row in rows:
+            return_value.append(row)
+        Database.conn.close()
+        return return_value
+
+    #Update record 
+    @staticmethod
+    def update_record_parameterized(tb_name, update_fields, conditions, parameters):
         Database.setup_connection()      
-        Database.curs.execute("INSERT INTO " + tb_name + " values" + values, parameters)
+        Database.curs.execute(
+            "UPDATE " 
+            + tb_name 
+            + " SET " 
+            + update_fields 
+            + conditions
+            , parameters
+        ) 
         Database.conn.commit()
         Database.conn.close()
 
     #Delete record 
     @staticmethod
-    def delete_record_by_id(tb_name, record_id):
+    def delete_record_parameterized(tb_name, conditions, parameters):
         Database.setup_connection()      
-        Database.curs.execute("DELETE FROM " + tb_name + " WHERE ID = %s", record_id)
+        Database.curs.execute(
+            "DELETE FROM " 
+            + tb_name 
+            + conditions
+            , parameters
+        )
         Database.conn.commit()
         Database.conn.close()
 
-    #Update record 
-    @staticmethod
-    def update_record_by_id(tb_name, update_fields, values):
-        Database.setup_connection()      
-        Database.curs.execute("UPDATE " + tb_name + " SET " + update_fields + " WHERE ID = %s", values) 
-        Database.conn.commit()
-        Database.conn.close()
 
+    #Execute equation 
     @staticmethod
-    def execute_command(command):
-        Database.setup_connection()      
-        Database.curs.execute(command)
-        Database.conn.commit()
-        Database.conn.close()
-
-    #Retrieve data by equation
-    @staticmethod
-    def execute_equation(equation, tb_name, extra = ""):
+    def execute_equation_parameterized(equation, tb_name, conditions, parameterized):
         Database.setup_connection()
         rows = Database.curs.execute(
             "SELECT " 
             + equation
             + " FROM "
             + tb_name
-            + extra
+            + conditions
+            , parameterized
         )
         for row in rows:
             return_value = row
         Database.conn.close()
         return return_value[0]
+
+    #Execute a command
+    @staticmethod
+    def execute_command(command):
+        Database.setup_connection()
+        Database.curs.execute(command)
+        Database.curs.connection.commit()
+        Database.conn.close()
