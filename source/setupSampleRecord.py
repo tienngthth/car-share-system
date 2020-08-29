@@ -16,7 +16,7 @@ def add_sample_staff(staff):
 
 def add_sample_car(car):
     Database.insert_record(
-        "Car (MacAddress, Brand, Type, Location, Status, Color, Seat, Cost)",
+        "Car(MacAddress, Brand, Type, Location, Status, Color, Seat, Cost)",
         "(%s, %s, %s, %s, %s, %s, %s, %s)",
         car
     )
