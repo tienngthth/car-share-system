@@ -10,6 +10,7 @@ def create_customer_table():
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
+            Phone VARCHAR(20),
             PRIMARY KEY(ID)
         ) """
     )
@@ -24,6 +25,7 @@ def create_staff_table():
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
+            Phone VARCHAR(20),
             UserType VARCHAR(10),
             PRIMARY KEY(ID)
         ) """
@@ -56,9 +58,10 @@ def create_booking_table():
             RentTime DATETIME, 
             ReturnTime DATETIME, 
             TotalCost INT,
+            Status VARCHAR(20),
             PRIMARY KEY(ID),
-            FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
@@ -74,9 +77,9 @@ def create_backlog_table():
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
-            FOREIGN KEY (AssignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (SignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (AssignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (SignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
