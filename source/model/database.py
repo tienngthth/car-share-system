@@ -49,7 +49,7 @@ class Database:
     @staticmethod
     def select_record_parameterized(columns, tb_name, conditions, parameters):
         Database.setup_connection()
-        rows = Database.curs.execute(
+        Database.curs.execute(
             "SELECT " 
             + columns 
             + " FROM "
@@ -58,8 +58,8 @@ class Database:
             , parameters
         )
         return_value = []
-        for row in rows:
-            return_value.append(row)
+        for result in Database.curs:
+            return_value.append(result)
         Database.conn.close()
         return return_value
 

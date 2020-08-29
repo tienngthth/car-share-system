@@ -1,19 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-from flask import Flask, request, jsonify
-from model.database import Database
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
+from flask import Flask
+from customerAPI import customer_api
 
 app = Flask(__name__)
 
-# 
-@app.route('/get/password', methods=['GET'])
-def get_context():
+app.register_blueprint(customer_api)
 
-
-# 
-@app.route('/u', methods=['POST'])
-def upload_context():
- 
+@app.route("/")
+def hello():
+    return "Hello World!"
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
