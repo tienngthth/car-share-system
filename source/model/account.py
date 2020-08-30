@@ -3,14 +3,16 @@ from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
 from database import Database
 
+
 class Account(ABC):
-    def __init__(self, username, password, email, first_name, last_name, user_type):
+    def __init__(self, username, password, email, first_name, last_name, phone, user_type):
         super().__init__()
         self.__username = username
         self.__password = Account.hash_salt_password(password)
         self.__first_name = first_name
         self.__last_name = last_name
         self.__email = email
+        self.__phone = phone
         self.__user_type = user_type
 
     @staticmethod
@@ -26,7 +28,6 @@ class Account(ABC):
 
     @staticmethod
     def validate_username_input(username, user_type):
-        #user_type == Staff/Customer
         # Valid username is unique and contains 6-15 alphanumerical characters 
         existed_username = Database.execute_equation(
             "COUNT(*)", 
@@ -61,6 +62,13 @@ class Account(ABC):
             return True
         return False
 
+    @staticmethod      
+    def validate_phone_input(phone):
+        # Valid phone contains at least 5 characters, all is numbers
+        if re.search("^[0-9]{5,}$", phone):
+            return True
+        return False
+
     #Login to the database
     def __log_data_to_db(self):
         try:
@@ -76,3 +84,4 @@ class Account(ABC):
             )
         except:
             pass
+
