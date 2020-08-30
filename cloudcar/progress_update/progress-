@@ -1,5 +1,4 @@
 28/08/2020
-
 >>>Environments
 install Flask 
 install flask_wtf
@@ -15,8 +14,13 @@ view all cars in a table
 car search form with date-time selector
 
 >>>Notes
-*** all ís not done ás still need more styling
-*** all has bên developed on Google Chr
+*** all is not done ás still need more styling
+*** all has been developed on Google Chr
 
 
-
+30/08/2020
+Template built for all pages that display searchable tabular results
+Log-in page
+Registration page --> more fields to be added later
+Wtf forms integration
+Date-time picker added

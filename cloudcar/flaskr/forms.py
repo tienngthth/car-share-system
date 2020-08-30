@@ -17,19 +17,15 @@ from wtforms.fields.html5 import DateField
 from datetime import *
 from wtforms.widgets.html5 import DateTimeLocalInput
 
-class ContactForm(FlaskForm):
-    """Contact form."""
-    name = StringField('Name', [
-        DataRequired()])
-    email = StringField('Email', [
-        Email(message=('Not a valid email address.')),
-        DataRequired()])
-    body = TextField('Message', [
-        DataRequired(),
-        Length(min=4, message=('Your message is too short.'))])
-    recaptcha = RecaptchaField()
-    submit = SubmitField('Submit')
-    
+
+class bookingSearch(FlaskForm):   
+    """ My Booking search form. for users"""
+    start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    page = StringField('page')
+    submit = SubmitField('Search')
+ 
+ 
     
 class carSearch(FlaskForm):
     """Car search form. for users"""
@@ -53,7 +49,7 @@ class carSearch(FlaskForm):
                                  ('8', '8')
                                  ])
     cost = StringField('Cost')
-    start = StringField('Start Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
-    end = StringField('End Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')

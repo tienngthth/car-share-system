@@ -9,7 +9,7 @@ from werkzeug.exceptions import abort
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
-from .forms import carSearch
+from .forms import carSearch, bookingSearch
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
 bp = Blueprint("blog", __name__)
@@ -18,61 +18,57 @@ bp = Blueprint("blog", __name__)
 
 @bp.route("/", methods=("GET", "POST"))
 def index():
-    """Show all the cars, most recent first."""
-    db = get_db()
-    cars = db.execute(
-        "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
-        " FROM cars p JOIN user u ON p.author_id = u.id"
-        " ORDER BY created DESC"
-    ).fetchall()
-    
     form = carSearch()
-    if form.validate_on_submit():
-        return redirect(url_for('success'))
-    return render_template("blog/index.html", cars=cars, form=form)
-
-@bp.route("/test")
-def test():
-    """Show all the cars, most recent first."""
     db = get_db()
-    cars = db.execute(
-        "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
-        " FROM cars p JOIN user u ON p.author_id = u.id"
-        " ORDER BY created DESC"
-    ).fetchall()
-    return render_template("blog/test.html", cars=cars)
-
-
-def get_car(id, check_author=True):
-    """Get a car and its author by id.
-
-    Checks that the id exists and optionally that the current user is
-    the author.
-
-    :param id: id of post to get
-    :param check_author: require the current user to be the author
-    :return: the post with author information
-    :raise 404: if a post with the given id doesn't exist
-    :raise 403: if the current user isn't the author
-    """
-    car = (
-        get_db()
-        .execute(
+    if request.method == "POST":
+        make = '%' + request.form['make'] + '%'
+        colour = '%' + request.form['colour'] + '%'
+        # search form
+        cars = db.execute(
+            "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(make,colour,)
+        ).fetchall()
+        # all in the search box will return all the tuples
+        return render_template("blog/index.html", cars=cars, form=form)
+    """Show all the cars, most recent first."""
+    if request.method == "GET":
+        cars = db.execute(
             "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
             " FROM cars p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
-            (id,),
-        )
-        .fetchone()
-    )
+            " ORDER BY created DESC"
+        ).fetchall()
+        #do I need these next 2 lines?
+        if form.validate_on_submit():
+            return redirect(url_for('success'))
+        return render_template("blog/index.html", cars=cars, form=form)
 
-    if car is None:
-        abort(404, "Car id {0} doesn't exist.".format(id))
+@bp.route("/bookings", methods=("GET", "POST"))
+@login_required
+def bookings():
+    form = bookingSearch()
+    db = get_db()
+    if request.method == "POST":
+        start = '%' + request.form['start'] + '%'
+        end = '%' + request.form['end'] + '%'
+        # search date only
+        bookings = db.execute(
+            "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(start,end,)
+        ).fetchall()
+        # all in the search box will return all the tuples
+        return render_template("blog/bookings.html", bookings=bookings, form=form)
+    """Show all the cars, most recent first."""
+    if request.method == "GET":
+        bookings = db.execute(
+            "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
+            " FROM cars p JOIN user u ON p.author_id = u.id"
+            " ORDER BY created DESC"
+        ).fetchall()
+        #do I need these next 2 lines?
+        if form.validate_on_submit():
+            return redirect(url_for('success'))
+        return render_template("blog/bookings.html", bookings=bookings, form=form)
 
-    if check_author and car["author_id"] != g.user["id"]:
-        abort(403)
 
-    return car
+
 
 
 @bp.route("/create", methods=("GET", "POST"))
@@ -89,7 +85,7 @@ def create():
         error = None
 #placeholder for input validation
         if not make:
-            error = "Title is required."
+            error = "Make is required."
 
         if error is not None:
             flash(error)
