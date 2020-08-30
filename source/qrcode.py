@@ -7,22 +7,27 @@ ap_mac_addr = "DC:A6:32:4A:0C:41"
 def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)
-		try:
-			user_info = Code.parse_json(code)
-			print(user_info["user_type"])
-			if (user_info["user_type"] == "engineer"):
-				close_backlog(user_info["engineer_id"])
-		except:
-			pass
+		user_info = Code.parse_json(code)
+		print(user_info["user_type"])
+		print(user_info["engineer_id"])
+		if (user_info["user_type"] == "engineer"):
+			close_backlog(user_info["engineer_id"])
 
 # Close ticket and save signed engineer id
 def close_backlog(signed_engineer_ID):
-	car_id = requests.get('http://127.0.0.1:8080/get/newest/context')
-	Database.update_record(
-		" Backlogs ", 
-		" SignedEngineerID = %s, Status = Done ", 
-		" CarID = %s"
-		,  (signed_engineer_ID, car_id)
+	car_id = requests.get(
+		"http://127.0.0.1:8080/cars/get/car/id/by/mac/address?" +
+		"mac_address=" + ap_mac_addr
+	).text
+	requests.put(
+		"http://127.0.0.1:8080/backlogs/update/signed/engineer/id/and/status/by/car/id?" +
+		"signed_engineer_id=" + signed_engineer_ID +
+		"&car_id=" + car_id
+	)
+	requests.put(
+		"http://127.0.0.1:8080/cars/update?" +
+		"status=Available" +
+		"&id=" + car_id
 	)
 
 def start_scanning():
