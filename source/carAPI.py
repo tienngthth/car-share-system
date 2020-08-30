@@ -44,7 +44,7 @@ def update_status_by_id():
     ) 
     return "Done"
 
-@car_api.route("/create/car", methods=['GET', 'POST'])
+@car_api.route("/create", methods=['GET', 'POST'])
 def create_car():
     Database.insert_record_parameterized(
         "Cars(MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) ",
@@ -62,7 +62,7 @@ def create_car():
     )
     return "Done"
 
-@car_api.route("/delete/car", methods=['GET', 'POST'])
+@car_api.route("/delete", methods=['GET', 'POST'])
 def delete_car():
     Database.delete_record_parameterized(
         "Cars",
@@ -71,7 +71,7 @@ def delete_car():
     )
     return "Done"
 
-@car_api.route("/update/car", methods=['GET', 'PUT'])
+@car_api.route("/update", methods=['GET', 'PUT'])
 def update_car():
     Database.update_record_parameterized(
         "Cars",

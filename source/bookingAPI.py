@@ -68,7 +68,7 @@ def get_booked_time_wrt_car_id():
     else: 
         return str(results)
 
-@booking_api.route("/create/booking", methods=['GET', 'POST'])
+@booking_api.route("/create", methods=['GET', 'POST'])
 def create_booking():
     Database.insert_record_parameterized(
         "Bookings(CustomerID, CarID, RentTime, ReturnTime, TotalCost, Status)",
