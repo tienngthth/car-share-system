@@ -3,16 +3,15 @@ from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
 
 
-class Account(ABC):
+class Account():
     def __init__(self, username, password, email, first_name, last_name, phone, user_type):
-        super().__init__()
-        self.__username = username
-        self.__password = Account.hash_salt_password(password)
-        self.__first_name = first_name
-        self.__last_name = last_name
-        self.__email = email
-        self.__phone = phone
-        self.__user_type = user_type
+        self.username = username
+        self.password = Account.hash_salt_password(password)
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.phone = phone
+        self.user_type = user_type
 
     @staticmethod
     def hash_salt_password(raw_input):
@@ -70,16 +69,3 @@ class Account(ABC):
         if re.search("^[0-9]{5,}$", phone):
             return True
         return False
-
-    #Login to the database
-    def __log_data_to_db(self):
-        parameters = (
-            self.__username, self.__password, 
-            self.__first_name, self.__last_name, 
-            self.__email, self.__phone,
-            self.__user_type
-        )
-        requests.get(
-            "http://127.0.0.1:8080/staffs/create/customer?username=abc&password=def&first_name=Tien&last_name=Nguyen&phone=123456&email=1234@gmail" + 
-            username
-        ) == "0"
