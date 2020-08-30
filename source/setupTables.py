@@ -2,7 +2,7 @@ from model.database import Database
 
 def create_customer_table():
     Database.create_table(
-        "Customer", 
+        "Customers", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
@@ -10,13 +10,14 @@ def create_customer_table():
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
+            Phone VARCHAR(20),
             PRIMARY KEY(ID)
         ) """
     )
                 
 def create_staff_table():
     Database.create_table(
-        "Staff", 
+        "Staffs", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
@@ -24,6 +25,7 @@ def create_staff_table():
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
+            Phone VARCHAR(20),
             UserType VARCHAR(10),
             PRIMARY KEY(ID)
         ) """
@@ -31,7 +33,7 @@ def create_staff_table():
 
 def create_car_table():
     Database.create_table(
-        "Car", 
+        "Cars", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             MacAddress VARCHAR(30),
@@ -48,7 +50,7 @@ def create_car_table():
 
 def create_booking_table():
     Database.create_table(
-        "Booking", 
+        "Bookings", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             CustomerID INT,
@@ -56,15 +58,16 @@ def create_booking_table():
             RentTime DATETIME, 
             ReturnTime DATETIME, 
             TotalCost INT,
+            Status VARCHAR(20),
             PRIMARY KEY(ID),
-            FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
 def create_backlog_table():
     Database.create_table(
-        "Backlog", 
+        "Backlogs", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             AssignedEngineerID INT,
@@ -74,15 +77,15 @@ def create_backlog_table():
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
-            FOREIGN KEY (AssignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (SignedEngineerID) REFERENCES Staff(ID),
-            FOREIGN KEY (CarID) REFERENCES Car(ID)
+            FOREIGN KEY (AssignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (SignedEngineerID) REFERENCES Staffs(ID),
+            FOREIGN KEY (CarID) REFERENCES Cars(ID)
         ) """
     )
 
 def create_all_tables():
-    Database.execute_command("DROP TABLE IF EXISTS Booking")
-    Database.execute_command("DROP TABLE IF EXISTS Backlog")
+    Database.execute_command("DROP TABLE IF EXISTS Bookings")
+    Database.execute_command("DROP TABLE IF EXISTS Backlogs")
 
     #Create tables one by one
     create_customer_table()
