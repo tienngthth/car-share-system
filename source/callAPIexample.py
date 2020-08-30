@@ -1,7 +1,4 @@
 import requests
-import json
-
-data_send = None
 
 # Function to call GET API to get the latest context from the database
 def test_1():

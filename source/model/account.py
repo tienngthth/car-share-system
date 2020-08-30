@@ -1,7 +1,6 @@
-import re
+import re, requests
 from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
-from database import Database
 
 
 class Account(ABC):
@@ -21,21 +20,24 @@ class Account(ABC):
 
     @staticmethod
     def verify_password(input_password, username, user_type):
-        #user_type == Staff/Customer
+        #user_type == staffs/customers
         #retrieve password from database by username
-        encryptedPassword = Database.select_record("Password", user_type, "WHERE Username=(%s)," + username)
+        encryptedPassword = requests.get(
+            "http://127.0.0.1:8080/" +
+            user_type +
+            "/get/encrypted/password/by/username?username=" +
+            username
+        )
         return hash.sha256_crypt.verify(input_password, encryptedPassword)
 
     @staticmethod
     def validate_username_input(username, user_type):
         # Valid username is unique and contains 6-15 alphanumerical characters 
-        existed_username = Database.execute_equation(
-            "COUNT(*)", 
-            user_type, 
-            "WHERE username=%s",
+        existed_username = requests.get(
+            "http://127.0.0.1:8080/customers/get/number/of/existed/username?username=" + 
             username
-        ) > 0
-        if not existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
+        ) == "0"
+        if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
             return True
         return False
 
@@ -71,17 +73,13 @@ class Account(ABC):
 
     #Login to the database
     def __log_data_to_db(self):
-        try:
-            parameters = (
-                self.__username, self.__password, 
-                self.__first_name, self.__last_name, 
-                self.__email, self.__user_type
-            )
-            Database.insert_record(
-                "Staff (Username, Password, FirstName, LastName, Email, UserType)",
-                "(%s, %s, %s, %s, %s, %s)",
-                parameters
-            )
-        except:
-            pass
-
+        parameters = (
+            self.__username, self.__password, 
+            self.__first_name, self.__last_name, 
+            self.__email, self.__phone,
+            self.__user_type
+        )
+        requests.get(
+            "http://127.0.0.1:8080/staffs/create/customer?username=abc&password=def&first_name=Tien&last_name=Nguyen&phone=123456&email=1234@gmail" + 
+            username
+        ) == "0"
