@@ -1,8 +1,9 @@
-import cv2
+import cv2, requests
 from model.code import Code
 from model.camera import Camera
-from model.database import Database
+
 ap_mac_addr = "DC:A6:32:4A:0C:41"
+
 def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)
@@ -16,7 +17,7 @@ def validate_code(code, found_codes):
 
 # Close ticket and save signed engineer id
 def close_backlog(signed_engineer_ID):
-	car_id = Database.select_record(" CarID ", " Cars ", " MacAddress = %s", ap_mac_addr)
+	car_id = requests.get('http://127.0.0.1:8080/get/newest/context')
 	Database.update_record(
 		" Backlogs ", 
 		" SignedEngineerID = %s, Status = Done ", 
