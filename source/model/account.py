@@ -2,7 +2,6 @@ import re, requests
 from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
 
-
 class Account():
     def __init__(self, username, password, email, first_name, last_name, phone, user_type):
         self.username = username
@@ -76,9 +75,15 @@ class Account():
         return False
 
     @staticmethod
-    def validate_email_phone_uniqueness(email, phone):
-        
-
+    def validate_email_phone_uniqueness(email, phone, user_type):
+        # Valid uniqueness of email and phone combination
+        return requests.get(
+            "http://127.0.0.1:8080/" +
+            user_type +
+            "/get/number/of/existed/email/and/phone/combination?" +
+            "email=" + email +
+            "&phone=" + phone
+        ).text == "0"
 
 #Test validate username
 print(Account.validate_username_input("tien123N", "customers"))
@@ -87,3 +92,7 @@ print(Account.validate_username_input("Tam", "customers"))
 #Test verify password
 print(Account.verify_password("123", "tien123N", "customers"))
 print(Account.verify_password("123abc", "ABC", "customers"))
+
+#Test uniqueness of email and phone combination
+print(Account.validate_email_phone_uniqueness("thanh456@gmail.com", "12345678", "customers"))
+print(Account.validate_email_phone_uniqueness("thanh456@gmail.com", "123456798", "customers"))
