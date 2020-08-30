@@ -23,16 +23,19 @@ def run_server():
 
 # Validate credential
 def validate_crendential():
-    if Account.verify_password(message["username"], message["password"], message["user_type"]):
+    if Account.verify_password(message["password"], message["username"], message["user_type"]):
         server.send_message("valid")
     else:
         server.send_message("invalid")
 
 # Validate credential
 def update_car_status():
-    #Up car availability - user first login/return
-    pass
-
+    resp = requests.put(
+		"http://127.0.0.1:8080/cars/update?" +
+		"status=" + message["car_status"] +
+		"&id=" + message["car_id"]
+	)
+    print(resp.text)
 
 if __name__ == "__main__":
     run_server()
