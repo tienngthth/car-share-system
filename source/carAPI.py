@@ -4,6 +4,19 @@ from model.database import Database
 
 car_api = Blueprint("car_api", __name__)
 
+@car_api.route("get/car/id/by/mac/address")
+def get_car_id_by_mac_address():
+    results = Database.select_record_parameterized(
+        "ID",
+        "Cars",
+        " WHERE MacAddress = %s",
+        request.args.get("mac_address")
+    )
+    if len(results) == 0:
+        return "No car found"
+    else: 
+        return str(results[0][0])
+
 @car_api.route("/get/cars/by/filter")
 def get_cars_by_filter():
     results = Database.select_record_parameterized(
@@ -34,16 +47,6 @@ def get_cars_by_filter():
     else: 
         return str(results)
 
-@car_api.route("/update/status/by/id", methods=['GET', 'PUT'])
-def update_status_by_id():
-    Database.update_record_parameterized(
-        "Cars", 
-        " Status = %s",
-        " WHERE ID = (%s)",
-        (request.args.get("status"), request.args.get("id"))
-    ) 
-    return "Done"
-
 @car_api.route("/create", methods=['GET', 'POST'])
 def create_car():
     Database.insert_record_parameterized(
@@ -62,7 +65,7 @@ def create_car():
     )
     return "Done"
 
-@car_api.route("/delete", methods=['GET', 'POST'])
+@car_api.route("/delete", methods=['GET', 'DELETE'])
 def delete_car():
     Database.delete_record_parameterized(
         "Cars",

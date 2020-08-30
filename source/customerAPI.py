@@ -52,7 +52,7 @@ def create_customer():
     )
     return "Done"
 
-@customer_api.route("/delete", methods=['GET', 'POST'])
+@customer_api.route("/delete", methods=['GET', 'DELETE'])
 def delete_customer():
     Database.delete_record_parameterized(
         "Customers",
