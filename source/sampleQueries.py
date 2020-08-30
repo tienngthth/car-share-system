@@ -125,7 +125,6 @@ def delete_backlog(cursor, ID):
     cursor.execute(sql, ID)
     cursor.connection.commit()
 
-
 def execute_queries():
     #Connect to the database
     Database.setup_connection()

@@ -16,6 +16,6 @@ class Customer(Account):
         )
         print(resp.text)
 
-#Test create new account with encrypted password
-customer = Customer("ABC", "123abc", "abc@abc", "Tien", "Nguyen", "1234567", "customer")
-customer.log_data_to_db()
+# #Test create new account with encrypted password
+# customer = Customer("ABC", "123abc", "abc@abc", "Tien", "Nguyen", "1234567", "customer")
+# customer.log_data_to_db()
