@@ -37,7 +37,7 @@ def update_signed_eng_id_and_status_by_car_id():
     ) 
     return "Done"
 
-@backlog_api.route("/create/backlog", methods=['GET', 'POST'])
+@backlog_api.route("/create", methods=['GET', 'POST'])
 def create_backlog():
     Database.insert_record_parameterized(
         "Backlogs(AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description) ",
