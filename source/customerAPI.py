@@ -8,7 +8,7 @@ def get_encrypted_password_by_username():
     results = Database.select_record_parameterized(
         "Password", 
         "Customers", 
-        " WHERE username = %s", 
+        " WHERE Username = %s", 
         request.args.get("username")
     ) 
     if len(results) == 0:
@@ -21,8 +21,18 @@ def get_number_of_existed_username():
     result = Database.select_record_parameterized(
         "COUNT(*) ", 
         " Customers ", 
-        " WHERE username = %s", 
+        " WHERE Username = %s", 
         request.args.get("username")
+    )
+    return str(result[0][0])
+
+@customer_api.route("/get/number/of/existed/email/and/phone/combination")
+def get_number_of_existed_email_phone_combination():
+    result = Database.select_record_parameterized(
+        "COUNT(*) ", 
+        " Customers ", 
+        " WHERE Email = %s AND Phone = %s", 
+        (request.args.get("email"), request.args.get("phone"))
     )
     return str(result[0][0])
 

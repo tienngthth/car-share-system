@@ -8,7 +8,7 @@ def get_encrypted_password_by_username():
     results = Database.select_record_parameterized(
         "Password", 
         "Staffs", 
-        " WHERE username = %s", 
+        " WHERE Username = %s", 
         request.args.get("username")
     ) 
     if len(results) == 0:
