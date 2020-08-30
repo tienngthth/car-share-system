@@ -22,7 +22,6 @@ def listen_to_client():
 def handle_request(message):
     try:
         message = Code.parse_json(message.replace("\'", "\""))
-        print(message["message_type"])
         if message["message_type"] == "credential":
             validate_crendential(message)
         elif message["message_type"] == "car_status":

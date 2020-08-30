@@ -3,6 +3,7 @@ from model.code import Code
 
 client = None
 
+#AP send crendential to MP to validate
 def send_credential_info():
     credential_message = {
         "message_type":"credential",
@@ -13,11 +14,22 @@ def send_credential_info():
     client.send_message(str(credential_message))
     wait_for_response()
 
-def update_car_status():
+#Customer first login to AP
+def use_car():
     car_status_message = {
         "message_type":"car_status",
         "car_id":"1",
         "car_status":"In use"
+    }
+    client.send_message(str(car_status_message))
+    wait_for_response()
+
+#Customer return car
+def return_car():
+    car_status_message = {
+        "message_type":"car_status",
+        "car_id":"1",
+        "car_status":"Available"
     }
     client.send_message(str(car_status_message))
     wait_for_response()
@@ -33,7 +45,8 @@ def end_connection():
     client.send_message("end")
 
 def listen_to_server():
-    update_car_status()
+    return_car()
+    use_car()
     send_credential_info()
     end_connection()
     
