@@ -17,7 +17,7 @@ class Account():
         return hash.sha256_crypt.hash(raw_input)
 
     @staticmethod
-    def verify_password(input_password, username, user_type):
+    def verify_password(username, input_password, user_type):
         #user_type == staffs/customers
         #retrieve password from database by username
         encryptedPassword = requests.get(
@@ -90,8 +90,8 @@ print(Account.validate_username_input("tien123N", "customers"))
 print(Account.validate_username_input("Tam", "customers"))
 
 #Test verify password
-print(Account.verify_password("123", "tien123N", "customers"))
-print(Account.verify_password("123abc", "ABC", "customers"))
+print(Account.verify_password("tien123N", "123", "customers"))
+print(Account.verify_password("ABC", "123abc", "customers"))
 
 #Test uniqueness of email and phone combination
 print(Account.validate_email_phone_uniqueness("thanh456@gmail.com", "12345678", "customers"))
