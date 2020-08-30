@@ -36,6 +36,29 @@ def get_number_of_existed_email_phone_combination():
     )
     return str(result[0][0])
 
+@customer_api.route("get/customers/by/filter")
+def get_customer_by_filter():
+    results = Database.select_record_parameterized(
+        "*", 
+        "Customers", 
+        " WHERE Username LIKE %s" +
+        " AND FirstName LIKE %s " +
+        " AND LastName LIKE %s"
+        " AND Email LIKE %s" +
+        " AND Phone LIKE %s",
+        (
+            "%{}%".format(request.args.get("username")), 
+            "%{}%".format(request.args.get("first_name")), 
+            "%{}%".format(request.args.get("last_name")), 
+            "%{}%".format(request.args.get("email")), 
+            "%{}%".format(request.args.get("phone"))
+        )
+    ) 
+    if len(results) == 0:
+        return "No customer found"
+    else: 
+        return str(results)
+
 @customer_api.route("/create", methods=['GET', 'POST'])
 def create_customer():
     Database.insert_record_parameterized(

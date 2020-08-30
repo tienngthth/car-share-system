@@ -40,7 +40,6 @@ def get_cars_by_filter():
             "%{}%".format(request.args.get("seat")), 
             "%{}%".format(request.args.get("cost")),
         )
-        
     ) 
     if len(results) == 0:
         return "No car found"
