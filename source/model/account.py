@@ -26,16 +26,21 @@ class Account():
             user_type +
             "/get/encrypted/password/by/username?username=" +
             username
-        )
-        return hash.sha256_crypt.verify(input_password, encryptedPassword)
+        ).text
+        try:
+            return hash.sha256_crypt.verify(input_password, encryptedPassword)
+        except:
+            return False
 
     @staticmethod
     def validate_username_input(username, user_type):
         # Valid username is unique and contains 6-15 alphanumerical characters 
         existed_username = requests.get(
-            "http://127.0.0.1:8080/customers/get/number/of/existed/username?username=" + 
+            "http://127.0.0.1:8080/" +
+            user_type +
+            "/get/number/of/existed/username?username=" + 
             username
-        ) == "0"
+        ).text == "0"
         if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
             return True
         return False
@@ -69,3 +74,16 @@ class Account():
         if re.search("^[0-9]{5,}$", phone):
             return True
         return False
+
+    @staticmethod
+    def validate_email_phone_uniqueness(email, phone):
+        
+
+
+#Test validate username
+print(Account.validate_username_input("tien123N", "customers"))
+print(Account.validate_username_input("Tam", "customers"))
+
+#Test verify password
+print(Account.verify_password("123", "tien123N", "customers"))
+print(Account.verify_password("123abc", "ABC", "customers"))

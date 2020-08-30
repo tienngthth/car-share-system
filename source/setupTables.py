@@ -6,7 +6,7 @@ def create_customer_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
-            Password VARCHAR(40), 
+            Password VARCHAR(256), 
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
@@ -21,7 +21,7 @@ def create_staff_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
-            Password VARCHAR(20), 
+            Password VARCHAR(256), 
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
