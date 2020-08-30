@@ -1,0 +1,26 @@
+28/08/2020
+>>>Environments
+install Flask 
+install flask_wtf
+pip3 install email_validator
+sudo ./runme.sh
+Run Google Chrome --> localhost:5000
+
+>>>Progress
+create a local database for testing purpose - SQlite
+create basic registration and login feature
+crud on cars
+view all cars in a table
+car search form with date-time selector
+
+>>>Notes
+*** all is not done ás still need more styling
+*** all has been developed on Google Chr
+
+
+30/08/2020
+Template built for all pages that display searchable tabular results
+Log-in page
+Registration page --> more fields to be added later
+Wtf forms integration
+Date-time picker added
