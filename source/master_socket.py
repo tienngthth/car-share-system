@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import requests
 from model.server import Server
 from model.code import Code
 from model.account import Account
 
 server = Server()
-credential = 1
-car_status = 2
 message = {}
 
 # Function to call when Pi is a server
