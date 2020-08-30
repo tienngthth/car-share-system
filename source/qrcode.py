@@ -8,8 +8,6 @@ def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)
 		user_info = Code.parse_json(code)
-		print(user_info["user_type"])
-		print(user_info["engineer_id"])
 		if (user_info["user_type"] == "engineer"):
 			close_backlog(user_info["engineer_id"])
 
@@ -29,6 +27,7 @@ def close_backlog(signed_engineer_ID):
 		"status=Available" +
 		"&id=" + car_id
 	)
+	print("Done")
 
 def start_scanning():
 	Camera.start_camera()
