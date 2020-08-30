@@ -38,7 +38,7 @@ class Database:
         Database.curs.execute(
             "INSERT INTO " 
             + tb_name 
-            + " values" 
+            + " VALUES" 
             + values
             , parameters
         )
@@ -67,7 +67,7 @@ class Database:
     @staticmethod
     def select_record(columns, tb_name, conditions = ""):
         Database.setup_connection()
-        rows = Database.curs.execute(
+        Database.curs.execute(
             "SELECT " 
             + columns 
             + " FROM "
@@ -75,8 +75,8 @@ class Database:
             + conditions
         )
         return_value = []
-        for row in rows:
-            return_value.append(row)
+        for result in Database.curs:
+            return_value.append(result)
         Database.conn.close()
         return return_value
 
@@ -107,23 +107,6 @@ class Database:
         )
         Database.conn.commit()
         Database.conn.close()
-
-    #Execute equation 
-    @staticmethod
-    def execute_equation_parameterized(equation, tb_name, conditions, parameterized):
-        Database.setup_connection()
-        rows = Database.curs.execute(
-            "SELECT " 
-            + equation
-            + " FROM "
-            + tb_name
-            + conditions
-            , parameterized
-        )
-        for row in rows:
-            return_value = row
-        Database.conn.close()
-        return return_value[0]
 
     #Execute a command
     @staticmethod

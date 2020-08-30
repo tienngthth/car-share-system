@@ -48,16 +48,16 @@ def create_sample_cars_data():
     #Cars
     global cars 
     cars = []
-    cars.append((None, "Ford", "Sedan", "28 Do Xuan Hop", "Unavailable", "White", 4, 2))
-    cars.append((None, "BMW", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
-    cars.append((None, "Audi", "Sedan", "702 Nguyen Van Linh", "Available", "Black", 4, 2))
-    cars.append((None, "Toyota", "Truck", "702 Nguyen Van Linh", "Available", "Blue", 2, 4))
-    cars.append((None, "Ford", "Truck", "65 Nguyen Huu Tho", "Unavailable", "Yellow", 2, 4))
-    cars.append((None, "Toyota", "Sedan", "702 Nguyen Van Linh", "Available", "White", 4, 2))
-    cars.append((None, "BMW", "Truck", "702 Nguyen Van Linh", "Available", "Black", 2, 4))
-    cars.append((None, "Audi", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
-    cars.append((None, "Ford", "Minivan", "702 Nguyen Van Linh", "Available", "White", 2, 3))
-    cars.append((None, "BMW", "Sedan", "702 Nguyen Van Linh", "Available", "Yellow", 4, 2))
+    cars.append(("DC:A6:32:4A:0C:41", "Ford", "Sedan", "28 Do Xuan Hop", "Unavailable", "White", 4, 2))
+    cars.append(("", "BMW", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
+    cars.append(("", "Audi", "Sedan", "702 Nguyen Van Linh", "Available", "Black", 4, 2))
+    cars.append(("", "Toyota", "Truck", "702 Nguyen Van Linh", "Available", "Blue", 2, 4))
+    cars.append(("", "Ford", "Truck", "65 Nguyen Huu Tho", "Unavailable", "Yellow", 2, 4))
+    cars.append(("", "Toyota", "Sedan", "702 Nguyen Van Linh", "Available", "White", 4, 2))
+    cars.append(("", "BMW", "Truck", "702 Nguyen Van Linh", "Available", "Black", 2, 4))
+    cars.append(("", "Audi", "Minivan", "702 Nguyen Van Linh", "Available", "Blue", 2, 3))
+    cars.append(("", "Ford", "Minivan", "702 Nguyen Van Linh", "Available", "White", 2, 3))
+    cars.append(("", "BMW", "Sedan", "702 Nguyen Van Linh", "Available", "Yellow", 4, 2))
    
 def create_sample_bookings_data():
     #Bookings

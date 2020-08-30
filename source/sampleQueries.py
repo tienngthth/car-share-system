@@ -131,52 +131,52 @@ def execute_queries():
     Database.setup_connection()
     cursor = Database.curs
 
-    #Retrieve all data
-    select_from_customers(cursor)
-    select_from_staffs(cursor)
-    select_from_cars(cursor)
-    select_from_bookings(cursor)
+    # #Retrieve all data
+    # select_from_customers(cursor)
+    # select_from_staffs(cursor)
+    # select_from_cars(cursor)
+    # select_from_bookings(cursor)    
     select_from_backlogs(cursor)
-    #Additional queries (for drawing graphs)
-    select_number_of_bookings_per_day(cursor)
-    select_number_of_returns_per_day(cursor)
-    select_number_of_cars_of_the_same_type(cursor)
-    select_profit_per_day(cursor)
+    # #Additional queries (for drawing graphs)
+    # select_number_of_bookings_per_day(cursor)
+    # select_number_of_returns_per_day(cursor)
+    # select_number_of_cars_of_the_same_type(cursor)
+    # select_profit_per_day(cursor)
 
-    #Updated values
-    updated_customer = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh123@gmail.com", "13572486901", 3)
-    updated_staff = ("Minh34", "ab33333333cd", "Minh", "Nguyen", "minh456@gmail.com", "Engineer", 3)
-    updated_car = (None, "Toyota", "Sedan", "600 Nguyen Van Linh", "Available", "White", 4, 2, 6)
-    updated_booking = (1, 10, "2020-8-23 14:30:00", "2020-8-27 15:30:00", 192, 5)
-    updated_backlog = (2, 2, "7", "2020-8-23 11:15:00", "Done", "Change the oil", 3)
+    # #Updated values
+    # updated_customer = ("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh123@gmail.com", "13572486901", 3)
+    # updated_staff = ("Minh34", "ab33333333cd", "Minh", "Nguyen", "minh456@gmail.com", "Engineer", 3)
+    # updated_car = (None, "Toyota", "Sedan", "600 Nguyen Van Linh", "Available", "White", 4, 2, 6)
+    # updated_booking = (1, 10, "2020-8-23 14:30:00", "2020-8-27 15:30:00", 192, 5)
+    # updated_backlog = (2, 2, "7", "2020-8-23 11:15:00", "Done", "Change the oil", 3)
 
-    #Update data
-    update_customers_table(cursor, updated_customer)
-    update_staffs_table(cursor, updated_staff)
-    update_cars_table(cursor, updated_car)
-    update_bookings_table(cursor, updated_booking)
-    update_backlogs_table(cursor, updated_backlog)
+    # #Update data
+    # update_customers_table(cursor, updated_customer)
+    # update_staffs_table(cursor, updated_staff)
+    # update_cars_table(cursor, updated_car)
+    # update_bookings_table(cursor, updated_booking)
+    # update_backlogs_table(cursor, updated_backlog)
 
-    #Retrieve all data
-    select_from_customers(cursor)
-    select_from_staffs(cursor)
-    select_from_cars(cursor)
-    select_from_bookings(cursor)
-    select_from_backlogs(cursor)
+    # #Retrieve all data
+    # select_from_customers(cursor)
+    # select_from_staffs(cursor)
+    # select_from_cars(cursor)
+    # select_from_bookings(cursor)
+    # select_from_backlogs(cursor)
 
-    #Delete data
-    delete_customer(cursor, 4)
-    delete_staff(cursor, 5)
-    delete_car(cursor, 9)
-    delete_booking(cursor, 7)
-    delete_backlog(cursor, 3)
+    # #Delete data
+    # delete_customer(cursor, 4)
+    # delete_staff(cursor, 5)
+    # delete_car(cursor, 9)
+    # delete_booking(cursor, 7)
+    # delete_backlog(cursor, 3)
 
-    #Retrieve all data
-    select_from_customers(cursor)
-    select_from_staffs(cursor)
-    select_from_cars(cursor)
-    select_from_bookings(cursor)
-    select_from_backlogs(cursor)
+    # #Retrieve all data
+    # select_from_customers(cursor)
+    # select_from_staffs(cursor)
+    # select_from_cars(cursor)
+    # select_from_bookings(cursor)
+    # select_from_backlogs(cursor)
 
     #Close connection
     cursor.close()
