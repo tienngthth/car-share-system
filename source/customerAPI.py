@@ -26,7 +26,7 @@ def get_number_of_existed_username():
     )
     return str(result[0][0])
 
-@customer_api.route("/create/customer", methods=['GET', 'POST'])
+@customer_api.route("/create", methods=['GET', 'POST'])
 def create_customer():
     Database.insert_record_parameterized(
         "Customers(Username, Password, FirstName, LastName, Email, Phone)",
@@ -42,7 +42,7 @@ def create_customer():
     )
     return "Done"
 
-@customer_api.route("/delete/customer", methods=['GET', 'POST'])
+@customer_api.route("/delete", methods=['GET', 'POST'])
 def delete_customer():
     Database.delete_record_parameterized(
         "Customers",
@@ -51,7 +51,7 @@ def delete_customer():
     )
     return "Done"
 
-@customer_api.route("/update/customer", methods=['GET', 'PUT'])
+@customer_api.route("/update", methods=['GET', 'PUT'])
 def update_customer():
     Database.update_record_parameterized(
         "Customers",
