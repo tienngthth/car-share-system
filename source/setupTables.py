@@ -6,12 +6,12 @@ def create_customer_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
-            Password VARCHAR(20), 
+            Password VARCHAR(256), 
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
             Phone VARCHAR(20),
-            PRIMARY KEY(ID, Email, Phone)
+            PRIMARY KEY(ID)
         ) """
     )
                 
@@ -21,10 +21,11 @@ def create_staff_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
             Username VARCHAR(30),
-            Password VARCHAR(20), 
+            Password VARCHAR(256), 
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
             Email VARCHAR(50),
+            Phone VARCHAR(20),
             UserType VARCHAR(10),
             PRIMARY KEY(ID)
         ) """
@@ -57,7 +58,7 @@ def create_booking_table():
             RentTime DATETIME, 
             ReturnTime DATETIME, 
             TotalCost INT,
-            Status VARCHAR(10),
+            Status VARCHAR(20),
             PRIMARY KEY(ID),
             FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
             FOREIGN KEY (CarID) REFERENCES Cars(ID)
@@ -93,4 +94,3 @@ def create_all_tables():
     create_booking_table()
     create_backlog_table()
     print("Tables succesfully created")
-
