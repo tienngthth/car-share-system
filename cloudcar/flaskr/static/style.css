@@ -221,6 +221,7 @@ nav ul li a, nav ul li span, header .action {
   font-weight: bold;
   margin-bottom: 0.5em;
   margin-right:10px;
+
 }
 
 .content input, .content textarea {
@@ -232,8 +233,17 @@ nav ul li a, nav ul li span, header .action {
   resize: vertical;
 }
 
+
+input.warning {
+  background-color: #ff6700 !important;
+}
+
+.danger{
+  background-color: #aa1e21 !important;
+}
+
 input.danger {
-  color: #cc2f2e;
+  background-color: #aa1e21 !important;
 }
 
 input[type=submit] {
@@ -248,7 +258,6 @@ background-color:#043F5D;
 	font-weight:bold;
 	padding:6px 18px;
 	text-decoration:none;
-	text-shadow:0px 1px 0px #2f6627;
 }
 
 

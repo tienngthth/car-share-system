@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+ 
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="formwrapper">
+  <h2 class="title">Confirm Booking</h2>
+
+  <div style="display:block; width:100%; clear:both; float:none;height:30px;">
+  <div style="width:300px; float:left;"><strong>Car Type:</strong></div>
+  <div style="width:300px; float:left;">Make: {{ car.make }}</div>
+  <div style="width:300px; float:left;">Body: {{ car.body }}</div>
+</div>
+<hr>
+  <div style="display:block; width:100%; clear:both; float:none;height:30px;">
+  <div style="width:300px; float:left;"><strong>Car Details:</strong></div>
+  <div style="width:300px; float:left;">Colour: {{ car.colour }}</div>
+  <div style="width:300px; float:left;">Number of Seats: {{ car.seats }}</div>
+</div>
+<hr>
+  <div style="display:block; width:100%; clear:both; float:none;height:30px;">
+  <div style="width:300px; float:left;"><strong>Booking Schedule:</strong></div>
+  <div style="width:300px; float:left;">{{ datestart }}</div>
+  <div style="width:300px; float:left;">{{ dateend }}</div>
+</div>
+<hr>
+ <div style="display:block; width:100%; clear:both; float:none;height:30px;">
+  <div style="width:300px; float:left;"><strong>Cost Summary:</strong></div>
+  <div style="width:300px; float:left;">Hourly Cost: {{ car.cost }}</div>
+  <div style="width:300px; float:left;">(Estimated Total: TODO)</div>
+</div>
+<hr>
+<p>*** You will receive a Google Calendar notification once your booking is confirmed.</p>
+
+<a class="greenbutton" style="margin-top: 10px;" href="{{ url_for('blog.updateBooking', id=car['id'], action='confirm') }}">Confirm Booking</a>
+<a class="greenbutton danger" style="margin-top: 10px; float:right;" href="{{ url_for('blog.updateBooking', id=car['id'], action='cancel') }}">Cancel Booking</a>
+
+</div>
+
+    
+     
+{% endblock %}

@@ -24,3 +24,11 @@ Log-in page
 Registration page --> more fields to be added later
 Wtf forms integration
 Date-time picker added
+
+
+01/09/2020
+Booking confirmation page
+Admin edit car page
+Admin manage car page/ car search
+admin user search page
+--> overall pages are out, yet need more styling bits and bobs

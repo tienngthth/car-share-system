@@ -21,5 +21,6 @@ CREATE TABLE cars (
   seats INTEGER NOT NULL,
   location TEXT NOT NULL,
   cost INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT "Available",
   FOREIGN KEY (author_id) REFERENCES user (id)
 );

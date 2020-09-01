@@ -5,25 +5,20 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="make">Make</label>
-    <input name="make" id="make"> {{ request.form['make'] }}</input>
-    <label for="body">Body</label>
-    <input name="body" id="body">{{ request.form['body'] }}</input>
+  <form method="POST" action="/create">
+  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
+    <div class="form-field" style="float:left;"> {{ form.make.label }} {{ form.make }}</div>
+    <div class="form-field" style="float:left;">{{ form.body.label }} {{ form.body }}</div>
+    <div class="form-field" style="float:left;">{{ form.colour.label }} {{ form.colour }}</div>
+    </div>
+ <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">   
+    <div class="form-field" style="float:left;">{{ form.seats.label }} {{ form.seats }}</div>
     
-    <label for="colour">Colour</label>
-    <input name="colour" id="colour">{{ request.form['colour'] }}</input>
+    <div class="form-field" style="float:left;">{{ form.location.label }} {{ form.location }}</div>
     
-    <label for="seats">Seats</label>
-    <input name="seats" id="seats">{{ request.form['seats'] }}</input>
+    <div class="form-field" style="float:left;">{{ form.cost.label }} {{ form.cost }}</div>
     
-    <label for="location">Location</label>
-    <input name="location" id="location">{{ request.form['location'] }}</input>
-    
-    <label for="cost">Cost</label>
-    <input name="cost" id="cost">{{ request.form['cost'] }}</input>
-    
-    
-    <input type="submit" value="Save">
+    </div>
+    <div class="form-submit"> {{ form.submit }} </div>
   </form>
 {% endblock %}
