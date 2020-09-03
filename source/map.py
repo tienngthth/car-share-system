@@ -4,7 +4,7 @@ from model.database import Database
 
 app = Flask(__name__)
 
-#In reality we don't get the coordinates from a certain address. The coordinates should be retreived automatically from the Pi
+#In reality we don't get the coordinates from a certain address. The coordinates are retrieved first and the location is figured out based on the coordinates
 #How this program works:
 #1) Get backlog number 3 (Backlogs.ID = 3)
 #2) Get the car listed in the backlog (CarID = 7)
@@ -12,13 +12,13 @@ app = Flask(__name__)
 #4) Get the real-life coordinates of that address
 #5) Display those coordinates on the Google Map, with a marker pointing to it
 
-def get_address_from_car_in_backlog():
-    address = Database.select_record("Cars.Location", "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", " WHERE Backlogs.ID = 3")
+def get_address_from_car_in_backlog(ID):        #Temporary fucntion
+    address = Database.select_record("Cars.Location", "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", " WHERE Backlogs.ID = " + str(ID))
     return address[0][0]
 
 def get_coordinates():
     geolocator = Nominatim(user_agent="nguyenthanhtamahs@gmail.com")
-    address = get_address_from_car_in_backlog()
+    address = get_address_from_car_in_backlog(3)
     location = geolocator.geocode(address)
     lattitude = location.latitude
     longtitude = location.longitude
