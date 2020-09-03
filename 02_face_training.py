@@ -27,4 +27,3 @@ recognizer.train(faces, np.array(ids))
 recognizer.write('trainer/trainer.yml') # recognizer.save() worked on Mac, but not on Pi
 # Print the numer of faces trained and end program
 print("\n [INFO] {0} faces trained. Exiting Program".format(len(np.unique(ids))))
-aa
