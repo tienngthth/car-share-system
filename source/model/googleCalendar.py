@@ -15,9 +15,9 @@ from oauth2client import file, client, tools
 class googleCalendar():
     service = None
 
-    def  __init__(self):
+    def  __init__(self, user_name):
         SCOPES = "https://www.googleapis.com/auth/calendar"
-        store = file.Storage(pathlib.Path(__file__).parent.parent/"files"/"token.json")
+        store = file.Storage(pathlib.Path(__file__).parent.parent/"files"/ "{}-token.json".format(user_name))
         creds = store.get()
         if(not creds or creds.invalid):
             flow = client.flow_from_clientsecrets(
@@ -33,11 +33,11 @@ class googleCalendar():
             "location": "Car Share Office",
             "description": "Please visit Car Share Office to pick up your car",
             "start": {
-                "dateTime": "{}T10:00:00+07:00".format(rent_date),
+                "dateTime": "{}T{}:00:00+07:00".format(rent_date, rent_time),
                 "timeZone": "Asia/Ho_Chi_Minh",
             },
             "end": {
-                "dateTime": "{}T10:30:00+07:00".format(rent_date),
+                "dateTime": "{}T{}:30:00+07:00".format(rent_date, rent_time),
                 "timeZone": "Asia/Ho_Chi_Minh",
             },
             "reminders": {
@@ -51,5 +51,5 @@ class googleCalendar():
         event = self.service.events().insert(calendarId = "primary", body = event).execute()
         print("Event created: {}".format(event.get("htmlLink")))
 
-calendar = googleCalendar()
-calendar.insert_event("2020-09-03")
+calendar = googleCalendar("tien")
+calendar.insert_event("2020-09-03", "10")
