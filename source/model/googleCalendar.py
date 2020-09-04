@@ -27,7 +27,7 @@ class googleCalendar():
             creds = tools.run_flow(flow, store)
         self.service = build("calendar", "v3", http=creds.authorize(Http()))
 
-    def insert_event(self, rent_date):
+    def insert_event(self, rent_date, rent_time):
         event = {
             "summary": "Your car is ready - Car Share",
             "location": "Car Share Office",
