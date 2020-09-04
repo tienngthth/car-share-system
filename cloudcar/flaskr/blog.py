@@ -116,6 +116,18 @@ def admincars():
         if form.validate_on_submit():
             return redirect(url_for('success'))
         return render_template("blog/admincars.html", cars=cars, form=form)
+        
+@bp.route("/engineercars", methods=("GET", "POST"))
+def engineercars():
+    db = get_db()
+    if request.method == "GET":
+        cars = db.execute(
+            "SELECT p.id, make, body, colour, seats, location, status, cost, created, author_id, username"
+            " FROM cars p JOIN user u ON p.author_id = u.id"
+            " ORDER BY created DESC"
+        ).fetchall()
+        #do I need these next 2 lines?
+        return render_template("blog/engineercars.html", cars=cars)
 
 
 
@@ -253,11 +265,7 @@ def delete(id):
 @bp.route("/<int:id>/repair", methods=("POST",))
 @login_required
 def repair(id):
-    """Delete a car.
 
-    Ensures that the car exists and that the logged in user is the
-    author of the car.
-    """
     get_car(id)
     db = get_db()
     db.execute(
@@ -265,3 +273,15 @@ def repair(id):
             )
     db.commit()
     return redirect(url_for("blog.admincars"))
+    
+@bp.route("/<int:id>/fix", methods=("POST",))
+@login_required
+def fix(id):
+
+    get_car(id)
+    db = get_db()
+    db.execute(
+            "UPDATE cars SET status = '' WHERE id = ?", (id,)
+            )
+    db.commit()
+    return redirect(url_for("blog.engineercars"))
