@@ -25,7 +25,8 @@ def get_cars_by_filter():
         " WHERE MacAddress LIKE %s" +
         " AND Brand LIKE %s" +
         " AND Type LIKE %s" +
-        " AND Location LIKE %s " +
+        " AND Latitude LIKE %s " +
+        " AND Longtitude LIKE %s " +
         " AND Status LIKE %s" + 
         " AND Color LIKE %s" +
         " AND Seat LIKE %s" +
@@ -34,7 +35,8 @@ def get_cars_by_filter():
             "%{}%".format(request.args.get("mac_address")), 
             "%{}%".format(request.args.get("brand")), 
             "%{}%".format(request.args.get("car_type")), 
-            "%{}%".format(request.args.get("location")), 
+            "%{}%".format(request.args.get("latitude")),
+            "%{}%".format(request.args.get("longtitude")),  
             "%{}%".format(request.args.get("status")), 
             "%{}%".format(request.args.get("color")), 
             "%{}%".format(request.args.get("seat")), 
@@ -49,13 +51,14 @@ def get_cars_by_filter():
 @car_api.route("/create", methods=['GET', 'POST'])
 def create_car():
     Database.insert_record_parameterized(
-        "Cars(MacAddress, Brand, Type, Location, Status, Color, Seat, Cost) ",
-        "(%s, %s, %s, %s, %s, %s, %s, %s)",
+        "Cars(MacAddress, Brand, Type, Latitude, Longtitude, Status, Color, Seat, Cost) ",
+        "(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (
             request.args.get("mac_address"),
             request.args.get("brand"),
             request.args.get("type"),
-            request.args.get("location"),
+            request.args.get("latitude"),
+            request.args.get("longtitude"),
             request.args.get("status"),
             request.args.get("color"),
             request.args.get("seat"),
@@ -83,8 +86,10 @@ def update_car():
         " THEN Brand ELSE %(brand)s END, " +
         " Type = CASE WHEN %(type)s = '' OR %(type)s IS NULL " + 
         " THEN Type ELSE %(type)s END, " +
-        " Location = CASE WHEN %(location)s = '' OR %(location)s IS NULL " + 
-        " THEN Location ELSE %(location)s END, " +
+        " Latitude = CASE WHEN %(latitude)s = '' OR %(latitude)s IS NULL " + 
+        " THEN Latitude ELSE %(latitude)s END, " +
+        " Longtitude = CASE WHEN %(longtitude)s = '' OR %(longtitude)s IS NULL " + 
+        " THEN Longtitude ELSE %(longtitude)s END, " +
         " Status = CASE WHEN %(status)s = '' OR %(status)s IS NULL " + 
         " THEN Status ELSE %(status)s END, " +
         " Color = CASE WHEN %(color)s = '' OR %(color)s IS NULL " + 
@@ -99,7 +104,8 @@ def update_car():
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
             "type": request.args.get("type"),
-            "location": request.args.get("location"), 
+            "latitude": request.args.get("latitude"), 
+            "longtitude": request.args.get("longtitude"), 
             "status": request.args.get("status"),
             "color": request.args.get("color"),
             "seat": request.args.get("seat"),
