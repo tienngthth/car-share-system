@@ -19,6 +19,7 @@ def login_menu():
                 credential_login()
         
 def facial_login():
+    #get username and talk to local database to verify 
     pass
 
 def credential_login():
