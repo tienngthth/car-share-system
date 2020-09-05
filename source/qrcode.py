@@ -1,6 +1,6 @@
 import cv2, requests
-from model.code import Code
-from model.camera import Camera
+from source.model.code import Code
+from source.model.camera import Camera
 
 ap_mac_addr = "DC:A6:32:4A:0C:41"
 
@@ -45,5 +45,5 @@ def start_scanning():
 			break
 	Camera.stop_camera()
 
-if __name__ == "__main__": 
-    start_scanning()
+# if __name__ == "__main__": 
+#     start_scanning()
