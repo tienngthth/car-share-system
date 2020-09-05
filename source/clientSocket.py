@@ -12,7 +12,7 @@ def send_credential_info():
         "user_type":"customers"
     }
     client.send_message(str(credential_message))
-    wait_for_response()
+    # wait_for_response()
 
 #Customer first login to AP
 def use_car():
@@ -22,7 +22,7 @@ def use_car():
         "car_status":"In use"
     }
     client.send_message(str(car_status_message))
-    wait_for_response()
+    # wait_for_response()
 
 #Customer return car
 def return_car():
@@ -32,7 +32,7 @@ def return_car():
         "car_status":"Available"
     }
     client.send_message(str(car_status_message))
-    wait_for_response()
+    # wait_for_response()
 
 def wait_for_response():
     while True:
@@ -54,3 +54,4 @@ def listen_to_server():
 if __name__ == "__main__":
     client = Client()
     listen_to_server() 
+

@@ -1,3 +1,5 @@
+from .client import Client
+
 class Car:
     __instance = None
 
@@ -8,31 +10,42 @@ class Car:
             Car()
         return Car.__instance
 
-    def __init__(self, available_status = None, lock_status = None, ap_addr = None):
+    def __init__(self, first_login = True, ap_addr = None):
         """ Virtually private constructor. """
         if Car.__instance != None:
             raise Exception("This class is a singleton!")
         else:
             Car.__instance = self
             self.__ap_addr = ap_addr
-            self.__available_status = available_status
-            self.__lock_status = lock_status
+            self.__first_login = first_login
+
+    def first_login_to_car(self):
+        self.first_login = False
+        self.__change_car_status("In use")
+
+    def return_car(self):
+        print('Car returned!\n')
+        self.first_login = True
+        self.__change_car_status("Available")
+
+    #speak to MP to change car status to available
+    def __change_car_status(self, status):
+        client = Client()
+        car_status_message = {
+            "message_type":"car_status",
+            "ap_addr":self.__ap_addr,
+            "car_status":status
+        }
+        client.send_message(str(car_status_message))
+        client.send_message("end")
 
     @property
-    def available_status(self):
-        return self.__available_status
+    def first_login(self):
+        return self.__first_login
 
-    @available_status.setter
-    def available_status(self, available_status):
-        self.__available_status = available_status
-
-    @property
-    def lock_status(self):
-        return self.__lock_status
-
-    @lock_status.setter
-    def lock_status(self, lock_status):
-        self.__lock_status = lock_status
+    @first_login.setter
+    def first_login(self, first_login):
+        self.__first_login = first_login
 
 car = Car()
 

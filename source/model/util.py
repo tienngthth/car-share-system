@@ -1,5 +1,5 @@
 import sys, getpass
-# from termios import tcflush, TCIFLUSH
+from termios import tcflush, TCIFLUSH
 from time import sleep
 
 """
@@ -9,11 +9,11 @@ class Util:
     #Get input from CLI
     @staticmethod
     def get_input(message):
-        # tcflush(sys.stdin, TCIFLUSH)
+        tcflush(sys.stdin, TCIFLUSH)
         return input(message)
 
     #Get input from CLI
     @staticmethod
     def get_password(message):
-        # tcflush(sys.stdin, TCIFLUSH)
+        tcflush(sys.stdin, TCIFLUSH)
         return getpass.getpass(prompt = message)

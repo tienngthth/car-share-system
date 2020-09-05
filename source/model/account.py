@@ -91,7 +91,7 @@ class Account():
 
 # #Test verify password
 # print(Account.verify_password("tien123N", "123", "customers"))
-print(Account.verify_password("ABC", "123abc", "customers"))
+# print(Account.verify_password("ABC", "123abc", "customers"))
 
 # #Test uniqueness of email and phone combination
 # print(Account.validate_email_phone_uniqueness("thanh456@gmail.com", "12345678", "customers"))

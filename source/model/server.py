@@ -9,7 +9,7 @@ Base on socket protocal and package, create client using socket programming
 
 class Server:
     #Initialize instance
-    def __init__(self, host = '127.0.0.1', port = 9985):
+    def __init__(self, host = '127.0.0.1', port = 9984):
         self.__address = (host, port)
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__set_up_connection()
@@ -20,10 +20,10 @@ class Server:
     def __set_up_connection(self):
         self.__socket.bind(self.__address)
         self.__socket.listen() 
-        print("Listening on {}...".format(self.__address))  
 
     #Accept connection
     def __accept_connection(self):
+        print("Listening on {}...".format(self.__address))  
         self.__connection, client_address = self.__socket.accept()
         print("Connected to {}".format(client_address))
       
@@ -38,5 +38,5 @@ class Server:
     #End connection
     def close_connection(self):
         self.__connection.close()
-        self.__set_up_connection()
+        self.__accept_connection()
 

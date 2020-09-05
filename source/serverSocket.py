@@ -13,19 +13,22 @@ def listen_to_client():
         # Constantly display message received from server until the end of connection (receive good bye message)
         message = server.receive_message()
         if message == "end":
+            print(message)
             # Close socket after connection is closed
             server.close_connection()
-            break
-        else:
+        elif message != "":
+            print(message)
             handle_request(message)
     
 def handle_request(message):
     try:
         message = Code.parse_json(message.replace("\'", "\""))
         if message["message_type"] == "credential":
-            validate_crendential(message)
+            # validate_crendential(message)
+            server.send_message("valid")
         elif message["message_type"] == "car_status":
-            update_car_status(message)
+            # update_car_status(message)
+            pass
     except:
         pass
 
