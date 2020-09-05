@@ -23,6 +23,3 @@ def start_searching(device_mac_address = ""):
                 pass
         except:
             start_searching()
-
-if __name__ == "__main__":
-    start_searching()
