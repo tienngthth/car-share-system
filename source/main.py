@@ -1,22 +1,19 @@
 from bluetoothDelect import start_searching
+from model import car
+
+def engineer_menu():
+    print("Application menu")
+    print("1. Scan QR Code")
 
 def customer_menu():
-    print("Welcome to Car Share")
-    print("Log in as a:")
-    print("1. Customer")
-    print("2. Engineer")
-
-def customer_menu():
-    print("Welcome to Car Share")
-    print("Log in as a:")
-    print("1. Customer")
-    print("2. Engineer")
+    print("Application menu")
+    print("Lock car")
+    print("Return car")
 
 def login_menu():
     print("Welcome to Car Share")
-    print("Unlock car as a:")
-    print("1. Customer")
-    print("2. Engineer")
+    print("Username: ")
+    print("Password: ")
 
 if __name__ == "__main__":
     while True:
