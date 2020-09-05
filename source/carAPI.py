@@ -48,6 +48,32 @@ def get_cars_by_filter():
     else: 
         return str(results)
 
+@car_api.route("get/car/latitude/from/backlog")
+def get_car_latitude():
+    results = Database.select_record_parameterized(
+        "Cars.Latitude", 
+        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", 
+        " WHERE Backlogs.ID = %s",
+        request.args.get("id")
+    )
+    if len(results) == 0:
+        return "No car found"
+    else: 
+        return str(Database.get_list_from_tuple_list(results))
+
+@car_api.route("get/car/longtitude/from/backlog")
+def get_car_longtitude():
+    results = Database.select_record_parameterized(
+        "Cars.Longtitude", 
+        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", 
+        " WHERE Backlogs.ID = %s",
+        request.args.get("id")
+    )
+    if len(results) == 0:
+        return "No car found"
+    else: 
+        return str(Database.get_list_from_tuple_list(results))
+
 @car_api.route("/create", methods=['GET', 'POST'])
 def create_car():
     Database.insert_record_parameterized(
