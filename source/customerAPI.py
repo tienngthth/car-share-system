@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from model.database import Database
+from model.account import Account
 
 customer_api = Blueprint("customer_api", __name__)
 
@@ -66,7 +67,7 @@ def create_customer():
         "(%s, %s, %s, %s, %s, %s)",
         (
             request.args.get("username"),
-            request.args.get("password"),
+            Account.hash_salt_password(request.args.get("password")),
             request.args.get("first_name"),
             request.args.get("last_name"),
             request.args.get("email"),
@@ -104,7 +105,7 @@ def update_customer():
         {
             "customer_id": request.args.get("id"),
             "username": request.args.get("username"), 
-            "password": request.args.get("password"), 
+            "password": Account.hash_salt_password(request.args.get("password")), 
             "first_name": request.args.get("first_name"),
             "last_name": request.args.get("last_name"), 
             "email": request.args.get("email"),
