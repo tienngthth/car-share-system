@@ -3,6 +3,11 @@ from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
 
 class Account():
+    username_regex = "^[A-Za-z0-9]{6,15}$"
+    passwod_regex = "^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$"
+    email_regex = "^([A-Za-z0-9]+([.]|[_])?[A-Za-z0-9]+)+[@][A-Za-z]+[.][A-Za-z]{2,3}$"
+    phone_regex = "^[0-9]{5,}$"
+
     def __init__(self, username, password, email, first_name, last_name, phone, user_type):
         self.username = username
         self.password = Account.hash_salt_password(password)
@@ -40,9 +45,11 @@ class Account():
             "/get/number/of/existed/username?username=" + 
             username
         ).text == "0"
-        if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
-            return True
-        return False
+        return existed_username and Account.validate_username(username)
+
+    @staticmethod
+    def validate_username(username):
+        return re.search(Account.username_regex, username)
 
     @staticmethod
     def validate_password_input(password):
@@ -50,10 +57,7 @@ class Account():
             8 characters, 1 upper case, 1 lower case,
             1 digit, 1 special characters
         """
-        if re.search("^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$", password):
-            return False
-        else:
-            return True 
+        return not re.search(Account.passwod_regex, password)
 
     @staticmethod
     def validate_email_input(email):
@@ -63,16 +67,12 @@ class Account():
             2. After "@", requires 2 alphabetical text with a "." between. 
             The latter contains 2 to 3 characters.
         """
-        if re.search("^([A-Za-z0-9]+([.]|[_])?[A-Za-z0-9]+)+[@][A-Za-z]+[.][A-Za-z]{2,3}$", email):
-            return True
-        return False
+        return re.search(Account.email_regex, email)
 
     @staticmethod      
     def validate_phone_input(phone):
         # Valid phone contains at least 5 characters, all is numbers
-        if re.search("^[0-9]{5,}$", phone):
-            return True
-        return False
+        return re.search(Account.phone_regex, phone)
 
     @staticmethod
     def validate_email_phone_uniqueness(email, phone, user_type):
@@ -91,7 +91,7 @@ class Account():
 
 # #Test verify password
 # print(Account.verify_password("tien123N", "123", "customers"))
-# print(Account.verify_password("ABC", "123abc", "customers"))
+print(Account.verify_password("ABC", "123abc", "customers"))
 
 # #Test uniqueness of email and phone combination
 # print(Account.validate_email_phone_uniqueness("thanh456@gmail.com", "12345678", "customers"))

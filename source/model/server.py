@@ -37,5 +37,6 @@ class Server:
 
     #End connection
     def close_connection(self):
-        self.__socket.close()
         self.__connection.close()
+        self.__set_up_connection()
+
