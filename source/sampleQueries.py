@@ -125,7 +125,6 @@ def delete_backlog(cursor, ID):
     cursor.execute(sql, ID)
     cursor.connection.commit()
 
-
 def execute_queries():
     #Connect to the database
     Database.setup_connection()
@@ -134,7 +133,7 @@ def execute_queries():
     # #Retrieve all data
     # select_from_customers(cursor)
     # select_from_staffs(cursor)
-    # select_from_cars(cursor)
+    select_from_cars(cursor)
     # select_from_bookings(cursor)    
     select_from_backlogs(cursor)
     # #Additional queries (for drawing graphs)
