@@ -22,3 +22,6 @@ def start_searching(device_mac_address = ""):
                 car.lock_status = "lock"
         except:
             start_searching()
+
+if __name__ == "__main__":
+    start_searching()
