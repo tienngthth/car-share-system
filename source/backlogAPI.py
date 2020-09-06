@@ -1,5 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, Flask, Markup, render_template
 from model.database import Database
+import googleMap
 
 backlog_api = Blueprint("backlog_api", __name__)
 
@@ -52,3 +53,9 @@ def create_backlog():
         )
     )
     return "Done"
+
+@backlog_api.route("/map/backlog")
+def get_map():
+    lattitude = googleMap.get_coordinates(request.args.get("id"))[0]
+    longtitude = googleMap.get_coordinates(request.args.get("id"))[1]
+    return render_template('map.html', title='Map', lattitude=lattitude, longtitude=longtitude)
