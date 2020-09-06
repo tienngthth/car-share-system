@@ -1,9 +1,9 @@
-from bluetoothDelect import start_searching
 from model import car
 
 def engineer_menu():
     print("Application menu")
     print("1. Scan QR Code")
+    # qrcode.start_scanning()
 
 def customer_menu():
     print("Application menu")

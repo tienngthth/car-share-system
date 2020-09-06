@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""# !/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import bluetooth
 from time import sleep
 from model import car

@@ -43,5 +43,3 @@ def start_scanning():
 			break
 	Camera.stop_camera()
 
-if __name__ == "__main__": 
-    start_scanning()
