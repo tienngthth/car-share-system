@@ -57,5 +57,5 @@ def create_backlog():
 @backlog_api.route("/map/backlog")
 def get_map():
     lattitude = googleMap.get_coordinates(request.args.get("id"))[0]
-    longtitude = googleMap.get_coordinates(request.args.get("id"))[1]
-    return render_template('map.html', title='Map', lattitude=lattitude, longtitude=longtitude)
+    longitude = googleMap.get_coordinates(request.args.get("id"))[1]
+    return render_template('map.html', title='Map', lattitude=lattitude, longitude=longitude)

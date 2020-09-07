@@ -40,7 +40,7 @@ def create_car_table():
             Brand VARCHAR(20),
             Type VARCHAR(20), 
             Latitude DOUBLE,
-            Longtitude DOUBLE, 
+            Longitude DOUBLE, 
             Status VARCHAR(20),
             Color VARCHAR(20),
             Seat INT,
