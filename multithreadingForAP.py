@@ -1,7 +1,7 @@
-import threading
+import multiprocessing
 import time
 import sys
-from source.qrcode import start_scanning
+import cv2
 
 # 1. run login thread and bluetooth unlock thread
 
@@ -19,39 +19,43 @@ from source.qrcode import start_scanning
 
 # Customer lock or return car; close customer menu thread; back to 1.
 
-stage1 = True
+def do_something(quit, foundit):
+    while not quit.is_set():
+        for x in range(1000):
+            if x == 50:
+                foundit.set()
+                break
+    print("done for sleep")
+    
 
-def do_something():
-    print ("Wait for bluetooth")
+def sleep(quit, foundit):
+    while not quit.is_set():
+        for x in range(1000):
+            if x == 1001:
+                foundit.set()
+                break
+    print("done for sleep")
+
+quit = multiprocessing.Event()
+foundit = multiprocessing.Event()
 
 
-def sleep():
-    if(input() != None):
-        global stage1
-        stage1 = False
-
-
+bluetoothLock = multiprocessing.Process(target= sleep, args= (quit, foundit))
+bluetoothLock.start()
 # start customer menu thread
-def start_customer_menu():
-    customerMenu = threading.Thread(target= do_something)
-    customerMenu.start()
+customerMenu = multiprocessing.Process(target= do_something, args=(quit, foundit))
+customerMenu.start()
+
+foundit.wait()
+quit.set()
 
 # start bluetooth lock thread
-def start_bluetooth_lock():
-    bluetoothLock = threading.Thread(target= sleep)
-    bluetoothLock.start()
-    bluetoothLock.join()
+
 # start qr command line
 
 # start bluetooth unlock thread
 
 # start login thread
-
-
-while stage1:
-    start_customer_menu()
-    start_bluetooth_lock()
-    time.sleep(1)
 
 
 # close customer menu thread
