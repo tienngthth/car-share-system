@@ -9,8 +9,8 @@ from facialScanner import start_scanning
 def login_menu():
     while True:
         print("Welcome to Car Share. Please select your login preference.")
-        print("Credential login: Press key \"C\"")
-        print("Facial login: Press key \"F\"")
+        print("Input C for Credential")
+        print("Input F for Facial")
         username = authenticate()
         ## car repaired? -> kcho vao
         if username != "Invalid":
@@ -93,7 +93,7 @@ def customer_menu(username):
             break
         elif option == "r":  
             car.return_car()
-            sys.exit()  
+            break
 
 if __name__ == "__main__":
     #check car status (available?)
