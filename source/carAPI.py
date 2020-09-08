@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from model.database import Database
-
+from model.util import Util
 
 car_api = Blueprint("car_api", __name__)
 
@@ -25,7 +25,6 @@ def get_cars_by_filter():
         " WHERE MacAddress LIKE %s" +
         " AND Brand LIKE %s" +
         " AND Type LIKE %s" +
-        " AND Location LIKE %s " +
         " AND Status LIKE %s" + 
         " AND Color LIKE %s" +
         " AND Seat LIKE %s" +
@@ -34,7 +33,6 @@ def get_cars_by_filter():
             "%{}%".format(request.args.get("mac_address")), 
             "%{}%".format(request.args.get("brand")), 
             "%{}%".format(request.args.get("car_type")), 
-            "%{}%".format(request.args.get("location")), 
             "%{}%".format(request.args.get("status")), 
             "%{}%".format(request.args.get("color")), 
             "%{}%".format(request.args.get("seat")), 
@@ -44,7 +42,7 @@ def get_cars_by_filter():
     if len(results) == 0:
         return "No car found"
     else: 
-        return str(results)
+        return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create_car():
