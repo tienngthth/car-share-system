@@ -37,6 +37,16 @@ class Account():
             return False
 
     @staticmethod
+    def verify_username(username):
+        bookedUser = requests.get(
+            "http://127.0.0.1:8080/" +
+            user_type +
+            "/get/encrypted/password/by/username?username=" +
+            username
+        ).text
+        return username == bookedUser
+
+    @staticmethod
     def validate_username_input(username, user_type):
         # Valid username is unique and contains 6-15 alphanumerical characters 
         existed_username = requests.get(

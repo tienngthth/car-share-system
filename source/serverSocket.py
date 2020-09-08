@@ -26,11 +26,17 @@ def handle_request(message):
         if message["message_type"] == "credential":
             # validate_crendential(message)
             server.send_message("valid")
+        elif message["message_type"] == "facial":
+            # validate_facial(message)
+            server.send_message("hashedPassword")
         elif message["message_type"] == "car_status":
             # update_car_status(message)
             pass
     except:
         pass
+ 
+def validate_facial(message):
+    
 
 # Validate credential
 def validate_crendential(message):

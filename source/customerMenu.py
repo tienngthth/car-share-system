@@ -40,15 +40,29 @@ def get_input():
 def facial_login():
     username = start_scanning()
     if car.first_login:
-
-        car.first_login_to_car()
-    if username == LocalDatabase.select_a_record("Username", "Credential")[0]:
-        if car.first_login:
+        if verify_facial_with_mp(username):
             car.first_login_to_car()
-            #ask for full credentail and save back to local db
+            return username
+    elif LocalDatabase.select_a_record("Username", "Credential")[0]:
         return username
-    else: 
-        return "Invalid"
+    return "Invalid"
+
+def verify_facial_with_mp(username):
+    client = Client()
+    facial_message = {
+        "message_type":"facial",
+        "username":username,
+        "user_type":"customers"
+    }
+    message = wait_for_response(client, message)
+    if message == "Invalid":
+        return False
+    else:
+        LocalDatabase.insert_record(
+            "Credential", "((?), (?))",
+            (username, message)
+        )
+        return True
 
 def credential_login():
     username = get_user_name_input()
@@ -76,15 +90,15 @@ def get_password_input():
 def verify_password(username, password):
     if car.first_login:
     # speak to MP to verify password
-        if verify_password_first_login(username, password):
+        if verify_credential_with_mp(username, password):
             car.first_login_to_car()
             return True
+        return False
     else:
         # talk to local dabase to verify credential
-        return verify_password_locally(username, password, "credential") 
-    return False
+        return verify_credential_locally(username, password) 
 
-def verify_password_first_login(username, authentication_type, password):
+def verify_credential_with_mp(username, password):
     client = Client()
     credential_message = {
         "message_type":"credential",
@@ -92,23 +106,23 @@ def verify_password_first_login(username, authentication_type, password):
         "password":password,
         "user_type":"customers"
     }
-    if wait_for_response(client, credential_message):
-        LocalDatabase.update_last_record(
-            "Credential", "Username, Password",
+    if wait_for_response(client, credential_message) != "Invaliid":
+        LocalDatabase.insert_record(
+            "Credential", "((?), (?))",
             (username, Account.hash_salt_password(password))
         )
         return True
     return False
 
-def wait_for_response(client, credential_message):
-    client.send_message(str(credential_message))
+def wait_for_response(client, message):
+    client.send_message(str(message))
     while True:
         message = client.receive_message()
         if message != "":
             client.send_message("end")
-            return True if message == "valid" else False
+            return message
 
-def verify_password_locally(username, password):
+def verify_credential_locally(username, password):
     valid_crendential = LocalDatabase.select_a_record("*", "Credential")[0]
     if username == valid_crendential[0]:
         if Account.hash_salt_password(password) == valid_crendential[1]:
