@@ -3,7 +3,7 @@ from model.util import Util
 from model.account import Account
 from model.car import car
 from model.client import Client
-from model.database import LocalDatabase
+from model.localDatabase import LocalDatabase
 from facialScanner import start_scanning
 
 def login_menu():
@@ -39,7 +39,13 @@ def get_input():
 
 def facial_login():
     username = start_scanning()
+    if car.first_login:
+
+        car.first_login_to_car()
     if username == LocalDatabase.select_a_record("Username", "Credential")[0]:
+        if car.first_login:
+            car.first_login_to_car()
+            #ask for full credentail and save back to local db
         return username
     else: 
         return "Invalid"
@@ -75,10 +81,10 @@ def verify_password(username, password):
             return True
     else:
         # talk to local dabase to verify credential
-        return verify_password_locally(username, password) 
+        return verify_password_locally(username, password, "credential") 
     return False
 
-def verify_password_first_login(username, password):
+def verify_password_first_login(username, authentication_type, password):
     client = Client()
     credential_message = {
         "message_type":"credential",
@@ -87,7 +93,10 @@ def verify_password_first_login(username, password):
         "user_type":"customers"
     }
     if wait_for_response(client, credential_message):
-        LocalDatabase.update_last_record("Credential", "Username, Password", (username, password))
+        LocalDatabase.update_last_record(
+            "Credential", "Username, Password",
+            (username, Account.hash_salt_password(password))
+        )
         return True
     return False
 

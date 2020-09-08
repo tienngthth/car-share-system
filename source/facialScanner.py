@@ -4,7 +4,7 @@ import os
 from model.camera import Camera
 
 id = 0
-names = ['None', 'haha', 'Tien','Tam', 'Minh'] 
+names = ['None', 'abc', 'Tien','Tam', 'Minh'] 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer/trainer.yml')
 

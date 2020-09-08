@@ -24,7 +24,7 @@ class Car:
         self.__change_car_status("In use")
 
     def return_car(self):
-        print('\nCar returned! Bye')
+        print('\nCar returned!')
         self.first_login = True
         self.__change_car_status("Available")
 

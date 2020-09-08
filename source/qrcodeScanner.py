@@ -8,11 +8,16 @@ ap_mac_addr = "DC:A6:32:4A:0C:41"
 def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)
-		user_info = Code.parse_json(code)
-		if (user_info["user_type"] == "engineer"):
-			print("Backlog closed!")
-			print(user_info)
-			# close_backlog(user_info["engineer_id"])
+		try:
+			user_info = Code.parse_json(code)
+			if (user_info["user_type"] == "engineer"):
+				print("Backlog closed!")
+				print(user_info)
+				# close_backlog(user_info["engineer_id"])
+				return True
+		except:
+			return False
+		return False
 
 # Close ticket and save signed engineer id
 def close_backlog(signed_engineer_ID):
@@ -39,7 +44,8 @@ def start_scanning():
 	while not Camera.stop:
 		code = Camera.scan_code()
 		if code is not None:
-			validate_code(code.decoded_content, found_codes)
+			if validate_code(code.decoded_content, found_codes):
+				Camera.stop_camera()
 		Camera.stop_camera_key_stroke()
 
 if __name__ == "__main__":

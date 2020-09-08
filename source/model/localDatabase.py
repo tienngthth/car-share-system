@@ -6,7 +6,7 @@ Class Database is to create and connect to the data for recording and retrieving
 """
 
 class LocalDatabase:
-    db_path = pathlib.Path(__file__).parent.parent / "database" / "ap.db"
+    db_path = "databases/ap.db"
     conn = None
     curs = None
 
@@ -75,5 +75,4 @@ class LocalDatabase:
         LocalDatabase.conn.commit()
         LocalDatabase.conn.close()
 
-LocalDatabase.create_table(
-    "Username VARCHAR(30), Password VARCHAR(256)", "Credential")
+# LocalDatabase.create_table("(Username VARCHAR(30), Password VARCHAR(256))", "Credential ")

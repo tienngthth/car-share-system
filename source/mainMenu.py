@@ -7,7 +7,7 @@ def main_menu():
     while True:
         print("\nMain menu")
         print("Input C if you are a Customer")
-        print("Input E if you are a Engineer")
+        print("Input E if you are an Engineer")
         option = Util.get_input("Option: ").lower().strip()
         if option == "c":  
             login_menu()
