@@ -25,4 +25,7 @@ def start_searching(device_mac_address = ""):
             start_searching()
 
 if __name__ == "__main__":
-    start_searching()
+    while True:
+        #car to be repaired? -> cho vao
+        if car.status != "Lock":
+            start_searching()

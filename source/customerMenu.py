@@ -4,31 +4,39 @@ from model.util import Util
 from model.account import Account
 from model.car import car
 from model.client import Client
+from facialScanner import start_scanning
 
 def login_menu():
     while True:
         print("Welcome to Car Share. Please select your login preference.")
         print("Credential login: Press key \"C\"")
         print("Facial login: Press key \"F\"")
-        while True:  
-            option = Util.get_input("Option: ").lower().strip()
-            if option == "f":  
-                facial_login()
-                break
-            elif option == "c":  
-                credential_login()
-        
+        username = authenticate()
+        ## car repaired? -> kcho vao
+        if username != "Invalid":
+            customer_menu(username)
+        else:
+            print("You have entered incorrect username or password.\n")
+
+def authenticate():
+    while True:  
+        option = Util.get_input("Option: ").lower().strip()
+        if option == "f":  
+            return facial_login()
+        elif option == "c":  
+            return credential_login()
+
 def facial_login():
-    #get username and talk to local database to verify 
-    pass
+    start_scanning()
+    return "Invalid"
 
 def credential_login():
     username = get_user_name_input()
     password = get_password_input()
     if verify_password(username, password):
-        customer_menu(username)
+        return username
     else:
-        print("You have entered incorrect username or password.\n")
+        return "Invalid"
 
 def get_user_name_input():
     username = Util.get_input("Username (contains 6-15 alphanumerical characters): ")
@@ -88,4 +96,5 @@ def customer_menu(username):
             sys.exit()  
 
 if __name__ == "__main__":
+    #check car status (available?)
     login_menu()

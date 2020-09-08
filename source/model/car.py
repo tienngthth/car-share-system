@@ -10,7 +10,7 @@ class Car:
             Car()
         return Car.__instance
 
-    def __init__(self, first_login = True, ap_addr = None):
+    def __init__(self, first_login = True, ap_addr = "DC:A6:32:4A:0C:41"):
         """ Virtually private constructor. """
         if Car.__instance != None:
             raise Exception("This class is a singleton!")
@@ -46,6 +46,10 @@ class Car:
     @first_login.setter
     def first_login(self, first_login):
         self.__first_login = first_login
+
+    @property
+    def ap_addr(self):
+        return __ap_addr
 
 car = Car()
 

@@ -1,6 +1,7 @@
 """#!/usr/bin/env python3
 # Documentation: https://docs.python.org/3/library/socket.html"""
 import socket
+from time import sleep
 
 """
 Class Server is to create instances to send context messages and accept connection request
@@ -22,6 +23,7 @@ class Client:
    #Send message
    def send_message(self, message):
       self.__socket.sendall(message.encode('utf-8'))
+      sleep(0.1)
 
    #Retrieve and decode the latest message
    def receive_message(self):
