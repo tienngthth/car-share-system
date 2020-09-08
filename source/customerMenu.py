@@ -43,7 +43,7 @@ def facial_login():
         if verify_facial_with_mp(username):
             car.first_login_to_car()
             return username
-    elif LocalDatabase.select_a_record("Username", "Credential")[0]:
+    elif LocalDatabase.select_a_record("Username", "Credential")[0] == username:
         return username
     return "Invalid"
 
@@ -51,11 +51,10 @@ def verify_facial_with_mp(username):
     client = Client()
     facial_message = {
         "message_type":"facial",
-        "username":username,
-        "user_type":"customers"
+        "username":username
     }
     message = wait_for_response(client, message)
-    if message == "Invalid":
+    if message == "invalid":
         return False
     else:
         LocalDatabase.insert_record(
@@ -106,7 +105,7 @@ def verify_credential_with_mp(username, password):
         "password":password,
         "user_type":"customers"
     }
-    if wait_for_response(client, credential_message) != "Invaliid":
+    if wait_for_response(client, credential_message) != "invaliid":
         LocalDatabase.insert_record(
             "Credential", "((?), (?))",
             (username, Account.hash_salt_password(password))
@@ -142,6 +141,7 @@ def customer_menu(username):
         elif option == "r": 
             escape = True 
             car.return_car()
+            LocalDatabase.delete_record("Credential", " WHERE Username = (?)", username)
             break
 
 if __name__ == "__main__":

@@ -3,6 +3,19 @@ from model.database import Database
 
 booking_api = Blueprint("booking_api", __name__)
 
+@booking_api.rout("/get/customer/id/by/car/id")
+def get_customer_id_by_car_id():
+    results = Database.select_record_parameterized(
+        "CustomerID", 
+        "Bookings", 
+        " WHERE CarID = %s",
+        request.args.get("car_id")
+    )   
+    if len(results) == 0:
+        return "No customer found"
+    else: 
+        return str(results[0][0])
+
 @booking_api.route("/get/booking/by/customer/or/car/id")
 def get_booking_by_car_or_customer_id():
     results = Database.select_record_parameterized(

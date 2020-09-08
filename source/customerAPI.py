@@ -60,6 +60,19 @@ def get_customer_by_filter():
     else: 
         return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
 
+@customer_api.route("get/username/by/id")
+def get_customer_username_by_id():
+    results = Database.select_record_parameterized(
+        "Username", 
+        "Customers", 
+        " WHERE ID = %s",
+        request.args.get("id")
+    )
+    if len(results) == 0:
+        return "No customer found"
+    else:
+        return results[0][0]
+
 @customer_api.route("/create", methods=['GET', 'POST'])
 def create_customer():
     Database.insert_record_parameterized(

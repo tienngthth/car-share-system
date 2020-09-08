@@ -36,7 +36,25 @@ def handle_request(message):
         pass
  
 def validate_facial(message):
-    
+    car_id = requests.get(
+		"http://127.0.0.1:8080/cars/get/car/id/by/mac/address?" +
+		"mac_address=" + car.ap_addr
+	).text
+	customer_id = requests.get(
+		"http://127.0.0.1:8080/bookings/get/customer/id/by/car/id?" +
+		"car_id=" + car_id
+	).text
+	username = requests.get(
+		"http://127.0.0.1:8080/customers/get/username/by/id?" +
+		"id=" + customer_id
+	).text
+    if message["username"] == username:
+        return requests.get(
+            "http://127.0.0.1:8080/get/encrypted/password/by/username?" +
+            "username=" + username
+	    ).text
+    else:
+        return "invalid"
 
 # Validate credential
 def validate_crendential(message):

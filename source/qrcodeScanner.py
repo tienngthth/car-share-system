@@ -3,8 +3,6 @@ from model.code import Code
 from model.camera import Camera
 from model.car import car
 
-ap_mac_addr = "DC:A6:32:4A:0C:41"
-
 def validate_code(code, found_codes):
 	if code not in found_codes:
 		found_codes.add(code)

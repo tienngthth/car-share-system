@@ -65,4 +65,17 @@ class LocalDatabase:
         LocalDatabase.conn.close()
         return return_value[0]
         
+
+    #Delete record 
+    @staticmethod
+    def delete_record_parameterized(tb_name, conditions, parameters, db_path = None):
+        LocalDatabase.setup_connection(db_path)
+        LocalDatabase.curs.execute(
+            "DELETE FROM " 
+            + tb_name 
+            + conditions
+            , parameters
+        )
+        LocalDatabase.conn.commit()
+        LocalDatabase.conn.close()
 # LocalDatabase.create_table("(Username VARCHAR(30), Password VARCHAR(256))", "Credential ")
