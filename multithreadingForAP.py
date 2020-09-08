@@ -5,6 +5,9 @@ import cv2
 
 # 1. run login thread and bluetooth unlock thread
 
+engineerEntering = False
+
+customerEntering = False
 
 # 2. bluetooth unlock and close login and bluetooth unlock thread; run scan qr command line and bluetooth lock thread
 
@@ -21,11 +24,8 @@ import cv2
 
 def do_something(quit, foundit):
     while not quit.is_set():
-        for x in range(1000):
-            if x == 50:
-                foundit.set()
-                break
-    print("done for sleep")
+        # find bluetooth engineer
+    
     
 
 def sleep(quit, foundit):
