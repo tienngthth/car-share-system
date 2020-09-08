@@ -8,6 +8,7 @@ names = ['None', 'haha', 'Tien','Tam', 'Minh']
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer/trainer.yml')
 
+
 def start_scanning():  
     Camera.start_camera()
     while not Camera.stop:

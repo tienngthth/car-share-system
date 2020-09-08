@@ -9,13 +9,12 @@ from .code import Code
 
 class Camera():
     cam = None
-    frame = None
-    width = 480
-    height = 640
+    frame = None 
     stop = False
 
     @staticmethod
     def start_camera():
+        Camera.stop = False
         Camera.cam = cv2.VideoCapture(0)
         Camera.cam.set(3, 640)
         Camera.cam.set(4, 480)

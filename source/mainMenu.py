@@ -5,15 +5,14 @@ from bluetoothDetect import start_searching
 
 def main_menu():
     while True:
-        print("Welcome to Car Share. Are you a:")
-        print("Input C for Customer")
-        print("Input E for Engineer")
-        while True:  
-            option = Util.get_input("Option: ").lower().strip()
-            if option == "C":  
-                login_menu()
-            elif option == "E":  
-                start_searching()
+        print("\nMain menu")
+        print("Input C if you are a Customer")
+        print("Input E if you are a Engineer")
+        option = Util.get_input("Option: ").lower().strip()
+        if option == "c":  
+            login_menu()
+        elif option == "e":  
+            start_searching()
 
 if __name__ == "__main__":
     main_menu()

@@ -4,27 +4,24 @@ import bluetooth
 from time import sleep
 
 # Search for engineer device with matched mac address
-def start_searching(car_lock = True, device_mac_address = ""):
+def start_searching(device_mac_address = ""):
+    print("\nSearching for engineer...")
     # Wait until bluetooth is on and stable (loop throught the unstable period)
-    while True:         
-        if find_eng(device_mac_address):
-            close_ticket_menu()
+    for i in range(1):         
+        try:
+            sleep(2)
+            # Get all nearby devices mac address
+            nearby_devices_mac_address = bluetooth.discover_devices()
+            # Loop through all nearby devices
+            for mac_address in nearby_devices_mac_address:
+                if mac_address == device_mac_address:
+                    close_ticket_menu()
+                    return
+            print("\nNo engineer found. Continue searching...")
+        except:
+            find_eng(device_mac_address)
 
-def find_eng(device_mac_address = ""):
-    try:
-        sleep(5)
-        # Get all nearby devices mac address
-        nearby_devices_mac_address = bluetooth.discover_devices()
-        # Loop through all nearby devices
-        for mac_address in nearby_devices_mac_address:
-            if mac_address == device_mac_address:
-                engineer_found = True
-        if engineer_found:
-            return True
-        else:
-            return False
-    except:
-        find_eng(device_mac_address)
+    print("\nNo engineer found. Stop searching")
 
 
 def close_ticket_menu():
@@ -37,10 +34,7 @@ def close_ticket_menu():
             break
         elif option == "l":
             break
-    print('Car locked!\n')
+    print("\nCar locked!")
 
 if __name__ == "__main__":
-    while True:
-        #car to be repaired? -> cho vao
-        if car.status != "Lock":
-            start_searching()
+    start_searching()
