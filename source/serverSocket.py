@@ -26,10 +26,10 @@ def handle_request(message):
         message = Code.parse_json(message.replace("\'", "\""))
         if message["message_type"] == "credential":
             # validate_crendential(message)
-            server.send_message("valid")
+            server.send_message(Account.hashedPassword(message["password"]))
         elif message["message_type"] == "facial":
             # validate_facial(message)
-            server.send_message("hashedPassword")
+            server.send_message(Account.hashedPassword("hashedPassword"))
         elif message["message_type"] == "car_status":
             # update_car_status(message)
             pass
@@ -60,7 +60,10 @@ def validate_facial(message):
 # Validate credential
 def validate_crendential(message):
     if Account.verify_password(message["username"], message["password"], message["user_type"]):
-        server.send_message("valid")
+        return requests.get(
+            "http://127.0.0.1:8080/customers/get/encrypted/password/by/username?" +
+            "username=" + message["username"]
+	    ).text
     else:
         server.send_message("invalid")
 

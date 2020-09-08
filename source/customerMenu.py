@@ -53,15 +53,15 @@ def verify_facial_with_mp(username):
         "message_type":"facial",
         "username":username
     }
-    message = wait_for_response(client, facial_message)
-    if message == "invalid":
-        return False
-    else:
+    encrypted_password = wait_for_response(client, facial_message)
+    if encrypted_password != "invalid":
         LocalDatabase.insert_record(
             "Credential", "((?), (?))",
-            (username, message)
+            (username, encrypted_password)
         )
+        print(encrypted_password)
         return True
+    return False
 
 def credential_login():
     username = get_user_name_input()
@@ -95,7 +95,7 @@ def verify_password(username, password):
         return False
     else:
         # talk to local dabase to verify credential
-        return verify_credential_locally(username, password) 
+        return Account.verify_password_locally(username, password) 
 
 def verify_credential_with_mp(username, password):
     client = Client()
@@ -105,10 +105,12 @@ def verify_credential_with_mp(username, password):
         "password":password,
         "user_type":"customers"
     }
-    if wait_for_response(client, credential_message) != "invaliid":
+    encrypted_password = wait_for_response(client, credential_message)
+    print(encrypted_password)
+    if message != "invaliid":
         LocalDatabase.insert_record(
             "Credential", "((?), (?))",
-            (username, Account.hash_salt_password(password))
+            (username, encrypted_password)
         )
         return True
     return False
@@ -120,13 +122,6 @@ def wait_for_response(client, message):
         if message != "":
             client.send_message("end")
             return message
-
-def verify_credential_locally(username, password):
-    valid_crendential = LocalDatabase.select_a_record("*", "Credential")[0]
-    if username == valid_crendential[0]:
-        if Account.hash_salt_password(password) == valid_crendential[1]:
-            return True
-    return False
 
 def customer_menu(username):
     global escape
@@ -141,7 +136,8 @@ def customer_menu(username):
         elif option == "r": 
             escape = True 
             car.return_car()
-            LocalDatabase.delete_record("Credential", " WHERE Username = (?)", username)
+            LocalDatabase.delete_record("Credential", " WHERE Username = (?)", (username,))
+            print("new record deleted")
             break
 
 if __name__ == "__main__":

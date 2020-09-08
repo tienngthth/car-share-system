@@ -50,6 +50,22 @@ class LocalDatabase:
         LocalDatabase.conn.close()
         return return_value
 
+    @staticmethod
+    def select_a_record_parameterized(columns, tb_name, extra, parameters, db_path = None):
+        LocalDatabase.setup_connection(db_path)
+        rows = LocalDatabase.curs.execute(
+            "SELECT " 
+            + columns 
+            + " FROM "
+            + tb_name
+            + extra
+            , parameters
+        )
+        for row in rows:
+            return_value = row
+        LocalDatabase.conn.close()
+        return return_value
+
     #Retrieve data by equation
     @staticmethod
     def execute_equation(equation, tb_name, extra = "", db_path = None):
@@ -68,7 +84,7 @@ class LocalDatabase:
 
     #Delete record 
     @staticmethod
-    def delete_record_parameterized(tb_name, conditions, parameters, db_path = None):
+    def delete_record(tb_name, conditions, parameters, db_path = None):
         LocalDatabase.setup_connection(db_path)
         LocalDatabase.curs.execute(
             "DELETE FROM " 

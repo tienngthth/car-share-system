@@ -1,6 +1,7 @@
 import re, requests
 from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
+from model.localDatabase import LocalDatabase
 
 class Account():
     username_regex = "^[A-Za-z0-9]{6,15}$"
@@ -37,14 +38,17 @@ class Account():
             return False
 
     @staticmethod
-    def verify_username(username):
-        bookedUser = requests.get(
-            "http://127.0.0.1:8080/" +
-            user_type +
-            "/get/encrypted/password/by/username?username=" +
-            username
-        ).text
-        return username == bookedUser
+    def verify_username_locally(username, input_password):
+        encrypted_password = LocalDatabase.select_a_record_parameterized(
+            "Password", 
+            "Credential", 
+            " WHERE Username = (?)", 
+            (username,)
+        )[0]
+        try:
+            return hash.sha256_crypt.verify(input_password, encryptedPassword)
+        except:
+            return False
 
     @staticmethod
     def validate_username_input(username, user_type):
