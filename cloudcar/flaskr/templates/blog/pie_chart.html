@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+{% endblock %}
+
+{% block header %}
+
+ 
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="formwrapper">
+  <h2 class="title">Dashboard</h2>
+  <div style="display:block; width:600px; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto;">
+      <div style="float:left;"><a class="greenbutton" style="margin-left:10px;" href="/manager?graph=barchart">Bar Chart</a></div>
+      <div style="float:left;"><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=linechart">Line Chart</a></div>
+      <div><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=piechart">Pie Chart</a></div>
+</div>
+
+</div>
+<center>
+<p>Name of Pie Chart</p>
+    <canvas style="border: 1px black solid;" id="chart" width="600" height="400"></canvas>
+<script>
+      var pieData = [
+        {% for item, label, colors in set %}
+          {
+            value: {{item}},
+            label: "{{label}}",
+            color : "{{colors}}"
+          },
+        {% endfor %}
+      ];
+
+      // get bar chart canvas
+      var mychart = document.getElementById("chart").getContext("2d");
+      steps = 10
+      max = {{ max }}
+
+      // draw pie chart
+      new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+
+    </script>
+  </center>
+
+
+
+{% endblock %}

@@ -174,6 +174,28 @@ def edituser():
     return redirect(url_for("blog.adminusers"))
 
 
+@bp.route("/manager", methods=("GET", "POST"))
+def manager():
+    if request.method == "GET":
+        try:
+            graph = request.args["graph"]
+        except: graph = "barchart"
+        
+        if graph == "barchart":
+            return render_template("blog/bar_chart.html")
+        elif graph == "linechart":
+            return render_template("blog/line_chart.html")
+        elif graph == "piechart":
+            return render_template("blog/pie_chart.html")
+        
+        else:
+            return "No graph of that type."
+
+
+
+
+
+
 @bp.route("/create", methods=("GET", "POST"))
 @login_required
 def create():

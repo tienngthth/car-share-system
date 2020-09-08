@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+{% endblock %}
+
+{% block header %}
+
+ 
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="formwrapper">
+  <h2 class="title">Dashboard</h2>
+  <div style="display:block; width:600px; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto;">
+      <div style="float:left;"><a class="greenbutton" style="margin-left:10px;" href="/manager?graph=barchart">Bar Chart</a></div>
+      <div style="float:left;"><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=linechart">Line Chart</a></div>
+      <div><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=piechart">Pie Chart</a></div>
+</div>
+
+</div>
+<center>
+<p>Name of Bar Chart</p>
+    <canvas style="border: 1px black solid;" id="chart" width="600" height="400"></canvas>
+    <script>
+      // bar chart data
+      var barData = {
+        labels : [
+          {% for item in labels %}
+           "{{ item }}",
+          {% endfor %}
+	],
+
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          data : [
+            {% for item in values %}
+               "{{ item }}",
+              {% endfor %}
+	    ]
+          }
+        ]
+      }
+
+     // get bar chart canvas
+     var mychart = document.getElementById("chart").getContext("2d");
+
+       steps = 10
+       max = {{max}}
+
+     // draw bar chart
+     new Chart(mychart).Bar(barData, {
+       scaleOverride: true,
+       scaleSteps: steps,
+       scaleStepWidth: Math.ceil(max / steps),
+       scaleStartValue: 0,
+       scaleShowVerticalLines: true,
+       scaleShowGridLines : true,
+       barShowStroke : true,
+       scaleShowLabels: true
+       }
+     );
+
+    </script>
+  </center>
+
+
+
+{% endblock %}
