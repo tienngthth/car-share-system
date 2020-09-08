@@ -12,7 +12,9 @@ To view the graphs:
 * Run the file api.py
 * Open the browser and run the APIs in graphAPI.py:
 http://127.0.0.1:8080/graphs/most/booked/cars
-http://127.0.0.1:8080/graphs/most/repaired/cars
+
+http://127.0.0.1:8080/graphs/most/repaired/cars 
+
 http://127.0.0.1:8080/graphs/profit/by/date 
 
 
