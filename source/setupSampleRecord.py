@@ -63,13 +63,13 @@ def create_sample_bookings_data():
     #Bookings
     global bookings 
     bookings = []
-    bookings.append((1, 1, "2020-8-21 10:00:00", "2020-8-24 10:00:00", 144, "Booked"))
-    bookings.append((3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480, "Booked"))
-    bookings.append((2, 2, "2020-8-22 09:30:00", "2020-8-26 09:30:00", 288, "Cancelled"))
-    bookings.append((3, 6, "2020-8-23 15:45:00", "2020-8-28 15:45:00", 240, "Cancelled"))
-    bookings.append((1, 10, "2020-8-23 14:30:00", "2020-8-27 14:30:00", 192, "Booked"))
-    bookings.append((2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504, "Booked"))
-    bookings.append((1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96, "Booked"))
+    bookings.append((1, 1, "2020-9-9 10:00:00", "2020-9-10 10:00:00", 144, "Booked"))
+    # bookings.append((3, 5, "2020-8-22 09:00:00", "2020-8-27 09:00:00", 480, "Booked"))
+    # bookings.append((2, 2, "2020-8-22 09:30:00", "2020-8-26 09:30:00", 288, "Cancelled"))
+    # bookings.append((3, 6, "2020-8-23 15:45:00", "2020-8-28 15:45:00", 240, "Cancelled"))
+    # bookings.append((1, 10, "2020-8-23 14:30:00", "2020-8-27 14:30:00", 192, "Booked"))
+    # bookings.append((2, 8, "2020-8-23 12:00:00", "2020-8-30 12:00:00", 504, "Booked"))
+    # bookings.append((1, 5, "2020-8-24 11:15:00", "2020-8-25 11:15:00", 96, "Booked"))
 
 def create_sample_backlogs_data():
     #Backlogs
@@ -88,26 +88,28 @@ def create_sample_customers_data():
     customers.append(("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com", "12345678"))
 
 def add_sample_data():
-    create_sample_staffs_data()
-    create_sample_customers_data()
-    create_sample_cars_data()
-    create_sample_backlogs_data()
+    # create_sample_staffs_data()
+    # create_sample_customers_data()
+    # create_sample_cars_data()
+    # create_sample_backlogs_data()
     create_sample_bookings_data()
     
-    for car in cars:
-        add_sample_car(car)
+    # for car in cars:
+    #     add_sample_car(car)
 
-    for customer in customers:
-        add_sample_customer(customer)
+    # for customer in customers:
+    #     add_sample_customer(customer)
 
     for booking in bookings:
         add_sample_booking(booking)
 
-    for staff in staffs:
-        add_sample_staff(staff)
+    # for staff in staffs:
+    #     add_sample_staff(staff)
 
-    for backlog in backlogs:
-        add_sample_backlog(backlog)
+    # for backlog in backlogs:
+    #     add_sample_backlog(backlog)
         
     print("Data successfully added")
 
+
+add_sample_data()

@@ -5,6 +5,7 @@ import requests
 from model.server import Server
 from model.code import Code
 from model.account import Account
+from model.car import car
 
 server = None
 
@@ -40,17 +41,17 @@ def validate_facial(message):
 		"http://127.0.0.1:8080/cars/get/car/id/by/mac/address?" +
 		"mac_address=" + car.ap_addr
 	).text
-	customer_id = requests.get(
-		"http://127.0.0.1:8080/bookings/get/customer/id/by/car/id?" +
+    customer_id = requests.get(
+        "http://127.0.0.1:8080/bookings/get/current/customer/id/by/car/id?" +
 		"car_id=" + car_id
 	).text
-	username = requests.get(
+    username = requests.get(
 		"http://127.0.0.1:8080/customers/get/username/by/id?" +
 		"id=" + customer_id
 	).text
     if message["username"] == username:
         return requests.get(
-            "http://127.0.0.1:8080/get/encrypted/password/by/username?" +
+            "http://127.0.0.1:8080/customers/get/encrypted/password/by/username?" +
             "username=" + username
 	    ).text
     else:

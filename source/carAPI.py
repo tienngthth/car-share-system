@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from model.database import Database
-from model.util import Util
+# from model.util import Util
 
 car_api = Blueprint("car_api", __name__)
 
@@ -42,7 +42,8 @@ def get_cars_by_filter():
     if len(results) == 0:
         return "No car found"
     else: 
-        return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
+        # return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
+        pass
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create_car():

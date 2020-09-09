@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from model.database import Database
-from model.util import Util
+# from model.util import Util
 
 customer_api = Blueprint("customer_api", __name__)
 
@@ -58,7 +58,8 @@ def get_customer_by_filter():
     if len(results) == 0:
         return "No customer found"
     else: 
-        return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
+        # return str(Util.paginatedDisplay(results, int(request.args.get("page"))))
+        pass
 
 @customer_api.route("get/username/by/id")
 def get_customer_username_by_id():

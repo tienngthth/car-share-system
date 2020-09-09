@@ -53,7 +53,7 @@ def verify_facial_with_mp(username):
         "message_type":"facial",
         "username":username
     }
-    message = wait_for_response(client, message)
+    message = wait_for_response(client, facial_message)
     if message == "invalid":
         return False
     else:
