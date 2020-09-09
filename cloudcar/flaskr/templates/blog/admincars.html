@@ -47,23 +47,25 @@
     <th style="border-top-left-radius: 8px;">Car ID</th>
     <th>Make</th>
     <th>Colour</th>
-    <th>Location</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
     <th>Status</th>
     <th>History</th>
     <th style="border-top-right-radius: 8px;">Edit</th>
   </tr>
   {% for car in cars %}
   <tr>
-  <td>{{ car['id'] }}</td>
-  <td>{{ car['make'] }}</td>
-    <td>{{ car['colour'] }}</td>
-    <td>{{ car['location'] }}</td>
-    <td>{{ car['status'] }}</td>
+  <td>{{ car[0] }}</td>
+  <td>{{ car[2] }}</td>
+  <td>{{ car[7] }}</td>
+  <td>{{ car[4] }}</td>
+  <td>{{ car[5] }}</td>
+  <td>{{ car[6] }}</td>
 <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', id=car['id']) }}">History</a>
+          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', id=car[0]) }}">History</a>
 </td>
     <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', id=car['id']) }}">Edit</a>
+          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', id=car[0]) }}">Edit</a>
 </td>
   </tr>
   

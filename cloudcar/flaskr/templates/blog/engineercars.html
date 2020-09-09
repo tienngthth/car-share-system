@@ -21,19 +21,21 @@
      <table>
   <tr>
     <th style="border-top-left-radius: 8px;">Car ID</th>
-    <th>Location</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
     <th>Request Date</th>
     <th>Status</th>
     <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
   {% for car in cars %}
   <tr>
-  <td>{{ car['id'] }}</td>
-    <td>{{ car['location'] }}</td>
-    <td>(Request Date)</td>
-    <td>{{ car['status'] }}</td>
-<td style="max-width:40px;">{% if car.status == "repair" %}
-          <form style="margin:0px;" action="{{ url_for('blog.fix', id=car['id']) }}" method="post">
+  <td>{{ car[0] }}</td>
+  <td>{{ car[4] }}</td>
+  <td>{{ car[5] }}</td>
+  <td>{{ car[14] }}</td>
+  <td>{{ car[15] }}</td>
+<td style="max-width:40px;">{% if car[15] == "Not done" %}
+          <form style="margin:0px;" action="{{ url_for('blog.fix', id=car[0]) }}" method="post">
     <input style="margin:0px;" class="warning" type="submit" value="Repair" onclick="return confirm('Are you sure you want to mark this car as repaired?');">
     </form>
           {% endif %}

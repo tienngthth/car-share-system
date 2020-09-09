@@ -80,6 +80,34 @@ class Database:
         Database.conn.close()
         return return_value
 
+    @staticmethod
+    def select_record_fetchone(columns, tb_name, conditions = ""):
+        Database.setup_connection()
+        Database.curs.execute(
+            "SELECT " 
+            + columns 
+            + " FROM "
+            + tb_name
+            + conditions
+        )
+        return_value = Database.curs.fetchone()
+        Database.conn.close()
+        return return_value
+
+    @staticmethod
+    def select_record_fetchall(columns, tb_name, conditions = ""):
+        Database.setup_connection()
+        Database.curs.execute(
+            "SELECT " 
+            + columns 
+            + " FROM "
+            + tb_name
+            + conditions
+        )
+        return_value = Database.curs.fetchall()
+        Database.conn.close()
+        return return_value
+
     #Update record 
     @staticmethod
     def update_record_parameterized(tb_name, update_fields, conditions, parameters):

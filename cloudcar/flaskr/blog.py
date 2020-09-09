@@ -6,6 +6,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from werkzeug.exceptions import abort
+from flaskr.source.model.database import Database
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
@@ -14,6 +15,7 @@ from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
 bp = Blueprint("blog", __name__)
 
+#?
 def get_car(id, check_author=True):
     """Get a car and its author by id.
     Checks that the id exists and optionally that the current user is
@@ -24,6 +26,10 @@ def get_car(id, check_author=True):
     :raise 404: if a post with the given id doesn't exist
     :raise 403: if the current user isn't the author
     """
+    #car = Database.select_record("Cars.*, Bookings.CustomerID", 
+    #                             "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
+    #                             " WHERE Cars.ID = " + str(id))
+
     car = (
         get_db()
         .execute(
@@ -40,19 +46,17 @@ def get_car(id, check_author=True):
 
     return car
 
+#DONE
 @bp.route("/", methods=("GET", "POST"))
 def index():
     form = carSearch()
-    db = get_db()
     if request.method == "POST":
         make = '%' + request.form['make'] + '%'
         colour = '%' + request.form['colour'] + '%'
         datestart = request.form['start']
         dateend = request.form['end']
         # search form
-        cars = db.execute(
-            "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(make,colour,)
-        ).fetchall()
+        cars = Database.select_record_fetchall("*", "Cars", " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
         # all in the search box will return all the tuples
         return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
     """Show all the cars, most recent first."""
@@ -65,93 +69,92 @@ def index():
             return redirect(url_for('success'))
         return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
         
-        
+#DONE        
 @bp.route("/adminusers", methods=("GET", "POST"))
 def adminusers():
     form = userSearch()
-    db = get_db()
     if request.method == "POST":
         username = '%' + request.form['username'] + '%'
         # search form
-        users = db.execute(
-            "SELECT id, username FROM user WHERE username LIKE ? ORDER BY username DESC",(username,)
-        ).fetchall()
+        users = Database.select_record_fetchall("*", "Customers", " WHERE Username LIKE '" + username + "' ORDER BY Username DESC")
         # all in the search box will return all the tuples
         return render_template("blog/adminusers.html", users=users, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        users = db.execute(
-            "SELECT id, username"
-            " FROM user "
-            " ORDER BY username DESC"
-        ).fetchall()
+        users = Database.select_record_fetchall("*", "Customers", " ORDER BY Username DESC")
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
         return render_template("blog/adminusers.html", users=users, form=form)
         
         
-        
+#DONE        
 @bp.route("/admincars", methods=("GET", "POST"))
 def admincars():
     form = adminCarSearch()
-    db = get_db()
     if request.method == "POST":
         make = '%' + request.form['make'] + '%'
         colour = '%' + request.form['colour'] + '%'
         # search form
-        cars = db.execute(
-            "SELECT id, make, body, colour, seats, location, cost, status, author_id FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(make,colour,)
-        ).fetchall()
+        cars = Database.select_record_fetchall("Cars.*, Bookings.CustomerID", 
+                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
+                                 " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
         # all in the search box will return all the tuples
         return render_template("blog/admincars.html", cars=cars, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = db.execute(
-            "SELECT p.id, make, body, colour, seats, location, status, cost, created, author_id, username"
-            " FROM cars p JOIN user u ON p.author_id = u.id"
-            " ORDER BY created DESC"
-        ).fetchall()
+        cars = Database.select_record_fetchall("Cars.*, Bookings.CustomerID", 
+                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
+                                 " ORDER BY Bookings.RentTime DESC")
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
         return render_template("blog/admincars.html", cars=cars, form=form)
-        
+
+#DONE        
 @bp.route("/engineercars", methods=("GET", "POST"))
 def engineercars():
-    db = get_db()
     if request.method == "GET":
-        cars = db.execute(
-            "SELECT p.id, make, body, colour, seats, location, status, cost, created, author_id, username"
-            " FROM cars p JOIN user u ON p.author_id = u.id"
-            " ORDER BY created DESC"
-        ).fetchall()
+        cars = Database.select_record_fetchall("Cars.*, Backlogs.*", 
+                                 "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID",
+                                 "")
         #do I need these next 2 lines?
         return render_template("blog/engineercars.html", cars=cars)
 
 
 
 @bp.route("/bookings", methods=("GET", "POST"))
-@login_required
+
+#NOT DONE
 def bookings():
     form = bookingSearch()
     db = get_db()
     if request.method == "POST":
-        start = '%' + request.form['start'] + '%'
-        end = '%' + request.form['end'] + '%'
+        start = request.form['start']
+        end =  request.form['end']
+        start_date = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S.%f')
+        end_date = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S.%f')
         # search date only
-        bookings = db.execute(
-            "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(start,end,)
-        ).fetchall()
+        bookings = Database.select_record_fetchall("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(MINUTE,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status", 
+                                                   "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
+                                                   " WHERE Bookings.Rentime > " + start + " AND Bookings.ReturnTime < " + end)
+
+        #bookings = db.execute(
+        #    "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(start,end,)
+        #).fetchall()
         # all in the search box will return all the tuples
         return render_template("blog/bookings.html", bookings=bookings, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        bookings = db.execute(
-            "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
-            " FROM cars p JOIN user u ON p.author_id = u.id"
-            " ORDER BY created DESC"
-        ).fetchall()
+        bookings = Database.select_record_fetchall("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(MINUTE,Bookings.ReturnTime,Bookings.RentTime) AS Duration, Bookings.Status, Bookings.ID", 
+                                                   "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
+                                                   "")
+
+        #bookings = db.execute(
+        #    "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
+        #    " FROM cars p JOIN user u ON p.author_id = u.id"
+        #    " ORDER BY created DESC"
+        #).fetchall()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))

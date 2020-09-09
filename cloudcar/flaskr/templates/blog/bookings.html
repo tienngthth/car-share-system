@@ -42,14 +42,14 @@
   </tr>
   {% for booking in bookings %}
   <tr>
-  <td>(date here)</td>
-  <td>(car ID here)</td>
-    <td>{{ booking['make'] }}</td>
-    <td>{{ booking['colour'] }}</td>
-    <td>(duration here)</td>
-    <td>(status here)</td>
-    <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.update', id=booking['id']) }}">Cancel</a>
+  <td>{{ booking[0] }}</td>
+  <td>{{ booking[1] }}</td>
+  <td>{{ booking[2] }}</td>
+  <td>{{ booking[3] }}</td>
+  <td>({ booking[4] }}</td>
+  <td>{{ booking[5] }}</td>
+  <td style="max-width:40px;">
+          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.update', id=booking[6]) }}">Cancel</a>
 </td>
   </tr>
   
