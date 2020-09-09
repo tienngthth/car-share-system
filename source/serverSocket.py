@@ -14,11 +14,9 @@ def listen_to_client():
         # Constantly display message received from server until the end of connection (receive good bye message)
         message = server.receive_message()
         if message == "end":
-            print(message)
             # Close socket after connection is closed
             server.close_connection()
         elif message != "":
-            print(message)
             handle_request(message)
     
 def handle_request(message):
@@ -26,16 +24,24 @@ def handle_request(message):
         message = Code.parse_json(message.replace("\'", "\""))
         if message["message_type"] == "credential":
             # validate_crendential(message)
-            server.send_message(Account.hashedPassword(message["password"]))
+            server.send_message(Account.hash_salt_password(message["password"]))
         elif message["message_type"] == "facial":
             # validate_facial(message)
-            server.send_message(Account.hashedPassword("hashedPassword"))
+            server.send_message(Account.hash_salt_password("hashedPassword"))
+        elif message["message_type"] == "backlog":
+            # validate_facial(message)
+            server.send_message("34:E1:2D:A6:24:75")# lap cuong
         elif message["message_type"] == "car_status":
             # update_car_status(message)
             pass
     except:
         pass
  
+def check_for_car_maintainance():
+    #1. Check backlog of car -> return engineeer id
+    
+    #2. Get engineer mac address
+
 def validate_facial(message):
     car_id = requests.get(
 		"http://127.0.0.1:8080/cars/get/car/id/by/mac/address?" +

@@ -26,29 +26,30 @@ class Account():
     def verify_password(username, input_password, user_type):
         #user_type == staffs/customers
         #retrieve password from database by username
-        encryptedPassword = requests.get(
+        encrypted_password = requests.get(
             "http://127.0.0.1:8080/" +
             user_type +
             "/get/encrypted/password/by/username?username=" +
             username
         ).text
         try:
-            return hash.sha256_crypt.verify(input_password, encryptedPassword)
+            return hash.sha256_crypt.verify(input_password, encrypted_password)
         except:
             return False
 
     @staticmethod
-    def verify_username_locally(username, input_password):
+    def verify_credential_locally(username, input_password):
         encrypted_password = LocalDatabase.select_a_record_parameterized(
             "Password", 
             "Credential", 
             " WHERE Username = (?)", 
             (username,)
         )[0]
-        try:
-            return hash.sha256_crypt.verify(input_password, encryptedPassword)
-        except:
-            return False
+        print(encrypted_password)
+        # try:
+        return hash.sha256_crypt.verify(input_password, encrypted_password)
+        # except:
+        #     return False
 
     @staticmethod
     def validate_username_input(username, user_type):

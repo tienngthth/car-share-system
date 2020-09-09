@@ -4,17 +4,34 @@ import bluetooth
 from time import sleep
 from model.util import Util
 from qrcodeScanner import start_scanning
+from model.client import Client
+
+def get_engineer_mac_address():
+    global engineer_mac_address 
+    client = Client()
+    repair_car_message = {"message_type":"backlog"}
+    engineer_mac_address = wait_for_response(client, repair_car_message)
+
+def wait_for_response(client, message):
+    client.send_message(str(message))
+    while True:
+        message = client.receive_message()
+        if message != "":
+            client.send_message("end")
+            return message
 
 # Search for engineer device with matched mac address
-def start_searching(device_mac_address = "34:E1:2D:A6:24:75"):
-    global engineer_mac_address 
-    engineer_mac_address = device_mac_address
-    print("\nSearching for engineer...")
-    find_engineer()
-    if engineer_found:
-        close_ticket_menu()
+def start_searching():
+    get_engineer_mac_address()
+    if engineer_mac_address != "invalid"::
+        print("\nSearching for engineer...")
+        find_engineer()
+        if engineer_found:
+            close_ticket_menu()
+        else:
+            print("\nNo engineer found. Stop searching")
     else:
-        print("\nNo engineer found. Stop searching")
+        print("No maintanance needed")
 
 def find_engineer():
     global engineer_found
@@ -30,7 +47,7 @@ def find_engineer():
                     engineer_found = True
                     return
         except:
-            find_engineer(engineer_mac_address)
+            find_engineer()
     engineer_found = False
 
 def close_ticket_menu():

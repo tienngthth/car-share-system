@@ -59,7 +59,6 @@ def verify_facial_with_mp(username):
             "Credential", "((?), (?))",
             (username, encrypted_password)
         )
-        print(encrypted_password)
         return True
     return False
 
@@ -87,6 +86,7 @@ def get_password_input():
     return password
 
 def verify_password(username, password):
+    print(password)
     if car.first_login:
     # speak to MP to verify password
         if verify_credential_with_mp(username, password):
@@ -95,7 +95,7 @@ def verify_password(username, password):
         return False
     else:
         # talk to local dabase to verify credential
-        return Account.verify_password_locally(username, password) 
+        return Account.verify_credential_locally(username, password) 
 
 def verify_credential_with_mp(username, password):
     client = Client()
@@ -106,8 +106,7 @@ def verify_credential_with_mp(username, password):
         "user_type":"customers"
     }
     encrypted_password = wait_for_response(client, credential_message)
-    print(encrypted_password)
-    if message != "invaliid":
+    if encrypted_password != "invaliid":
         LocalDatabase.insert_record(
             "Credential", "((?), (?))",
             (username, encrypted_password)
