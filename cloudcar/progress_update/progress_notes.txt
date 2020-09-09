@@ -38,9 +38,6 @@ Engineer page created
 
 07/09/2020
 Email sending feature to engineer for car repair using Google mail API
-<<<<<<< HEAD
 
-08/09/2020
-Manager page created with graphs integrated
-=======
->>>>>>> 6677be0e1a6979051b93b3c91638c71d2187eb86
+08/09/202
+Manager page with graph dispplay
