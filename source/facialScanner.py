@@ -8,7 +8,6 @@ names = ['None', 'haha', 'Tien','Tam', 'Minh']
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer/trainer.yml')
 
-
 def start_scanning():  
     Camera.start_camera()
     while not Camera.stop:
@@ -21,7 +20,9 @@ def start_scanning():
             if (confidence < 80):  
                 print(names[id])
                 Camera.stop_camera()
+                return names[id]
         Camera.stop_camera_key_stroke()
+    return names[0]
 
 if __name__ == "__main__":
     start_scanning()

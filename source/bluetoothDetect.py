@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 import bluetooth
 from time import sleep
+from model.util import Util
 
 # Search for engineer device with matched mac address
-def start_searching(device_mac_address = ""):
+def find_eng(device_mac_address = ""):
     print("\nSearching for engineer...")
     # Wait until bluetooth is on and stable (loop throught the unstable period)
     for i in range(1):         
@@ -37,4 +38,4 @@ def close_ticket_menu():
     print("\nCar locked!")
 
 if __name__ == "__main__":
-    start_searching()
+    find_eng()

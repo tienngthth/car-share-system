@@ -1,9 +1,9 @@
 import sys
-from termios import tcflush, TCIFLUSH
 from model.util import Util 
 from model.account import Account
 from model.car import car
 from model.client import Client
+from model.database import LocalDatabase
 from facialScanner import start_scanning
 
 def login_menu():
@@ -22,10 +22,10 @@ def authenticate():
     username = get_input()
     if username == "Escape":
         escape = True
-    elif username != "Invalid" :
-        customer_menu(username)
-    else:
+    elif username == "Invalid":
         print("\nYou have entered incorrect username or password.")
+    else:
+        customer_menu(username)
 
 def get_input():
     while True:  
@@ -38,8 +38,11 @@ def get_input():
             return "Escape"
 
 def facial_login():
-    start_scanning()
-    return "Invalid"
+    username = start_scanning()
+    if username == LocalDatabase.select_a_record("Username", "Credential")[0]:
+        return username
+    else: 
+        return "Invalid"
 
 def credential_login():
     username = get_user_name_input()
@@ -69,10 +72,10 @@ def verify_password(username, password):
     # speak to MP to verify password
         if verify_password_first_login(username, password):
             car.first_login_to_car()
-            #need to reset credential in local database
             return True
-    elif False: # talk to local dabase to verify
-        return True
+    else:
+        # talk to local dabase to verify credential
+        return verify_password_locally(username, password) 
     return False
 
 def verify_password_first_login(username, password):
@@ -83,15 +86,25 @@ def verify_password_first_login(username, password):
         "password":password,
         "user_type":"customers"
     }
-    client.send_message(str(credential_message))
-    return wait_for_response(client)
+    if wait_for_response(client, credential_message):
+        LocalDatabase.update_last_record("Credential", "Username, Password", (username, password))
+        return True
+    return False
 
-def wait_for_response(client):
+def wait_for_response(client, credential_message):
+    client.send_message(str(credential_message))
     while True:
         message = client.receive_message()
         if message != "":
             client.send_message("end")
             return True if message == "valid" else False
+
+def verify_password_locally(username, password):
+    valid_crendential = LocalDatabase.select_a_record("*", "Credential")[0]
+    if username == valid_crendential[0]:
+        if Account.hash_salt_password(password) == valid_crendential[1]:
+            return True
+    return False
 
 def customer_menu(username):
     global escape
