@@ -56,7 +56,7 @@ def index():
         datestart = request.form['start']
         dateend = request.form['end']
         # search form
-        cars = Database.select_record_fetchall("*", "Cars", " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
+        cars = Database.select_record("*", "Cars", " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
         # all in the search box will return all the tuples
         return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
     """Show all the cars, most recent first."""
@@ -76,12 +76,12 @@ def adminusers():
     if request.method == "POST":
         username = '%' + request.form['username'] + '%'
         # search form
-        users = Database.select_record_fetchall("*", "Customers", " WHERE Username LIKE '" + username + "' ORDER BY Username DESC")
+        users = Database.select_record("*", "Customers", " WHERE Username LIKE '" + username + "' ORDER BY Username DESC")
         # all in the search box will return all the tuples
         return render_template("blog/adminusers.html", users=users, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        users = Database.select_record_fetchall("*", "Customers", " ORDER BY Username DESC")
+        users = Database.select_record("*", "Customers", " ORDER BY Username DESC")
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
@@ -96,14 +96,14 @@ def admincars():
         make = '%' + request.form['make'] + '%'
         colour = '%' + request.form['colour'] + '%'
         # search form
-        cars = Database.select_record_fetchall("Cars.*, Bookings.CustomerID", 
+        cars = Database.select_record("Cars.*, Bookings.CustomerID", 
                                  "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
                                  " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
         # all in the search box will return all the tuples
         return render_template("blog/admincars.html", cars=cars, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = Database.select_record_fetchall("Cars.*, Bookings.CustomerID", 
+        cars = Database.select_record("Cars.*, Bookings.CustomerID", 
                                  "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
                                  " ORDER BY Bookings.RentTime DESC")
         #do I need these next 2 lines?
@@ -115,46 +115,33 @@ def admincars():
 @bp.route("/engineercars", methods=("GET", "POST"))
 def engineercars():
     if request.method == "GET":
-        cars = Database.select_record_fetchall("Cars.*, Backlogs.*", 
+        cars = Database.select_record("Cars.*, Backlogs.*", 
                                  "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID",
                                  "")
         #do I need these next 2 lines?
         return render_template("blog/engineercars.html", cars=cars)
 
 
-
+#DONE
 @bp.route("/bookings", methods=("GET", "POST"))
-
-#NOT DONE
 def bookings():
     form = bookingSearch()
-    db = get_db()
     if request.method == "POST":
         start = request.form['start']
         end =  request.form['end']
-        start_date = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S.%f')
-        end_date = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S.%f')
+        start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
+        end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M')
         # search date only
-        bookings = Database.select_record_fetchall("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(MINUTE,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status", 
+        bookings = Database.select_record("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
                                                    "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
-                                                   " WHERE Bookings.Rentime > " + start + " AND Bookings.ReturnTime < " + end)
-
-        #bookings = db.execute(
-        #    "SELECT id, make, body, colour, seats, location, cost FROM cars WHERE make LIKE ? AND colour LIKE ? ORDER BY created DESC",(start,end,)
-        #).fetchall()
+                                                   " WHERE Bookings.RentTime > '" + str(start_date) + "' AND Bookings.RentTime < '" + str(end_date) + "'")
         # all in the search box will return all the tuples
         return render_template("blog/bookings.html", bookings=bookings, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        bookings = Database.select_record_fetchall("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(MINUTE,Bookings.ReturnTime,Bookings.RentTime) AS Duration, Bookings.Status, Bookings.ID", 
+        bookings = Database.select_record("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
                                                    "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
                                                    "")
-
-        #bookings = db.execute(
-        #    "SELECT p.id, make, body, colour, seats, location, cost, created, author_id, username"
-        #    " FROM cars p JOIN user u ON p.author_id = u.id"
-        #    " ORDER BY created DESC"
-        #).fetchall()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
