@@ -4,45 +4,64 @@ from model.util import Util
 from model.account import Account
 from model.car import car
 from model.client import Client
+from facialScanner import start_scanning
 
 def login_menu():
-    while True:
-        print("Welcome to Car Share. Please select your login preference.")
+    global escape
+    escape = False
+    while not escape:
+        print("\nWelcome to Car Share. Please select your login preference.")
         print("Input C for Credential")
         print("Input F for Facial")
-        while True:  
-            option = Util.get_input("Option: ").lower().strip()
-            if option == "f":  
-                facial_login()
-                break
-            elif option == "c":  
-                credential_login()
-        
+        print("Input E for Escape")
+        authenticate()
+    print("\nGoodbye!")
+
+def authenticate():
+    global escape
+    username = get_input()
+    if username == "Escape":
+        escape = True
+    elif username != "Invalid" :
+        customer_menu(username)
+    else:
+        print("\nYou have entered incorrect username or password.")
+
+def get_input():
+    while True:  
+        option = Util.get_input("Option: ").lower().strip()
+        if option == "f":  
+            return facial_login()
+        elif option == "c":  
+            return credential_login()
+        elif option == "e":
+            return "Escape"
+
 def facial_login():
-    #get username and talk to local database to verify 
-    pass
+    start_scanning()
+    return "Invalid"
 
 def credential_login():
     username = get_user_name_input()
     password = get_password_input()
     if verify_password(username, password):
-        customer_menu(username)
+        return username
     else:
-        print("You have entered incorrect username or password.\n")
+        return "Invalid"
 
 def get_user_name_input():
-    username = Util.get_input("Username (contains 6-15 alphanumerical characters): ")
+    username = Util.get_input("\nUsername (contains 6-15 alphanumerical characters): ")
     while not Account.validate_username(username):
-        username = Util.get_input("Invalid username input\nUsername: ")
+        username = Util.get_input("\nInvalid username input\n\nUsername: ")
     return username
 
 def get_password_input():
     password = Util.get_password(
-        "Password (contains at least 8 characters, 1 upper case, " +
+        "\nPassword (contains at least 8 characters, 1 upper case, " +
         "1 lower case, 1 digit, 1 special character): "
     )
     while not Account.validate_password_input(password):
-        password = Util.get_password("Invalid password input\nPassword: ")
+        password = Util.get_password("\nInvalid password input\n\nPassword: ")
     return password
 
 def verify_password(username, password):
@@ -75,17 +94,20 @@ def wait_for_response(client):
             return True if message == "valid" else False
 
 def customer_menu(username):
-    print("Welcome "+ username + "! Application menu")
+    global escape
+    print("\nWelcome "+ username + "! Application menu")
     print("Lock car: Press key \"L\"")
     print("Return car: Press key \"R\"")
     while True:  
         option = Util.get_input("Option: ").lower().strip()
         if option == "l":  
-            print('Car locked!\n')
+            print("\nCar locked!")
             break
-        elif option == "r":  
+        elif option == "r": 
+            escape = True 
             car.return_car()
             break
 
 if __name__ == "__main__":
+    #check car status (available?)
     login_menu()

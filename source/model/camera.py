@@ -8,12 +8,16 @@ from pyzbar import pyzbar
 from .code import Code
 
 class Camera():
-    video_stream = None
-    frame = None
+    cam = None
+    frame = None 
+    stop = False
 
     @staticmethod
     def start_camera():
-        Camera.video_stream = VideoStream(src=0).start()
+        Camera.stop = False
+        Camera.cam = cv2.VideoCapture(0)
+        Camera.cam.set(3, 640)
+        Camera.cam.set(4, 480)
         time.sleep(2.0)
 
     @staticmethod
@@ -31,19 +35,40 @@ class Camera():
         return code 
 
     @staticmethod
-    def grab_frame():
-        # grab the frame from the threaded video stream and resize it to
-        # have a maximum width of 400 pixels
-        Camera.frame = imutils.resize(Camera.video_stream.read(), width=400)
-
-    @staticmethod
     def draw_bounding_box(barcode):
         # draw a bounding box 
         (x, y, w, h) = barcode.rect
         cv2.rectangle(Camera.frame, (x, y), (x + w, y + h), (0, 0, 255), 1)
 
     @staticmethod
-    def stop_camera():
-        cv2.destroyAllWindows()
-        Camera.video_stream.stop()
+    def scan_face():
+        Camera.grab_frame()
+        faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+        faces = faceCascade.detectMultiScale( 
+            cv2.cvtColor(Camera.frame, cv2.COLOR_BGR2GRAY),
+            scaleFactor = 1.2,
+            minNeighbors = 5,
+            minSize = (int(0.1*Camera.cam.get(3)), int(0.1*Camera.cam.get(4)))
+        )
+        cv2.imshow("Face Scanner", Camera.frame) 
+        return faces
 
+    @staticmethod
+    def grab_frame():
+        # grab the frame from the threaded video stream and resize it to
+        # have a maximum width of 400 pixels
+        ret, Camera.frame = Camera.cam.read()
+
+    @staticmethod
+    def stop_camera_key_stroke():
+        if not Camera.stop:
+            # Press 'ESC' for exiting video
+            k = cv2.waitKey(10) & 0xff 
+            if k == 27:
+                Camera.stop_camera()
+
+    @staticmethod
+    def stop_camera():
+        Camera.cam.release()
+        cv2.destroyAllWindows()
+        Camera.stop = True

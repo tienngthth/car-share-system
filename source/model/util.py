@@ -17,3 +17,4 @@ class Util:
     def get_password(message):
         tcflush(sys.stdin, TCIFLUSH)
         return getpass.getpass(prompt = message)
+        
