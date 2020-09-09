@@ -9,7 +9,8 @@ def validate_code(code, found_codes):
 		found_codes.add(code)
 		user_info = Code.parse_json(code)
 		if (user_info["user_type"] == "engineer"):
-			close_backlog(user_info["engineer_id"])
+			# close_backlog(user_info["engineer_id"])
+			print(user_info)
 
 # Close ticket and save signed engineer id
 def close_backlog(signed_engineer_ID):
@@ -43,3 +44,6 @@ def start_scanning():
 			break
 	Camera.stop_camera()
 
+if __name__ == "__main__":
+	start_scanning()
+	start_scanning()
