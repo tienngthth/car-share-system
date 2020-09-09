@@ -1,5 +1,6 @@
 from model.database import Database
 from model.account import Account
+import googleMap
 
 def add_sample_customer(customer):
     Database.insert_record_parameterized(
@@ -71,7 +72,7 @@ def create_sample_locations_data():
     #Locations
     global locations
     locations = []
-    locations.append((10.729683, 106.693183, "702 Nguyen Van Linh"))
+    locations.append((10.729683, 106.693183, googleMap.get_address(10.729683, 106.693183)))
    
 def create_sample_bookings_data():
     #Bookings

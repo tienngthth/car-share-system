@@ -45,22 +45,20 @@
     <th>Body</th>
     <th>Colour</th>
     <th>Seats</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
+    <th>Location</th>
     <th>Hourly Cost</th>
     <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
   {% for car in cars %}
   <tr>
+  <td>{{ car[0] }}</td>
+  <td>{{ car[1] }}</td>
   <td>{{ car[2] }}</td>
   <td>{{ car[3] }}</td>
-  <td>{{ car[7] }}</td>
-  <td>{{ car[8] }}</td>
   <td>{{ car[4] }}</td>
   <td>{{ car[5] }}</td>
-  <td>{{ car[9] }}</td>
   <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.confirm', id=car[0],datestart=datestart,dateend=dateend) }}">Book now</a>
+          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.confirm', id=car[6],datestart=datestart,dateend=dateend) }}">Book now</a>
 </td>
   </tr>
   

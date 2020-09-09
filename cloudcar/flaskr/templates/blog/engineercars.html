@@ -21,8 +21,7 @@
      <table>
   <tr>
     <th style="border-top-left-radius: 8px;">Car ID</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
+    <th>Location</th>
     <th>Request Date</th>
     <th>Status</th>
     <th style="border-top-right-radius: 8px;">Action</th>
@@ -30,11 +29,10 @@
   {% for car in cars %}
   <tr>
   <td>{{ car[0] }}</td>
-  <td>{{ car[4] }}</td>
-  <td>{{ car[5] }}</td>
-  <td>{{ car[14] }}</td>
-  <td>{{ car[15] }}</td>
-<td style="max-width:40px;">{% if car[15] == "Not done" %}
+  <td>{{ car[1] }}</td>
+  <td>{{ car[2] }}</td>
+  <td>{{ car[3] }}</td>
+<td style="max-width:40px;">{% if car[3] == "Not done" %}
           <form style="margin:0px;" action="{{ url_for('blog.fix', id=car[0]) }}" method="post">
     <input style="margin:0px;" class="warning" type="submit" value="Repair" onclick="return confirm('Are you sure you want to mark this car as repaired?');">
     </form>

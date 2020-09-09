@@ -57,7 +57,7 @@ def create_location_table():
             ID INT NOT NULL AUTO_INCREMENT,
             Latitude DOUBLE,
             Longitude DOUBLE,
-            Address VARCHAR(50),
+            Address VARCHAR(200),
             PRIMARY KEY (ID)
         )"""
     )

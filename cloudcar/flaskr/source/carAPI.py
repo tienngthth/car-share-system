@@ -49,8 +49,8 @@ def get_cars_by_filter():
 @car_api.route("get/car/latitude/from/backlog")
 def get_car_latitude():
     results = Database.select_record_parameterized(
-        "Cars.Latitude", 
-        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", 
+        "Locations.Latitude", 
+        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
         " WHERE Backlogs.ID = %s",
         request.args.get("id")
     )
@@ -62,8 +62,8 @@ def get_car_latitude():
 @car_api.route("get/car/longitude/from/backlog")
 def get_car_longitude():
     results = Database.select_record_parameterized(
-        "Cars.Longitude", 
-        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID", 
+        "Locations.Longitude", 
+        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
         " WHERE Backlogs.ID = %s",
         request.args.get("id")
     )

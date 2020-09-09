@@ -47,8 +47,7 @@
     <th style="border-top-left-radius: 8px;">Car ID</th>
     <th>Make</th>
     <th>Colour</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
+    <th>Location</th>
     <th>Status</th>
     <th>History</th>
     <th style="border-top-right-radius: 8px;">Edit</th>
@@ -56,11 +55,10 @@
   {% for car in cars %}
   <tr>
   <td>{{ car[0] }}</td>
+  <td>{{ car[1] }}</td>
   <td>{{ car[2] }}</td>
-  <td>{{ car[7] }}</td>
+  <td>{{ car[3] }}</td>
   <td>{{ car[4] }}</td>
-  <td>{{ car[5] }}</td>
-  <td>{{ car[6] }}</td>
 <td style="max-width:40px;">
           <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', id=car[0]) }}">History</a>
 </td>

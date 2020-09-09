@@ -56,7 +56,9 @@ def index():
         datestart = request.form['start']
         dateend = request.form['end']
         # search form
-        cars = Database.select_record("*", "Cars", " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
+        cars = Database.select_record("Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost, Cars.ID", 
+                                      "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
+                                      " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
         # all in the search box will return all the tuples
         return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
     """Show all the cars, most recent first."""
@@ -96,16 +98,16 @@ def admincars():
         make = '%' + request.form['make'] + '%'
         colour = '%' + request.form['colour'] + '%'
         # search form
-        cars = Database.select_record("Cars.*, Bookings.CustomerID", 
-                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
-                                 " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
+        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
+                                      "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
+                                      " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
         # all in the search box will return all the tuples
         return render_template("blog/admincars.html", cars=cars, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = Database.select_record("Cars.*, Bookings.CustomerID", 
-                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
-                                 " ORDER BY Bookings.RentTime DESC")
+        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
+                                      "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
+                                      " ORDER BY Bookings.RentTime DESC")
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
@@ -115,8 +117,8 @@ def admincars():
 @bp.route("/engineercars", methods=("GET", "POST"))
 def engineercars():
     if request.method == "GET":
-        cars = Database.select_record("Cars.*, Backlogs.*", 
-                                 "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID",
+        cars = Database.select_record("Cars.ID, Locations.Address, Backlogs.Date, Backlogs.Status", 
+                                 "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
                                  "")
         #do I need these next 2 lines?
         return render_template("blog/engineercars.html", cars=cars)
