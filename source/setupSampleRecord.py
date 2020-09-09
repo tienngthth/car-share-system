@@ -58,6 +58,17 @@ def create_sample_cars_data():
     cars.append(("", "Audi", "Minivan", 10.729683, 106.693183, "Available", "Blue", 2, 3))
     cars.append(("", "Ford", "Minivan", 10.729683, 106.693183, "Available", "White", 2, 3))
     cars.append(("", "BMW", "Sedan", 10.729683, 106.693183, "Available", "Yellow", 4, 2))
+    cars.append(("", "Ford", "Truck", 10.729683, 106.693183, "Available", "Red", 4, 5))
+    cars.append(("", "Toyota", "Sedan", 10.729683, 106.693183, "Available", "Grey", 4, 4))
+    cars.append(("", "BMW", "Truck", 10.729683, 106.693183, "Available", "White", 4, 7))
+    cars.append(("", "Audi", "Minivan", 10.729683, 106.693183, "Available", "Red", 5, 7))
+    cars.append(("", "Ford", "Minivan", 10.729683, 106.693183, "Available", "Blue", 4, 6))
+    cars.append(("", "Ford", "Truck", 10.729683, 106.693183, "Available", "White", 2, 4))
+    cars.append(("", "Toyota", "Sedan", 10.729683, 106.693183, "Available", "Red", 4, 5))
+    cars.append(("", "BMW", "Truck", 10.729683, 106.693183, "Available", "Red", 2, 4))
+    cars.append(("", "Audi", "Minivan", 10.729683, 106.693183, "Available", "White", 4, 5))
+    cars.append(("", "Ford", "Minivan", 10.729683, 106.693183, "Available", "Red", 4, 5))
+    
    
 def create_sample_bookings_data():
     #Bookings
