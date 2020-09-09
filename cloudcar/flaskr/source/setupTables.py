@@ -27,6 +27,7 @@ def create_staff_table():
             Email VARCHAR(50),
             Phone VARCHAR(20),
             UserType VARCHAR(10),
+            EngineerMACAddress VARCHAR(50),
             PRIMARY KEY(ID)
         ) """
     )
@@ -38,15 +39,27 @@ def create_car_table():
             ID INT NOT NULL AUTO_INCREMENT,
             MacAddress VARCHAR(50),
             Brand VARCHAR(20),
-            Type VARCHAR(20), 
-            Latitude DOUBLE,
-            Longitude DOUBLE, 
+            Type VARCHAR(20),
+            LocationID INT,  
             Status VARCHAR(20),
             Color VARCHAR(20),
             Seat INT,
             Cost INT,
-            PRIMARY KEY(ID)
+            PRIMARY KEY(ID),
+            FOREIGN KEY (LocationID) REFERENCES Locations(ID)
         ) """
+    )
+
+def create_location_table():
+    Database.create_table(
+        "Locations",
+        """ (
+            ID INT NOT NULL AUTO_INCREMENT,
+            Latitude DOUBLE,
+            Longitude DOUBLE,
+            Address VARCHAR(50),
+            PRIMARY KEY (ID)
+        )"""
     )
 
 def create_booking_table():
@@ -72,7 +85,6 @@ def create_backlog_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             AssignedEngineerID INT,
-            EngineerMACAddress VARCHAR(50),
             SignedEngineerID INT,
             CarID INT,
             Date DATETIME, 
@@ -88,10 +100,12 @@ def create_backlog_table():
 def create_all_tables():
     Database.execute_command("DROP TABLE IF EXISTS Bookings")
     Database.execute_command("DROP TABLE IF EXISTS Backlogs")
+    Database.execute_command("DROP TABLE IF EXISTS Cars")
 
     #Create tables one by one
     create_customer_table()
     create_staff_table()
+    create_location_table()
     create_car_table()
     create_booking_table()
     create_backlog_table()

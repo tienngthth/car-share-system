@@ -10,16 +10,23 @@ def add_sample_customer(customer):
 
 def add_sample_staff(staff):
     Database.insert_record_parameterized(
-        "Staffs(Username, Password, FirstName, LastName, Email, Phone, UserType)",
-        "(%s, %s, %s, %s, %s, %s, %s)",
+        "Staffs(Username, Password, FirstName, LastName, Email, Phone, UserType, EngineerMACAddress)",
+        "(%s, %s, %s, %s, %s, %s, %s, %s)",
         staff
     )
 
 def add_sample_car(car):
     Database.insert_record_parameterized(
-        "Cars(MacAddress, Brand, Type, Latitude, Longitude, Status, Color, Seat, Cost)",
-        "(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost)",
+        "(%s, %s, %s, %s, %s, %s, %s, %s)",
         car
+    )
+
+def add_sample_location(location):
+    Database.insert_record_parameterized(
+        "Locations(Latitude, Longitude, Address)",
+        "(%s, %s, %s)",
+        location
     )
 
 def add_sample_booking(booking):
@@ -31,8 +38,8 @@ def add_sample_booking(booking):
 
 def add_sample_backlog(backlog):
     Database.insert_record_parameterized(
-        "Backlogs(AssignedEngineerID, EngineerMACAddress, SignedEngineerID, CarID, Date, Status, Description)",
-        "(%s, %s, %s, %s, %s, %s, %s)",
+        "Backlogs(AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description)",
+        "(%s, %s, %s, %s, %s, %s)",
         backlog
     )
 
@@ -40,25 +47,31 @@ def create_sample_staffs_data():
     #Staffs
     global staffs 
     staffs = []
-    staffs.append(("Cuong_Nguyen", Account.hash_salt_password("11111111abcd"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Admin"))
-    staffs.append(("Tien_Nguyen", Account.hash_salt_password("abcd22222222"), "Tien", "Nguyen", "tien222@gmail.com", "1234567", "Manager"))
-    staffs.append(("Minh33", Account.hash_salt_password("ab33333333cd"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Engineer"))
-    staffs.append(("Tom", Account.hash_salt_password("abcdefgh"), "Tom", "Nguyen", "tom@gmail.com", "12345678970", "Engineer"))
+    staffs.append(("Cuong_Nguyen", Account.hash_salt_password("11111111abcd"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Admin", ""))
+    staffs.append(("Tien_Nguyen", Account.hash_salt_password("abcd22222222"), "Tien", "Nguyen", "tien222@gmail.com", "1234567", "Manager", ""))
+    staffs.append(("Minh33", Account.hash_salt_password("ab33333333cd"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Engineer", ""))
+    staffs.append(("Tom", Account.hash_salt_password("abcdefgh"), "Tom", "Nguyen", "tom@gmail.com", "12345678970", "Engineer", ""))
 
 def create_sample_cars_data():
     #Cars
     global cars 
     cars = []
-    cars.append(("DC:A6:32:4A:0C:41", "Ford", "Sedan", 10.729683, 106.693183, "Unavailable", "White", 4, 2))
-    cars.append(("", "BMW", "Minivan", 10.729683, 106.693183, "Available", "Blue", 2, 3))
-    cars.append(("", "Audi", "Sedan", 10.729683, 106.693183, "Available", "Black", 4, 2))
-    cars.append(("", "Toyota", "Truck", 10.729683, 106.693183, "Available", "Blue", 2, 4))
-    cars.append(("", "Ford", "Truck", 10.729683, 106.693183, "Unavailable", "Yellow", 2, 4))
-    cars.append(("", "Toyota", "Sedan", 10.729683, 106.693183, "Available", "White", 4, 2))
-    cars.append(("", "BMW", "Truck", 10.729683, 106.693183, "Available", "Black", 2, 4))
-    cars.append(("", "Audi", "Minivan", 10.729683, 106.693183, "Available", "Blue", 2, 3))
-    cars.append(("", "Ford", "Minivan", 10.729683, 106.693183, "Available", "White", 2, 3))
-    cars.append(("", "BMW", "Sedan", 10.729683, 106.693183, "Available", "Yellow", 4, 2))
+    cars.append(("DC:A6:32:4A:0C:41", "Ford", "Sedan", 1, "Unavailable", "White", 4, 2))
+    cars.append(("", "BMW", "Minivan", 1, "Available", "Blue", 2, 3))
+    cars.append(("", "Audi", "Sedan", 1, "Available", "Black", 4, 2))
+    cars.append(("", "Toyota", "Truck", 1, "Available", "Blue", 2, 4))
+    cars.append(("", "Ford", "Truck", 1, "Unavailable", "Yellow", 2, 4))
+    cars.append(("", "Toyota", "Sedan", 1, "Available", "White", 4, 2))
+    cars.append(("", "BMW", "Truck", 1, "Available", "Black", 2, 4))
+    cars.append(("", "Audi", "Minivan", 1, "Available", "Blue", 2, 3))
+    cars.append(("", "Ford", "Minivan", 1, "Available", "White", 2, 3))
+    cars.append(("", "BMW", "Sedan", 1, "Available", "Yellow", 4, 2))
+
+def create_sample_locations_data():
+    #Locations
+    global locations
+    locations = []
+    locations.append((10.729683, 106.693183, "702 Nguyen Van Linh"))
    
 def create_sample_bookings_data():
     #Bookings
@@ -76,9 +89,9 @@ def create_sample_backlogs_data():
     #Backlogs
     global backlogs 
     backlogs = []
-    backlogs.append((1, "", 1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel"))
-    backlogs.append((1, "", 2, "4", "2020-8-22 15:45:00", "Done", "Replace the windshield"))
-    backlogs.append((2, "", None, "7", "2020-8-23 11:15:00", "Not done", "Change the oil"))     #This data is selected for map.py
+    backlogs.append((1, 1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel"))
+    backlogs.append((1, 2, "4", "2020-8-22 15:45:00", "Done", "Replace the windshield"))
+    backlogs.append((2, None, "7", "2020-8-23 11:15:00", "Not done", "Change the oil"))     #This data is selected for map.py
    
 def create_sample_customers_data():
     #Customers
@@ -91,10 +104,14 @@ def create_sample_customers_data():
 def add_sample_data():
     create_sample_staffs_data()
     create_sample_customers_data()
+    create_sample_locations_data()
     create_sample_cars_data()
     create_sample_backlogs_data()
     create_sample_bookings_data()
     
+    for location in locations:
+        add_sample_location(location)
+
     for car in cars:
         add_sample_car(car)
 
