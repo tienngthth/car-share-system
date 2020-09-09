@@ -15,6 +15,19 @@ def get_all_repaired_car_ids():
     else: 
         return str(results)
 
+@backlog_api.route("/get/engineer/id/by/car/id")
+def get_engineer_id_by_car_id():
+    results = Database.select_record_parameterized(
+        " AssignedEngineerID ", 
+        " Backlogs ", 
+        " WHERE CarID = %s ",
+        (request.args.get("car_id"), )
+    ) 
+    if len(results) == 0:
+        return "No engineer found"
+    else: 
+        return str(results[0][0])
+
 @backlog_api.route("/get/repaired/times/wrt/car/id")
 def get_repaired_times_wrt_car_id():
     results = Database.select_record(

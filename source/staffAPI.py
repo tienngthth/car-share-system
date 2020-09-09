@@ -17,3 +17,15 @@ def get_encrypted_password_by_username():
     else: 
         return results[0][0]
 
+@staff_api.route("/get/engineer/mac/address/by/id")
+def get_engineer_mac_address_by_id():
+    results = Database.select_record_parameterized(
+        " MacAddress ", 
+        " Staffs ", 
+        " WHERE ID = %s ",
+        (request.args.get("id"), )
+    ) 
+    if len(results) == 0:
+        return "No mac address found"
+    else: 
+        return str(results[0][0])

@@ -6,6 +6,19 @@ from model.util import Util
 from qrcodeScanner import start_scanning
 from model.client import Client
 
+# Search for engineer device with matched mac address
+def start_searching():
+    get_engineer_mac_address()
+    if engineer_mac_address != "invalid":
+        print("\nSearching for engineer...")
+        find_engineer()
+        if engineer_found:
+            close_ticket_menu()
+        else:
+            print("\nNo engineer found. Stop searching")
+    else:
+        print("No maintanance needed")
+
 def get_engineer_mac_address():
     global engineer_mac_address 
     client = Client()
@@ -19,19 +32,6 @@ def wait_for_response(client, message):
         if message != "":
             client.send_message("end")
             return message
-
-# Search for engineer device with matched mac address
-def start_searching():
-    get_engineer_mac_address()
-    if engineer_mac_address != "invalid"::
-        print("\nSearching for engineer...")
-        find_engineer()
-        if engineer_found:
-            close_ticket_menu()
-        else:
-            print("\nNo engineer found. Stop searching")
-    else:
-        print("No maintanance needed")
 
 def find_engineer():
     global engineer_found
@@ -65,4 +65,4 @@ def close_ticket_menu():
     print("\nCar locked!")
 
 if __name__ == "__main__":
-    find_engineer()
+    start_searching()

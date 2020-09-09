@@ -39,29 +39,12 @@ def get_input():
 
 def facial_login():
     username = start_scanning()
-    if car.first_login:
-        if verify_facial_with_mp(username):
-            car.first_login_to_car()
-            return username
-    elif LocalDatabase.select_a_record("Username", "Credential")[0] == username:
+    password = get_password_input()
+    if verify_password(username, password):
         return username
-    return "Invalid"
-
-def verify_facial_with_mp(username):
-    client = Client()
-    facial_message = {
-        "message_type":"facial",
-        "username":username
-    }
-    encrypted_password = wait_for_response(client, facial_message)
-    if encrypted_password != "invalid":
-        LocalDatabase.insert_record(
-            "Credential", "((?), (?))",
-            (username, encrypted_password)
-        )
-        return True
-    return False
-
+    else:
+        return "Invalid"
+        
 def credential_login():
     username = get_user_name_input()
     password = get_password_input()
@@ -142,3 +125,28 @@ def customer_menu(username):
 if __name__ == "__main__":
     #check car status (available?)
     login_menu()
+
+
+
+#     if car.first_login:
+#         if verify_facial_with_mp(username):
+#             car.first_login_to_car()
+#             return username
+#     elif LocalDatabase.select_a_record("Username", "Credential")[0] == username:
+#         return username
+#     return "Invalid"
+
+# def verify_facial_with_mp(username):
+#     client = Client()
+#     facial_message = {
+#         "message_type":"facial",
+#         "username":username
+#     }
+#     encrypted_password = wait_for_response(client, facial_message)
+#     if encrypted_password != "invalid":
+#         LocalDatabase.insert_record(
+#             "Credential", "((?), (?))",
+#             (username, encrypted_password)
+#         )
+#         return True
+#     return False

@@ -38,9 +38,22 @@ def handle_request(message):
         pass
  
 def check_for_car_maintainance():
-    #1. Check backlog of car -> return engineeer id
-    
-    #2. Get engineer mac address
+    car_id = requests.get(
+		"http://127.0.0.1:8080/cars/get/car/id/by/mac/address?" +
+		"mac_address=" + car.ap_addr
+	).text
+    engineer_id = requests.get(
+        "http://127.0.0.1:8080/backlogs/get/engineer/id/by/car/id?" +
+		"car_id=" + car_id
+	).text
+    if engineer_id != "No engineer found":
+        engineer_mac_address = requests.get(
+            "http://127.0.0.1:8080/staffs/get/engineer/mac/address/by/id?" +
+            "id=" + engineer_id
+	    ).text
+        if mac_address != "No mac address found":
+            return mac_address
+    return "Invalid"    
 
 def validate_facial(message):
     car_id = requests.get(
@@ -75,7 +88,7 @@ def validate_crendential(message):
 
 # Validate credential
 def update_car_status(message):
-    resp = requests.get(
+    resp = requests.put(
 		"http://127.0.0.1:8080/cars/update?" +
 		"status=" + message["car_status"] +
 		"&id=" + message["car_id"]
