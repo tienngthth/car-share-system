@@ -36,7 +36,7 @@ def create_car_table():
         "Cars", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
-            MacAddress VARCHAR(30),
+            MacAddress VARCHAR(50),
             Brand VARCHAR(20),
             Type VARCHAR(20), 
             Latitude DOUBLE,
@@ -72,6 +72,7 @@ def create_backlog_table():
         """ (
             ID INT NOT NULL AUTO_INCREMENT,
             AssignedEngineerID INT,
+            EngineerMACAddress VARCHAR(50),
             SignedEngineerID INT,
             CarID INT,
             Date DATETIME, 
