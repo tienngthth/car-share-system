@@ -1,4 +1,5 @@
 from .client import Client
+from .util import Util
 
 class Car:
     __instance = None
@@ -24,7 +25,7 @@ class Car:
         self.__change_car_status("In use")
 
     def return_car(self):
-        print('\nCar returned!')
+        Util.log_messages("car_returned")
         self.first_login = True
         self.__change_car_status("Available")
 

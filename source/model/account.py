@@ -23,15 +23,7 @@ class Account():
         return hash.sha256_crypt.hash(raw_input)
 
     @staticmethod
-    def verify_password(username, input_password, user_type):
-        #user_type == staffs/customers
-        #retrieve password from database by username
-        encrypted_password = requests.get(
-            "http://127.0.0.1:8080/" +
-            user_type +
-            "/get/encrypted/password/by/username?username=" +
-            username
-        ).text
+    def verify_credential(input_password, encrypted_password):
         try:
             return hash.sha256_crypt.verify(input_password, encrypted_password)
         except:
@@ -45,12 +37,8 @@ class Account():
             " WHERE Username = (?)", 
             (username,)
         )[0]
-        print(encrypted_password)
-        # try:
-        return hash.sha256_crypt.verify(input_password, encrypted_password)
-        # except:
-        #     return False
-
+        return verify_credential(input_password, encrypted_password)
+        
     @staticmethod
     def validate_username_input(username, user_type):
         # Valid username is unique and contains 6-15 alphanumerical characters 
@@ -99,6 +87,7 @@ class Account():
             "email=" + email +
             "&phone=" + phone
         ).text == "0"
+
 
 # #Test validate username
 # print(Account.validate_username_input("tien123N", "customers"))

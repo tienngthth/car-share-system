@@ -7,51 +7,29 @@ from model.localDatabase import LocalDatabase
 from facialScanner import start_scanning
 
 def login_menu():
-    global escape
     escape = False
     while not escape:
-        print("\nWelcome to Car Share. Please select your login preference.")
-        print("Input C for Credential")
-        print("Input F for Facial")
-        print("Input E for Escape")
-        authenticate()
-    print("\nGoodbye!")
-
+        Util.log_messages("login_menu")
+        escape = authenticate()
+    
 def authenticate():
-    global escape
     username = get_input()
-    if username == "Escape":
-        escape = True
-    elif username == "Invalid":
-        print("\nYou have entered incorrect username or password.")
+    if username == "escape":
+        Util.log_messages("back_to_main")
+        return True
+    elif username == "invalid":
+        Util.log_messages("incorrect_credential")
     else:
-        customer_menu(username)
+        return customer_menu(username)
 
 def get_input():
     while True:  
         option = Util.get_input("Option: ").lower().strip()
-        if option == "f":  
-            return facial_login()
-        elif option == "c":  
-            return credential_login()
-        elif option == "e":
-            return "Escape"
-
-def facial_login():
-    username = start_scanning()
-    password = get_password_input()
-    if verify_password(username, password):
-        return username
-    else:
-        return "Invalid"
-        
-def credential_login():
-    username = get_user_name_input()
-    password = get_password_input()
-    if verify_password(username, password):
-        return username
-    else:
-        return "Invalid"
+        if option == "e":
+            return "escape"
+        if option == "f" or option == "c":
+            username = start_scanning() if option == "f" else get_user_name_input()
+            return verify_password(username, password = get_password_input()):
 
 def get_user_name_input():
     username = Util.get_input("\nUsername (contains 6-15 alphanumerical characters): ")
@@ -69,33 +47,28 @@ def get_password_input():
     return password
 
 def verify_password(username, password):
-    print(password)
     if car.first_login:
-    # speak to MP to verify password
-        if verify_credential_with_mp(username, password):
-            car.first_login_to_car()
-            return True
-        return False
-    else:
-        # talk to local dabase to verify credential
-        return Account.verify_credential_locally(username, password) 
+        if verify_credential_with_mp(username, password) == "invalid":
+            username == "invalid" 
+    elif not Account.verify_credential_locally(username, password):
+        username == "invalid" 
+    return username
 
-def verify_credential_with_mp(username, password):
-    client = Client()
-    credential_message = {
+def create_credential_message_to_mp(username, password):
+    return {
         "message_type":"credential",
-        "username":username,
-        "password":password,
+        "username": username,
+        "password": password,
         "user_type":"customers"
     }
-    encrypted_password = wait_for_response(client, credential_message)
-    if encrypted_password != "invaliid":
-        LocalDatabase.insert_record(
-            "Credential", "((?), (?))",
-            (username, encrypted_password)
-        )
-        return True
-    return False
+
+# speak to MP to verify password
+def verify_credential_with_mp(username, password):
+    client = Client()
+    encrypted_password = wait_for_response(client, create_credential_message_to_mp())
+    if response != "invalid":
+        first_login_to_car(username, encrypted_password)
+    return response
 
 def wait_for_response(client, message):
     client.send_message(str(message))
@@ -105,48 +78,25 @@ def wait_for_response(client, message):
             client.send_message("end")
             return message
 
+def first_login_to_car(username, encrypted_password):
+    car.first_login_to_car()
+    LocalDatabase.insert_record("Credential", "((?), (?))",(username, encrypted_password))
+
 def customer_menu(username):
-    global escape
-    print("\nWelcome "+ username + "! Application menu")
-    print("Lock car: Press key \"L\"")
-    print("Return car: Press key \"R\"")
+    Util.log_messages("customer_menu")
     while True:  
         option = Util.get_input("Option: ").lower().strip()
         if option == "l":  
-            print("\nCar locked!")
-            break
+            Util.log_messages("car_locked")
+            return False
         elif option == "r": 
-            escape = True 
-            car.return_car()
-            LocalDatabase.delete_record("Credential", " WHERE Username = (?)", (username,))
-            print("new record deleted")
-            break
+            return_car(username)
+            return True
+
+def return_car(username):
+    car.return_car()
+    LocalDatabase.delete_record("Credential", " WHERE Username = (?)", (username,))
 
 if __name__ == "__main__":
     #check car status (available?)
     login_menu()
-
-
-
-#     if car.first_login:
-#         if verify_facial_with_mp(username):
-#             car.first_login_to_car()
-#             return username
-#     elif LocalDatabase.select_a_record("Username", "Credential")[0] == username:
-#         return username
-#     return "Invalid"
-
-# def verify_facial_with_mp(username):
-#     client = Client()
-#     facial_message = {
-#         "message_type":"facial",
-#         "username":username
-#     }
-#     encrypted_password = wait_for_response(client, facial_message)
-#     if encrypted_password != "invalid":
-#         LocalDatabase.insert_record(
-#             "Credential", "((?), (?))",
-#             (username, encrypted_password)
-#         )
-#         return True
-#     return False

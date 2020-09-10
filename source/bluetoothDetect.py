@@ -10,14 +10,14 @@ from model.client import Client
 def start_searching():
     get_engineer_mac_address()
     if engineer_mac_address != "invalid":
-        print("\nSearching for engineer...")
+        Util.log_messages("bluetooth_start")
         find_engineer()
         if engineer_found:
-            close_ticket_menu()
+            engineer_menu_menu()
         else:
-            print("\nNo engineer found. Stop searching")
+            Util.log_messages("bluetooth_stop")
     else:
-        print("No maintanance needed")
+        Util.log_messages("no_maintainance")
 
 def get_engineer_mac_address():
     global engineer_mac_address 
@@ -50,10 +50,8 @@ def find_engineer():
             find_engineer()
     engineer_found = False
 
-def close_ticket_menu():
-    print("\nCar Unlocked! Application menu")
-    print("Lock car: Press key \"L\"")
-    print("Close backlog (scan QR code): Press key \"C\"")
+def engineer_menu_menu():
+    Util.log_messages("engineer_menu")
     while engineer_found:  
         option = Util.get_input("Option: ").lower().strip()
         if option == "c":  
@@ -62,7 +60,7 @@ def close_ticket_menu():
         elif option == "l":
             break
         find_engineer()
-    print("\nCar locked!")
+    Util.log_messages("car_locked")
 
 if __name__ == "__main__":
     start_searching()
