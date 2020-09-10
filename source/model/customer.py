@@ -8,12 +8,18 @@ from .car import car
 
 class Customer():    
     def __init__(self, option):
+        self.__username = "invalid"
+        self.__password = "invalid"
+        self.__get_credential()  
+
+    def __get_crendential(self):
         if option == "f":
-            self.__username = FacialScanner.start_scanning() 
+            self.username = FacialScanner.start_scanning() 
         else:
-            self.__username = Account.get_user_name_input()
-        self.__password = Account.get_password_input()
-        self.__verify_credential()
+            self.username = Account.get_user_name_input()
+        if self.username != "invalid":
+            self.password = Account.get_password_input()
+            self.__verify_credential()
 
     def __verify_credential(self):
         if car.first_login:

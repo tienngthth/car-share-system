@@ -5,7 +5,7 @@ from .camera import Camera
 from .util import Util
 
 class FacialScanner():
-    names = ['None', 'abcdefg', 'Tien','Tam', 'Minh'] 
+    names = ['invalid', 'abcdefg', 'Tien','Tam', 'Minh'] 
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read('model/trainer/trainer.yml')
 
@@ -25,7 +25,7 @@ class FacialScanner():
                         Camera.stop_camera()
                         return FacialScanner().names[id]
                 Camera.stop_camera_key_stroke()
-            return names[0]
+            return FacialScanner().names[0]
         except:
             Util.log_messages("facial_error")
 

@@ -54,6 +54,7 @@ class Camera():
         # grab the frame from the threaded video stream and resize it to
         # have a maximum width of 400 pixels
         ret, Camera.frame = Camera.cam.read()
+        Camera.frame = cv2.flip(Camera.frame, 1)
 
     @staticmethod
     def stop_camera_key_stroke():
