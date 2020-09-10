@@ -40,7 +40,7 @@ class Account():
             "/get/number/of/existed/username?username=" + 
             username
         ).text == "0"
-        if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username): 
+        if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username) and username != "invalid":
             return True
         return False
 
