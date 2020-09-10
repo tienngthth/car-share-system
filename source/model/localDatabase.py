@@ -66,22 +66,6 @@ class LocalDatabase:
         LocalDatabase.conn.close()
         return return_value
 
-    #Retrieve data by equation
-    @staticmethod
-    def execute_equation(equation, tb_name, extra = "", db_path = None):
-        LocalDatabase.setup_connection(db_path)
-        rows = LocalDatabase.curs.execute(
-            "SELECT " 
-            + equation
-            + " FROM "
-            + tb_name
-            + extra)
-        for row in rows:
-            return_value = row
-        LocalDatabase.conn.close()
-        return return_value[0]
-        
-
     #Delete record 
     @staticmethod
     def delete_record(tb_name, conditions, parameters, db_path = None):
@@ -94,4 +78,3 @@ class LocalDatabase:
         )
         LocalDatabase.conn.commit()
         LocalDatabase.conn.close()
-# LocalDatabase.create_table("(Username VARCHAR(30), Password VARCHAR(256))", "Credential ")

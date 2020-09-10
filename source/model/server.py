@@ -1,6 +1,7 @@
 """# !/usr/bin/env python3
 # Documentation: https://docs.python.org/3/library/socket.html"""
-import socket
+import socket, sys
+from .util import Util
 
 """
 Class Server is to create instances to send context messages and accept connection request
@@ -9,7 +10,7 @@ Base on socket protocal and package, create client using socket programming
 
 class Server:
     #Initialize instance
-    def __init__(self, host = '127.0.0.1', port = 9983):
+    def __init__(self, host = '127.0.0.1', port = 9971):
         self.__address = (host, port)
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__set_up_connection()
@@ -18,8 +19,12 @@ class Server:
 
     #Open socket and bind socket to a physical port (default is port 6)
     def __set_up_connection(self):
-        self.__socket.bind(self.__address)
-        self.__socket.listen() 
+        try:
+            self.__socket.bind(self.__address)
+            self.__socket.listen() 
+        except:
+            Util.log_messages("server_socket")
+            sys.exit()
 
     #Accept connection
     def __accept_connection(self):

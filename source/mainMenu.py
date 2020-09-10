@@ -1,8 +1,7 @@
 import sys
 from model.util import Util 
 from customerMenu import login_menu
-from bluetoothDetect import start_searching
-from model.util import Util 
+from engineerMenu import start_searching
 
 def main_menu():
     while True:

@@ -1,9 +1,5 @@
-import argparse
-import datetime
-import imutils
 import time
 import cv2
-from imutils.video import VideoStream
 from pyzbar import pyzbar
 from .code import Code
 
