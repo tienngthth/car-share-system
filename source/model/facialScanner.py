@@ -23,6 +23,7 @@ class FacialScanner():
                     )
                     if (confidence < 80):  
                         Camera.stop_camera()
+                        print(FacialScanner().names[id])
                         return FacialScanner().names[id]
                 Camera.stop_camera_key_stroke()
             return FacialScanner().names[0]

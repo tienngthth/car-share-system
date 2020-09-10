@@ -7,13 +7,13 @@ from .localDatabase import LocalDatabase
 from .car import car
 
 class Customer():    
-    def __init__(self, option):
+    def __init__(self, get_username_option):
         self.__username = "invalid"
         self.__password = "invalid"
-        self.__get_credential()  
+        self.__get_credential(get_username_option)  
 
-    def __get_crendential(self):
-        if option == "f":
+    def __get_credential(self, get_username_option):
+        if get_username_option == "f":
             self.username = FacialScanner.start_scanning() 
         else:
             self.username = Account.get_user_name_input()
