@@ -27,6 +27,7 @@ def engineer_menu(engineer):
         if option == "q":  
             done = engineer.close_ticket()
         elif option == "l":
+            print("Car locked !")
             break
 
 if __name__ == "__main__":
