@@ -15,7 +15,7 @@ from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
 bp = Blueprint("blog", __name__)
 
-#?
+#DONE
 def get_car(id):
     """Get a car and its author by id.
     Checks that the id exists and optionally that the current user is
@@ -87,14 +87,14 @@ def admincars():
         colour = '%' + request.form['colour'] + '%'
         # search form
         cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-                                      "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
+                                      "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
                                       " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
         # all in the search box will return all the tuples
         return render_template("blog/admincars.html", cars=cars, form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
         cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-                                      "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
+                                      "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
                                       " ORDER BY Bookings.RentTime DESC")
         #do I need these next 2 lines?
         if form.validate_on_submit():
@@ -188,13 +188,6 @@ def create():
                     cost,
                 )
             )
-            #Database.insert_record_parameterized()
-            #db = get_db()
-            #db.execute(
-            #    "INSERT INTO cars (make, body, colour, seats, location, cost, author_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            #    (make, body, colour, seats, location, cost, g.user["id"]),
-            #)
-            #db.commit()
             return redirect(url_for("blog.index"))
     return render_template("blog/create.html", form=form)
 
@@ -268,43 +261,60 @@ def confirm(id):
     total = int((end_date - start_date).total_seconds() / 3600) * car[8]
     return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend,total=total)
 
-
+#DONE
 @bp.route("/<int:id>/delete", methods=("POST",))
 def delete(id):
     """Delete a car.
-
     Ensures that the car exists and that the logged in user is the
     author of the car.
     """
     car = get_car(id)[0]
     Database.delete_record_parameterized(
         "Cars",
-        " WHERE ID = %s"
-        , car[0],
+        " WHERE ID = %s",
+         car[0],
     )
     return redirect(url_for("blog.index"))
     
-    
-@bp.route("/repair", methods=("POST",))
-@login_required
+#DONE    
+@bp.route("/<int:id>/repair", methods=("POST",))
 def repair(id):
-
-    get_car(id)
-    db = get_db()
-    db.execute(
-            "UPDATE cars SET status = 'repair' WHERE id = ?", (id,)
-            )
-    db.commit()
-    return redirect(url_for("blog.admincars"))
-    
-@bp.route("/fix", methods=("POST",))
-@login_required
-def fix(id):
-
-    get_car(id)
-    db = get_db()
-    db.execute(
-            "UPDATE cars SET status = '' WHERE id = ?", (id,)
-            )
-    db.commit()
+    car = get_car(id)[0]
+    Database.update_record_parameterized(
+        "Backlogs", 
+        " Status = 'Done'",
+        " WHERE CarID = (%s) AND Status = 'Not done' ",
+        car[0]
+    ) 
     return redirect(url_for("blog.engineercars"))
+    
+#DONE    
+@bp.route("/<int:id>/report", methods=("GET", "POST"))
+def report(id):
+    car = get_car(id)[0]
+    form=newBacklogForm()
+    if request.method == "POST":
+        car_id = car[0]
+        engineer_ID = request.form["engineer_ID"]
+        date = request.form["date"]
+        new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M')
+        error = None
+        if not engineer_ID:
+            error = "Engineer is required."
+        if error is not None:
+            flash(error)
+        else:
+            Database.insert_record_parameterized(
+                "Backlogs(AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description) ",
+                "(%s, %s, %s, %s, %s, %s)",
+                (
+                    engineer_ID,
+                    None,
+                    car_id,
+                    new_date,
+                    "Not done",
+                    ""
+                )
+            )
+            return redirect(url_for("blog.admincars"))
+    return render_template("blog/backlog.html", form=form)

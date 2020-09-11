@@ -150,3 +150,8 @@ class carSearch(FlaskForm):
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
+
+class newBacklogForm(FlaskForm):
+    engineer_ID = StringField('Engineer ID')
+    date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    submit = SubmitField('Create')

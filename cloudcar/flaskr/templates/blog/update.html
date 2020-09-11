@@ -25,12 +25,9 @@
   </form>
 
 <div style="width:100%; display:block; height:40px;">
-<form style="float:right; margin-top:-65px;" action="{{ url_for('blog.delete', id=car['id']) }}" method="post">
+<form style="float:right; margin-top:-65px;" action="{{ url_for('blog.delete', id=car[0]) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
-<form style="float:right; margin-top:-65px; padding-right:30px;" action="{{ url_for('blog.repair', id=car['id']) }}" method="post">
-    <input class="warning" type="submit" value="Repair" onclick="return confirm('Are you sure?');">
-    </form>
-  
+  <a class="greenbutton" style="float:right; margin-top:-65px; padding-right:30px;" href="{{ url_for('blog.report', id=car[0]) }}">Report</a>  
   <div>
 {% endblock %}
