@@ -26,8 +26,8 @@ def get_car(id):
     :raise 404: if a post with the given id doesn't exist
     :raise 403: if the current user isn't the author
     """
-    car = Database.select_record("Cars.*, Bookings.CustomerID", 
-                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
+    car = Database.select_record("*", 
+                                 "Cars",
                                  " WHERE Cars.ID = " + str(id))
     if car is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
@@ -44,7 +44,7 @@ def index():
         datestart = request.form['start']
         dateend = request.form['end']
         # search form
-        cars = Database.select_record("Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost, Cars.ID", 
+        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost", 
                                       "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
                                       " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
         # all in the search box will return all the tuples
@@ -195,7 +195,7 @@ def create():
             #    (make, body, colour, seats, location, cost, g.user["id"]),
             #)
             #db.commit()
-            return redirect(url_for("blog.admincars"))
+            return redirect(url_for("blog.index"))
     return render_template("blog/create.html", form=form)
 
 #DONE
@@ -253,7 +253,7 @@ def update(id):
                     "cost": cost
                 }
             )
-            return redirect(url_for("blog.admincars"))
+            return redirect(url_for("blog.index"))
     return render_template("blog/update.html", car=car, form=form)
 
 #DONE
@@ -263,23 +263,26 @@ def confirm(id):
     car = get_car(id)[0]
     datestart=request.args['datestart']
     dateend=request.args['dateend']
-    form=updateCarForm()
-    return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend)
+    start_date = datetime.strptime(datestart, '%Y-%m-%dT%H:%M')
+    end_date = datetime.strptime(dateend, '%Y-%m-%dT%H:%M')
+    total = int((end_date - start_date).total_seconds() / 3600) * car[8]
+    return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend,total=total)
 
 
-@bp.route("/delete", methods=("POST",))
-@login_required
+@bp.route("/<int:id>/delete", methods=("POST",))
 def delete(id):
     """Delete a car.
 
     Ensures that the car exists and that the logged in user is the
     author of the car.
     """
-    get_car(id)
-    db = get_db()
-    db.execute("DELETE FROM cars WHERE id = ?", (id,))
-    db.commit()
-    return redirect(url_for("blog.admincars"))
+    car = get_car(id)[0]
+    Database.delete_record_parameterized(
+        "Cars",
+        " WHERE ID = %s"
+        , car[0],
+    )
+    return redirect(url_for("blog.index"))
     
     
 @bp.route("/repair", methods=("POST",))
