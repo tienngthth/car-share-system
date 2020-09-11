@@ -77,7 +77,6 @@ class updateCarForm(FlaskForm):
                                  ('8', '8')
                                  ])
     cost = StringField('Cost')
-    location = StringField('LocationID')
     status = StringField('Status')
     submit = SubmitField('Update')
 

@@ -9,7 +9,6 @@ from werkzeug.exceptions import abort
 from flaskr.source.model.database import Database
 
 from flaskr.auth import login_required
-from flaskr.db import get_db
 from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
@@ -204,7 +203,6 @@ def update(id):
         body = request.form["body"]
         colour = request.form["colour"]
         seats = request.form["seats"]
-        location = request.form["location"]
         cost = request.form["cost"]
         status = request.form["status"]
         error = None
@@ -223,8 +221,6 @@ def update(id):
                 " THEN Brand ELSE %(brand)s END, " +
                 " Type = CASE WHEN %(type)s = '' OR %(type)s IS NULL " + 
                 " THEN Type ELSE %(type)s END, " +
-                " LocationID = CASE WHEN %(locationID)s = '' OR %(locationID)s IS NULL " + 
-                " THEN LocationID ELSE %(locationID)s END, " +
                 " Status = CASE WHEN %(status)s = '' OR %(status)s IS NULL " + 
                 " THEN Status ELSE %(status)s END, " +
                 " Color = CASE WHEN %(color)s = '' OR %(color)s IS NULL " + 
@@ -239,7 +235,6 @@ def update(id):
                     "mac_address": mac_address, 
                     "brand": make, 
                     "type": body,
-                    "locationID": location, 
                     "status": status,
                     "color": colour,
                     "seat": seats,

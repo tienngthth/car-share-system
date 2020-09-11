@@ -32,3 +32,54 @@ Admin edit car page
 Admin manage car page/ car search
 admin user search page
 --> overall pages are out, yet need more styling bits and bobs
+
+
+12/09/2020
+All functions in blog.py now access the Google Cloud Database instead of the local database 
+
+Main page:
++Display a form that allows user to search for cars (Can only search by brand and color at the moment)
++Can display a list of cars after searching. Clicking on "Book now" will lead to a confirmation page
+
+Confirmation page:
++Can display all information of the car along with its total cost (cost per hour * duration)
++Clicking on "Cancel booking" will redirect back to the main page
++"Confirm booking" button is not working at the moment and will not create a calendar event (no function for it yet)
+
+Admincars page:
++Display a form that allows admin to search for cars
++Displays all cars and shows whether they're booked or not
++"History" button is not working at the moment (no function for it yet)
++Clicking on "Edit" will lead to the update page
++Clicking on "Add new" will lead to the create page
+
+Create page:
++Display a form that allows admin to enter car's information
++Clicking on "Create" will add the new car to the database
+
+Update page:
++Can display a form that allows admin to change car's information
++Clicking on "Update" will update the car into the database
++Clicking on "Delete" will remove the car from the database as long as it is not in a booking or backlog
++Clicking on "Repair" will lead to a backlog page
+
+Backlog page:
++Can display a form that allows admin to enter engineer's ID and date
++Clicking on "Create" will create a new backlog record
++Sending email is not available at the moment (No function for it yet)
+
+Engineer page:
++Shows cars information including its location
++Clicking on "Repair" will change the status from "Not done" to "Done"
++Maps are not available at the moment
+
+Adminuser page:
++Shows customer's information
++The "Edit" button is not working at the moment (No function for it yet)
+
+Additional problems:
++Haven't worked on auth.py yet
++All pages don't require users to log in at the moment
++Manager page and graphs are not available at the moment
++Haven't implemented API yet
+

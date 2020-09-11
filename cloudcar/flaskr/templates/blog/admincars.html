@@ -33,9 +33,9 @@
       <div class="form-field">{{ form.location.label }} {{ form.location() }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
-      <div class="form-submit"> {{ form.submit }}  {% if g.user %}
-    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.create') }}">Add New</a>
-  {% endif %}</div>
+      <div class="form-submit"> {{ form.submit }} 
+      <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.create') }}">Add New</a>
+      </div>
       </div>
      
   </form>
