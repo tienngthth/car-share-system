@@ -16,7 +16,7 @@ from wtforms.widgets.html5 import DateTimeLocalInput
 bp = Blueprint("blog", __name__)
 
 #?
-def get_car(id, check_author=True):
+def get_car(id):
     """Get a car and its author by id.
     Checks that the id exists and optionally that the current user is
     the author.
@@ -26,21 +26,9 @@ def get_car(id, check_author=True):
     :raise 404: if a post with the given id doesn't exist
     :raise 403: if the current user isn't the author
     """
-    #car = Database.select_record("Cars.*, Bookings.CustomerID", 
-    #                             "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
-    #                             " WHERE Cars.ID = " + str(id))
-
-    car = (
-        get_db()
-        .execute(
-            "SELECT p.id, make, body, colour, seats, location, cost, status, author_id "
-            " FROM cars p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
-            (id,),
-        )
-        .fetchone()
-    )
-
+    car = Database.select_record("Cars.*, Bookings.CustomerID", 
+                                 "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID",
+                                 " WHERE Cars.ID = " + str(id))
     if car is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
@@ -165,13 +153,13 @@ def edituser():
 
     return redirect(url_for("blog.adminusers"))
 
-
+#DONE
 @bp.route("/create", methods=("GET", "POST"))
-@login_required
 def create():
     form=newCarForm()
     """Create a new car for the current user."""
     if request.method == "POST":
+        mac_address = request.form["mac_address"]
         make = request.form["make"]
         body = request.form["body"]
         colour = request.form["colour"]
@@ -186,32 +174,47 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                "INSERT INTO cars (make, body, colour, seats, location, cost, author_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (make, body, colour, seats, location, cost, g.user["id"]),
+            Database.insert_record_parameterized(
+                "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
+                "(%s, %s, %s, %s, %s, %s, %s, %s)",
+                (
+                    mac_address,
+                    make,
+                    body,
+                    location,
+                    "Available",
+                    colour,
+                    seats,
+                    cost,
+                )
             )
-            db.commit()
+            #Database.insert_record_parameterized()
+            #db = get_db()
+            #db.execute(
+            #    "INSERT INTO cars (make, body, colour, seats, location, cost, author_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            #    (make, body, colour, seats, location, cost, g.user["id"]),
+            #)
+            #db.commit()
             return redirect(url_for("blog.admincars"))
-
     return render_template("blog/create.html", form=form)
 
-
+#DONE
 @bp.route("/<int:id>/update", methods=("GET", "POST"))
-@login_required
 def update(id):
     """Update a car if the current user is the author."""
-    car = get_car(id)
+    car = get_car(id)[0]
     form=updateCarForm()
     if request.method == "POST":
+        car_id = car[0]
+        mac_address = request.form["mac_address"]
         make = request.form["make"]
         body = request.form["body"]
         colour = request.form["colour"]
         seats = request.form["seats"]
         location = request.form["location"]
         cost = request.form["cost"]
+        status = request.form["status"]
         error = None
-
 # placeholder for input validation
         if not make:
             error = "Make is required."
@@ -219,27 +222,52 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                "UPDATE cars SET make = ?, body = ?, colour = ?, seats = ?, location = ?, cost = ? WHERE id = ?", (make, body, colour, seats, location, cost, id)
+            Database.update_record_parameterized(
+                "Cars",
+                " MacAddress = CASE WHEN %(mac_address)s = '' OR %(mac_address)s IS NULL " +
+                " THEN MacAddress ELSE %(mac_address)s END, " +
+                " Brand = CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
+                " THEN Brand ELSE %(brand)s END, " +
+                " Type = CASE WHEN %(type)s = '' OR %(type)s IS NULL " + 
+                " THEN Type ELSE %(type)s END, " +
+                " LocationID = CASE WHEN %(locationID)s = '' OR %(locationID)s IS NULL " + 
+                " THEN LocationID ELSE %(locationID)s END, " +
+                " Status = CASE WHEN %(status)s = '' OR %(status)s IS NULL " + 
+                " THEN Status ELSE %(status)s END, " +
+                " Color = CASE WHEN %(color)s = '' OR %(color)s IS NULL " + 
+                " THEN Color ELSE %(color)s END, " +
+                " Seat = CASE WHEN %(seat)s = '' OR %(seat)s IS NULL " + 
+                " THEN Seat ELSE %(seat)s END, " +
+                " Cost = CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " + 
+                " THEN Cost ELSE %(cost)s END ",
+                " WHERE ID = %(car_id)s", 
+                {
+                    "car_id": car_id,
+                    "mac_address": mac_address, 
+                    "brand": make, 
+                    "type": body,
+                    "locationID": location, 
+                    "status": status,
+                    "color": colour,
+                    "seat": seats,
+                    "cost": cost
+                }
             )
-            db.commit()
             return redirect(url_for("blog.admincars"))
-
     return render_template("blog/update.html", car=car, form=form)
 
-
+#DONE
 @bp.route("/<int:id>/confirm", methods=("GET", "POST"))
 def confirm(id):
     """Update a car if the current user is the author."""
-    car = get_car(id)
+    car = get_car(id)[0]
     datestart=request.args['datestart']
     dateend=request.args['dateend']
     form=updateCarForm()
     return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend)
 
 
-@bp.route("/<int:id>/delete", methods=("POST",))
+@bp.route("/delete", methods=("POST",))
 @login_required
 def delete(id):
     """Delete a car.
@@ -254,7 +282,7 @@ def delete(id):
     return redirect(url_for("blog.admincars"))
     
     
-@bp.route("/<int:id>/repair", methods=("POST",))
+@bp.route("/repair", methods=("POST",))
 @login_required
 def repair(id):
 
@@ -266,7 +294,7 @@ def repair(id):
     db.commit()
     return redirect(url_for("blog.admincars"))
     
-@bp.route("/<int:id>/fix", methods=("POST",))
+@bp.route("/fix", methods=("POST",))
 @login_required
 def fix(id):
 

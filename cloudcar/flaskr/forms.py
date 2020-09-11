@@ -27,52 +27,58 @@ class bookingSearch(FlaskForm):
 
 class newCarForm(FlaskForm):
     """New car form. for admin"""
+    mac_address = StringField('MAC')
     make = StringField('Make')
     body = StringField('Body')
     colour = SelectField('Colour', 
                         choices=[('', 'Any'),
-                        	  ('red', 'Red'),
+                        	     ('red', 'Red'),
                                  ('green', 'Green'),
                                  ('blue', 'Blue'),
                                  ('black', 'Black'),
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
+                                 ('yellow', "Yellow"),
                                  ('other', 'Other')])
     seats = SelectField('Seats',
                         choices=[('', 'Any'),
-                        	  ('4', '4'),
+                        	     ('4', '4'),
                                  ('5', '5'),
                                  ('6', '6'),
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
     cost = StringField('Cost')
-    location = StringField('Location')
+    location = StringField('LocationID')
     submit = SubmitField('Create')
 
 class updateCarForm(FlaskForm):
     """New car form. for admin"""
+    car_id = StringField('ID')
+    mac_address = StringField('MAC')
     make = StringField('Make')
     body = StringField('Body')
     colour = SelectField('Colour', 
                         choices=[('', 'Any'),
-                        	  ('red', 'Red'),
+                        	     ('red', 'Red'),
                                  ('green', 'Green'),
                                  ('blue', 'Blue'),
                                  ('black', 'Black'),
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
+                                 ('yellow', "Yellow"),
                                  ('other', 'Other')])
     seats = SelectField('Seats',
                         choices=[('', 'Any'),
-                        	  ('4', '4'),
+                        	     ('4', '4'),
                                  ('5', '5'),
                                  ('6', '6'),
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
     cost = StringField('Cost')
-    location = StringField('Location')
+    location = StringField('LocationID')
+    status = StringField('Status')
     submit = SubmitField('Update')
 
 

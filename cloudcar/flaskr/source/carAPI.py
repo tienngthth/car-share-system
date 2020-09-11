@@ -76,7 +76,7 @@ def get_car_longitude():
 def create_car():
     Database.insert_record_parameterized(
         "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
-        "(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        "(%s, %s, %s, %s, %s, %s, %s, %s)",
         (
             request.args.get("mac_address"),
             request.args.get("brand"),

@@ -7,6 +7,7 @@
 {% block content %}
   <form method="POST" action="/create">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
+    <div class="form-field" style="float:left;"> {{ form.mac_address.label }} {{ form.mac_address }}</div>
     <div class="form-field" style="float:left;"> {{ form.make.label }} {{ form.make }}</div>
     <div class="form-field" style="float:left;">{{ form.body.label }} {{ form.body }}</div>
     <div class="form-field" style="float:left;">{{ form.colour.label }} {{ form.colour }}</div>
