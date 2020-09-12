@@ -132,8 +132,8 @@ def execute_queries():
     cursor = Database.curs
 
     # #Retrieve all data
-    select_from_customers(cursor)
-    # select_from_staffs(cursor)
+    # select_from_customers(cursor)
+    select_from_staffs(cursor)
     # select_from_cars(cursor)
     # select_from_bookings(cursor)    
     # select_from_backlogs(cursor)

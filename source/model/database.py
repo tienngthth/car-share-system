@@ -1,4 +1,5 @@
 import pymysql
+from flask import jsonify
 
 #To connect to the GCP database:
 #1) Download the Cloud SQL Proxy
@@ -18,10 +19,11 @@ class Database:
             host='127.0.0.1',
             user='root',
             password='s3747274',
-            db='demo_database'
+            db='demo_database',
+            cursorclass=pymysql.cursors.DictCursor
         )
         Database.curs = Database.conn.cursor()
-
+     
     #Create a new table
     @staticmethod
     def create_table(tb_name, columns):
@@ -57,11 +59,7 @@ class Database:
             + conditions
             , parameters
         )
-        return_value = []
-        for result in Database.curs:
-            return_value.append(result)
-        Database.conn.close()
-        return return_value
+        return Database.curs.fetchall()
 
     #Read record
     @staticmethod
@@ -74,11 +72,7 @@ class Database:
             + tb_name
             + conditions
         )
-        return_value = []
-        for result in Database.curs:
-            return_value.append(result)
-        Database.conn.close()
-        return return_value
+        return Database.curs.fetchall()
 
     #Update record 
     @staticmethod
@@ -115,3 +109,4 @@ class Database:
         Database.curs.execute(command)
         Database.curs.connection.commit()
         Database.conn.close()
+

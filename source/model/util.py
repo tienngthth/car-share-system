@@ -7,8 +7,10 @@ class Util:
     
     @staticmethod
     def getIndices(listSize, page, maximum_record_per_page):
-        if (page == 0):
+        if (page == None):
             return (0, listSize)
+        else:
+            page = int(page)
         firstIndex = (page - 1) * maximum_record_per_page
         if (listSize < firstIndex or page <= 0):
             return (0, 0)
