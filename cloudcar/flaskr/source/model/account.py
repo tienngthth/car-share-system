@@ -3,13 +3,14 @@ from passlib import hash
 from abc import ABC, ABCMeta, abstractmethod
 
 class Account(ABC):
-    def __init__(self, username, password, email, first_name, last_name):
+    def __init__(self, id, username, password, email, first_name, last_name):
         super().__init__()
         self.__username = username
         self.__password = Account.hash_salt_password(password)
         self.__first_name = first_name
         self.__last_name = last_name
         self.__email = email
+        self.__id = id
 
     @staticmethod
     def hash_salt_password(raw_input):

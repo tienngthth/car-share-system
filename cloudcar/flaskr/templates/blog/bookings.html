@@ -42,14 +42,15 @@
   </tr>
   {% for booking in bookings %}
   <tr>
-  <td>{{ booking[0] }}</td>
-  <td>{{ booking[1] }}</td>
-  <td>{{ booking[2] }}</td>
-  <td>{{ booking[3] }}</td>
-  <td>{{ booking[4] }}</td>
-  <td>{{ booking[5] }}</td>
-  <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.update', id=booking[6]) }}">Cancel</a>
+  <td>{{ booking["RentTime"] }}</td>
+  <td>{{ booking["CarID"] }}</td>
+  <td>{{ booking["Brand"] }}</td>
+  <td>{{ booking["Color"] }}</td>
+  <td>{{ booking["Duration"] }}</td>
+  <td>{{ booking["Status"] }}</td>
+  <td style="max-width:40px;">{% if booking["Status"] == "Booked" %}
+          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.update', ID=booking['ID']) }}">Cancel</a>
+          {% endif %}
 </td>
   </tr>
   

@@ -4,6 +4,7 @@ from flask import g
 from flask import redirect
 from flask import render_template
 from flask import request
+import requests
 from flask import url_for
 from werkzeug.exceptions import abort
 from flaskr.source.model.database import Database
@@ -25,12 +26,9 @@ def get_car(id):
     :raise 404: if a post with the given id doesn't exist
     :raise 403: if the current user isn't the author
     """
-    car = Database.select_record("*", 
-                                 "Cars",
-                                 " WHERE Cars.ID = " + str(id))
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(id))).json()
     if car is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
-
     return car
 
 #DONE
@@ -38,43 +36,38 @@ def get_car(id):
 def index():
     form = carSearch()
     if request.method == "POST":
-        make = '%' + request.form['make'] + '%'
-        colour = '%' + request.form['colour'] + '%'
+        make = request.form['make']
+        colour = request.form['colour']
         datestart = request.form['start']
         dateend = request.form['end']
         # search form
-        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost", 
-                                      "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
-                                      " WHERE Brand LIKE '" + make + "' AND Color LIKE '" + colour + "'")
-        # all in the search box will return all the tuples
-        return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
+        cars = requests.get("http://127.0.0.1:8080/cars/index/get/car?brand={}&color={}".format(str(make), str(colour))).json()
+        return render_template("blog/index.html", cars=cars["car"], form=form, datestart=datestart, dateend=dateend)
     """Show all the cars, most recent first."""
     if request.method == "GET":
         datestart = ""
         dateend = ""
-        cars = []
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
-        return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
+        return render_template("blog/index.html", form=form, datestart=datestart, dateend=dateend)
         
 #DONE        
 @bp.route("/adminusers", methods=("GET", "POST"))
 def adminusers():
     form = userSearch()
     if request.method == "POST":
-        username = '%' + request.form['username'] + '%'
+        username = request.form['username']
         # search form
-        users = Database.select_record("*", "Customers", " WHERE Username LIKE '" + username + "' ORDER BY Username DESC")
-        # all in the search box will return all the tuples
-        return render_template("blog/adminusers.html", users=users, form=form)
+        users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name=&last_name=&email=&phone=".format(str(username))).json()
+        return render_template("blog/adminusers.html", users=users["results"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        users = Database.select_record("*", "Customers", " ORDER BY Username DESC")
+        users = requests.get("http://127.0.0.1:8080/customers/get/all/users").json()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
-        return render_template("blog/adminusers.html", users=users, form=form)
+        return render_template("blog/adminusers.html", users=users["user"], form=form)
         
         
 #DONE        
@@ -82,33 +75,26 @@ def adminusers():
 def admincars():
     form = adminCarSearch()
     if request.method == "POST":
-        make = '%' + request.form['make'] + '%'
-        colour = '%' + request.form['colour'] + '%'
+        make = request.form['make']
+        colour = request.form['colour']
         # search form
-        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-                                      "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-                                      " WHERE Cars.Brand LIKE '" + make + "' AND Cars.Color LIKE '" + colour + "' ORDER BY Bookings.RentTime DESC")
-        # all in the search box will return all the tuples
-        return render_template("blog/admincars.html", cars=cars, form=form)
+        cars = requests.get("http://127.0.0.1:8080/cars/admin/search/car?brand={}&color={}".format(str(make), str(colour))).json()
+        return render_template("blog/admincars.html", cars=cars["car"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = Database.select_record("Cars.ID, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-                                      "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-                                      " ORDER BY Bookings.RentTime DESC")
+        cars = requests.get("http://127.0.0.1:8080/cars/admin/get/all/cars").json()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
-        return render_template("blog/admincars.html", cars=cars, form=form)
+        return render_template("blog/admincars.html", cars=cars["car"], form=form)
 
 #DONE        
 @bp.route("/engineercars", methods=("GET", "POST"))
 def engineercars():
     if request.method == "GET":
-        cars = Database.select_record("Cars.ID, Locations.Address, Backlogs.Date, Backlogs.Status", 
-                                 "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-                                 "")
+        cars = requests.get("http://127.0.0.1:8080/backlogs/engineer/get/cars").json()
         #do I need these next 2 lines?
-        return render_template("blog/engineercars.html", cars=cars)
+        return render_template("blog/engineercars.html", cars=cars["car"])
 
 
 #DONE
@@ -121,20 +107,15 @@ def bookings():
         start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M')
         # search date only
-        bookings = Database.select_record("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
-                                                   "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
-                                                   " WHERE Bookings.RentTime > '" + str(start_date) + "' AND Bookings.RentTime < '" + str(end_date) + "'")
-        # all in the search box will return all the tuples
-        return render_template("blog/bookings.html", bookings=bookings, form=form)
+        bookings = requests.get("http://127.0.0.1:8080/bookings/get/booking?start={}&end={}".format(str(start_date), str(end_date))).json()
+        return render_template("blog/bookings.html", bookings=bookings["booking"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        bookings = Database.select_record("Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
-                                                   "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
-                                                   "")
+        bookings = requests.get("http://127.0.0.1:8080/bookings/get/all/bookings").json()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
-        return render_template("blog/bookings.html", bookings=bookings, form=form)
+        return render_template("blog/bookings.html", bookings=bookings["booking"], form=form)
 
 
 
@@ -173,31 +154,19 @@ def create():
         if error is not None:
             flash(error)
         else:
-            Database.insert_record_parameterized(
-                "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
-                "(%s, %s, %s, %s, %s, %s, %s, %s)",
-                (
-                    mac_address,
-                    make,
-                    body,
-                    location,
-                    "Available",
-                    colour,
-                    seats,
-                    cost,
-                )
-            )
+            requests.get("http://127.0.0.1:8080/cars/create?mac_address={}&brand={}&type={}&location_id={}&status=Available&color={}&seat={}&cost={}"
+            .format(str(mac_address), str(make), str(body), str(location), str(colour), str(seats), str(cost)))
             return redirect(url_for("blog.index"))
     return render_template("blog/create.html", form=form)
 
 #DONE
-@bp.route("/<int:id>/update", methods=("GET", "POST"))
-def update(id):
+@bp.route("/<int:ID>/update", methods=("GET", "POST"))
+def update(ID):
     """Update a car if the current user is the author."""
-    car = get_car(id)[0]
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     form=updateCarForm()
     if request.method == "POST":
-        car_id = car[0]
+        car_id = car["car"][0]["ID"]
         mac_address = request.form["mac_address"]
         make = request.form["make"]
         body = request.form["body"]
@@ -209,87 +178,51 @@ def update(id):
 # placeholder for input validation
         if not make:
             error = "Make is required."
-
         if error is not None:
             flash(error)
         else:
-            Database.update_record_parameterized(
-                "Cars",
-                " MacAddress = CASE WHEN %(mac_address)s = '' OR %(mac_address)s IS NULL " +
-                " THEN MacAddress ELSE %(mac_address)s END, " +
-                " Brand = CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
-                " THEN Brand ELSE %(brand)s END, " +
-                " Type = CASE WHEN %(type)s = '' OR %(type)s IS NULL " + 
-                " THEN Type ELSE %(type)s END, " +
-                " Status = CASE WHEN %(status)s = '' OR %(status)s IS NULL " + 
-                " THEN Status ELSE %(status)s END, " +
-                " Color = CASE WHEN %(color)s = '' OR %(color)s IS NULL " + 
-                " THEN Color ELSE %(color)s END, " +
-                " Seat = CASE WHEN %(seat)s = '' OR %(seat)s IS NULL " + 
-                " THEN Seat ELSE %(seat)s END, " +
-                " Cost = CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " + 
-                " THEN Cost ELSE %(cost)s END ",
-                " WHERE ID = %(car_id)s", 
-                {
-                    "car_id": car_id,
-                    "mac_address": mac_address, 
-                    "brand": make, 
-                    "type": body,
-                    "status": status,
-                    "color": colour,
-                    "seat": seats,
-                    "cost": cost
-                }
-            )
-            return redirect(url_for("blog.index"))
-    return render_template("blog/update.html", car=car, form=form)
+            requests.get("http://127.0.0.1:8080/cars/update?id={}&mac_address={}&brand={}&type={}&locationID=1&status={}&color={}&seat={}&cost={}"
+            .format(str(car_id), str(mac_address), str(make), str(body), str(status), str(colour), str(seats), str(cost)))
+            return redirect(url_for("blog.admincars"))
+    return render_template("blog/update.html", car=car["car"], form=form)
 
 #DONE
-@bp.route("/<int:id>/confirm", methods=("GET", "POST"))
-def confirm(id):
+@bp.route("/<int:ID>/confirm", methods=("GET", "POST"))
+def confirm(ID):
     """Update a car if the current user is the author."""
-    car = get_car(id)[0]
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     datestart=request.args['datestart']
     dateend=request.args['dateend']
     start_date = datetime.strptime(datestart, '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(dateend, '%Y-%m-%dT%H:%M')
-    total = int((end_date - start_date).total_seconds() / 3600) * car[8]
-    return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend,total=total)
+    total = int((end_date - start_date).total_seconds() / 3600) * car["car"][0]["Cost"]
+    return render_template("blog/confirm.html", car=car["car"],datestart=datestart,dateend=dateend,total=total)
 
 #DONE
-@bp.route("/<int:id>/delete", methods=("POST",))
-def delete(id):
+@bp.route("/<int:ID>/delete", methods=("POST",))
+def delete(ID):
     """Delete a car.
     Ensures that the car exists and that the logged in user is the
     author of the car.
     """
-    car = get_car(id)[0]
-    Database.delete_record_parameterized(
-        "Cars",
-        " WHERE ID = %s",
-         car[0],
-    )
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
+    requests.get("http://127.0.0.1:8080/cars/delete?id={}".format(str(car["car"][0]["ID"])))
     return redirect(url_for("blog.index"))
     
 #DONE    
-@bp.route("/<int:id>/repair", methods=("POST",))
-def repair(id):
-    car = get_car(id)[0]
-    Database.update_record_parameterized(
-        "Backlogs", 
-        " Status = 'Done'",
-        " WHERE CarID = (%s) AND Status = 'Not done' ",
-        car[0]
-    ) 
+@bp.route("/<int:ID>/repair", methods=("POST",))
+def repair(ID):
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
+    requests.get("http://127.0.0.1:8080/backlogs/fix/car?car_id={}".format(str(car["car"][0]["ID"])))
     return redirect(url_for("blog.engineercars"))
     
 #DONE    
-@bp.route("/<int:id>/report", methods=("GET", "POST"))
-def report(id):
-    car = get_car(id)[0]
+@bp.route("/<int:ID>/report", methods=("GET", "POST"))
+def report(ID):
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     form=newBacklogForm()
     if request.method == "POST":
-        car_id = car[0]
+        car_id = car["car"][0]["ID"]
         engineer_ID = request.form["engineer_ID"]
         date = request.form["date"]
         new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M')
@@ -299,17 +232,7 @@ def report(id):
         if error is not None:
             flash(error)
         else:
-            Database.insert_record_parameterized(
-                "Backlogs(AssignedEngineerID, SignedEngineerID, CarID, Date, Status, Description) ",
-                "(%s, %s, %s, %s, %s, %s)",
-                (
-                    engineer_ID,
-                    None,
-                    car_id,
-                    new_date,
-                    "Not done",
-                    ""
-                )
-            )
+            requests.get("http://127.0.0.1:8080/backlogs/create?assigned_engineer_id={}&car_id={}&created_date={}&status=Not%20done&description="
+            .format(str(engineer_ID), str(car_id), str(new_date)))
             return redirect(url_for("blog.admincars"))
     return render_template("blog/backlog.html", form=form)

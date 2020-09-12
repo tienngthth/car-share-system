@@ -40,12 +40,12 @@
      
   </form>
 </div>
-<p>Showing results 1 - {{cars|length}}</p>
+<p>Showing results</p>
     
      <table>
   <tr>
-    <th style="border-top-left-radius: 8px;">Car ID</th>
-    <th>Make</th>
+    <th style="border-top-left-radius: 8px;">Type</th>
+    <th>Brand</th>
     <th>Colour</th>
     <th>Location</th>
     <th>Status</th>
@@ -54,16 +54,16 @@
   </tr>
   {% for car in cars %}
   <tr>
-  <td>{{ car[0] }}</td>
-  <td>{{ car[1] }}</td>
-  <td>{{ car[2] }}</td>
-  <td>{{ car[3] }}</td>
-  <td>{{ car[4] }}</td>
+  <td>{{ car["Type"] }}</td>
+  <td>{{ car["Brand"] }}</td>
+  <td>{{ car["Color"] }}</td>
+  <td>{{ car["Address"] }}</td>
+  <td>{{ car["Status"] }}</td>
 <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', id=car[0]) }}">History</a>
+          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', ID=car['ID']) }}">History</a>
 </td>
     <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', id=car[0]) }}">Edit</a>
+          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', ID=car['ID']) }}">Edit</a>
 </td>
   </tr>
   
