@@ -1,28 +1,21 @@
-import re
+import re, requests
 from account import Account
+from database import Database
 
 class Customer(Account):
-    def __init__(self, username, password, email, phone):
-        super().__init__(username, password)
-        self.__email = email
-        self.__phone = phone
+    #Log to the database
+    def log_data_to_db(self):
+        resp = requests.get(
+            "http://127.0.0.1:8080/customers/create?" + 
+            "username=" + self.username + 
+            "&password=" + self.password +
+            "&first_name=" + self.first_name +
+            "&last_name=" + self.last_name + 
+            "&phone=" + self.phone +
+            "&email=" + self.email
+        )
+        print(resp.text)
 
-    @staticmethod
-    def validate_email_input(email):
-        """ Valid email input: 
-            1. Before "@", minimum length of the text (between 2 dots/underscors) is 2. 
-            Has to start with/end with/contain only alphanumerical characters.
-            2. After "@", requires 2 alphabetical text with a "." between. 
-            The latter contains 2 to 3 characters.
-        """
-        if re.search("^([A-Za-z0-9]+([.]|[_])?[A-Za-z0-9]+)+[@][A-Za-z]+[.][A-Za-z]{2,3}$", email):
-            return True
-        return False
-
-    @staticmethod      
-    def validate_phone_input(phone):
-        # Valid phone contains at least 5 characters, all is numbers
-        if re.search("^[0-9]{5,}$", phone):
-            return True
-        return False
-
+#Test create new account with encrypted password
+customer = Customer("ABC", "123abc", "abc@abc", "Tien", "Nguyen", "1234567", "customer")
+customer.log_data_to_db()
