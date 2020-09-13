@@ -33,13 +33,13 @@
  <div style="display:block; width:100%; clear:both; float:none;height:30px;">
   <div style="width:300px; float:left;"><strong>Cost Summary:</strong></div>
   <div style="width:300px; float:left;">Hourly Cost: {{ car.cost }}</div>
-  <div style="width:300px; float:left;">(Estimated Total: TODO)</div>
+  <div style="width:300px; float:left;">Estimated Total: {{ total_cost }} USD</div>
 </div>
 <hr>
 <p>*** You will receive a Google Calendar notification once your booking is confirmed.</p>
 
-<a class="greenbutton" style="margin-top: 10px;" href="{{ url_for('blog.updateBooking', id=car['id'], action='confirm') }}">Confirm Booking</a>
-<a class="greenbutton danger" style="margin-top: 10px; float:right;" href="{{ url_for('blog.updateBooking', id=car['id'], action='cancel') }}">Cancel Booking</a>
+<a class="greenbutton" style="margin-top: 10px;" href="{{ url_for('blog.createbooking', id=car['id'], datestart=datestart,dateend=dateend, action='confirm') }}">Confirm Booking</a>
+<a class="greenbutton danger" style="margin-top: 10px; float:right;" href="{{ url_for('blog.index', id=car['id'], action='cancel') }}">Cancel Booking</a>
 
 </div>
 

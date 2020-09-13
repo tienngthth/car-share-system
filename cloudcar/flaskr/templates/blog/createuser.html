@@ -5,9 +5,10 @@
 
 {% block content %}
 <div class="loginbox">
-  <form method="POST" action="/auth/register">
+  <form method="POST" action="/createuser">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
     <div class="form-field" style="float:left; margin-left: 40px;"> {{ form.username.label }} &nbsp;{{ form.username }}</div>
+    <div class="form-field" style="float:left; margin-left: 40px;"> {{ form.usertype.label }} &nbsp;{{ form.usertype }}</div>
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.email.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.email }}</div>
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.firstname.label }} {{ form.firstname }}</div>
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.lastname.label }} &nbsp;{{ form.lastname }}</div>
@@ -16,7 +17,6 @@
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.password.label }}&nbsp;&nbsp; {{ form.password }}</div>
     </div>
     <div class="form-submit" style="margin-left: 40px;"> {{ form.submit }} </div>
-    <p style="margin-left: 40px;">Already registered? <a href="/auth/login">Log in here.</a></p>
   </form>
  </div>
 {% endblock %}

@@ -10,6 +10,8 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+from .forms import *
+import re
 
 from flaskr.db import get_db
 
@@ -43,6 +45,11 @@ def load_logged_in_user():
         )
 
 
+
+
+
+
+
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     """Register a new user.
@@ -50,9 +57,15 @@ def register():
     Validates that the username is not already taken. Hashes the
     password for security.
     """
+    form = Register()
     if request.method == "POST":
-        username = request.form["username"]
+        username = request.form["username"].strip()
         password = request.form["password"]
+        firstname = request.form["firstname"].strip()
+        lastname = request.form["lastname"].strip()
+        email = request.form["email"].strip()
+        valid_email = re.findall(r"[^@]+@[^@]+\.[^@]+",email)
+        usertype = "Customer"
         db = get_db()
         error = None
 
@@ -60,8 +73,17 @@ def register():
             error = "Username is required."
         elif not password:
             error = "Password is required."
+        elif not firstname:
+            error = "First name is required."
+        elif not lastname:
+            error = "Last name is required."
+        elif not email:
+            error = "Email is required."
+        elif len(valid_email) < 1:
+            error = "Incorrectly formatted email address"
+        
         elif (
-            db.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
+            db.execute("SELECT id FROM User WHERE UserName = ?", (username,)).fetchone()
             is not None
         ):
             error = "User {0} is already registered.".format(username)
@@ -70,15 +92,15 @@ def register():
             # the name is available, store it in the database and go to
             # the login page
             db.execute(
-                "INSERT INTO user (username, password) VALUES (?, ?)",
-                (username, generate_password_hash(password)),
+                "INSERT INTO User (UserName, UserType, Password, FirstName, LastName, Email) VALUES (?, ?, ?, ?, ?, ?)",
+                (username, usertype, generate_password_hash(password), firstname, lastname, email),
             )
             db.commit()
             return redirect(url_for("auth.login"))
 
         flash(error)
 
-    return render_template("auth/register.html")
+    return render_template("auth/register.html", form=form)
 
 
 @bp.route("/login", methods=("GET", "POST"))
@@ -90,12 +112,12 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            "SELECT * FROM user WHERE username = ?", (username,)
+            "SELECT * FROM User WHERE UserName = ?", (username,)
         ).fetchone()
 
         if user is None:
             error = "Incorrect username."
-        elif not check_password_hash(user["password"], password):
+        elif not check_password_hash(user["Password"], password):
             error = "Incorrect password."
 
         if error is None:

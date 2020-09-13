@@ -60,7 +60,7 @@
     <td>{{ car['location'] }}</td>
     <td>{{ car['status'] }}</td>
 <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', id=car['id']) }}">History</a>
+          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.carbookings', id=car['id']) }}">History</a>
 </td>
     <td style="max-width:40px;">
           <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', id=car['id']) }}">Edit</a>

@@ -6,16 +6,38 @@ from wtforms import (StringField,
                      DateField,
                      SelectField,
                      IntegerField,
-                     DateTimeField)
-from wtforms.validators import (DataRequired,
-                                Email,
-                                EqualTo,
-                                Length,
-                                URL)
+                     DateTimeField,
+                     DecimalField)
+from wtforms.validators import *
 from wtforms import StringField, TextField, SubmitField
 from wtforms.fields.html5 import DateField
 from datetime import *
 from wtforms.widgets.html5 import DateTimeLocalInput
+
+
+
+class AdminUserForm(FlaskForm):
+    username = StringField('Username', [DataRequired()])
+    usertype = SelectField('User Type',[DataRequired()], 
+                        choices=[('', 'Select One'),
+                        	  ('Admin', 'Admin'),
+                                 ('Engineer', 'Engineer'),
+                                 ('Manager', 'Manager'),
+                                 ('Customer', 'Customer')])
+    firstname = StringField('First Name', [DataRequired()])
+    lastname = StringField('Last Name', [DataRequired()])
+    email = StringField('Email', [DataRequired()])
+    password = StringField('Password', [DataRequired()])
+    submit = SubmitField('Register')
+
+
+class Register(FlaskForm):   
+    username = StringField('Username', [DataRequired()])
+    firstname = StringField('First Name', [DataRequired()])
+    lastname = StringField('Last Name', [DataRequired()])
+    email = StringField('Email', [DataRequired()])
+    password = StringField('Password', [DataRequired()])
+    submit = SubmitField('Register')
 
 
 class bookingSearch(FlaskForm):   
@@ -27,9 +49,9 @@ class bookingSearch(FlaskForm):
 
 class newCarForm(FlaskForm):
     """New car form. for admin"""
-    make = StringField('Make')
-    body = StringField('Body')
-    colour = SelectField('Colour', 
+    make = StringField('Make',[DataRequired()])
+    body = StringField('Body',[DataRequired()])
+    colour = SelectField('Colour',[DataRequired()], 
                         choices=[('', 'Any'),
                         	  ('red', 'Red'),
                                  ('green', 'Green'),
@@ -38,7 +60,7 @@ class newCarForm(FlaskForm):
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
                                  ('other', 'Other')])
-    seats = SelectField('Seats',
+    seats = SelectField('Seats',[DataRequired()],
                         choices=[('', 'Any'),
                         	  ('4', '4'),
                                  ('5', '5'),
@@ -46,15 +68,15 @@ class newCarForm(FlaskForm):
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
-    cost = StringField('Cost')
-    location = StringField('Location')
+    cost = DecimalField('Cost',[InputRequired()])
+    location = StringField('Location',[DataRequired()])
     submit = SubmitField('Create')
 
 class updateCarForm(FlaskForm):
     """New car form. for admin"""
-    make = StringField('Make')
-    body = StringField('Body')
-    colour = SelectField('Colour', 
+    make = StringField('Make',[DataRequired()])
+    body = StringField('Body',[DataRequired()])
+    colour = SelectField('Colour', [DataRequired()],
                         choices=[('', 'Any'),
                         	  ('red', 'Red'),
                                  ('green', 'Green'),
@@ -63,7 +85,7 @@ class updateCarForm(FlaskForm):
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
                                  ('other', 'Other')])
-    seats = SelectField('Seats',
+    seats = SelectField('Seats',[DataRequired()],
                         choices=[('', 'Any'),
                         	  ('4', '4'),
                                  ('5', '5'),
@@ -71,8 +93,8 @@ class updateCarForm(FlaskForm):
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
-    cost = StringField('Cost')
-    location = StringField('Location')
+    cost = DecimalField('Cost',[DataRequired()])
+    location = StringField('Location',[DataRequired()])
     submit = SubmitField('Update')
 
 
@@ -80,7 +102,7 @@ class adminCarSearch(FlaskForm):
     """Car search form. for admin"""
     make = StringField('Make')
     body = StringField('Body')
-    colour = SelectField('Colour', 
+    colour = SelectField('Colour',
                         choices=[('', 'Any'),
                         	  ('red', 'Red'),
                                  ('green', 'Green'),
@@ -89,10 +111,9 @@ class adminCarSearch(FlaskForm):
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
                                  ('other', 'Other')])
-    status = SelectField('Status', 
+    status = SelectField('Status',
                         choices=[('', 'Any'),
                         	  ('available', 'Available'),
-                                 ('booked', 'Booked'),
                                  ('repair', 'Needs Repair')
                                  ])
     seats = SelectField('Seats',
@@ -103,18 +124,23 @@ class adminCarSearch(FlaskForm):
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
-    cost = StringField('Cost')
+    cost = DecimalField('Cost')
     location = StringField('Location')
     page = StringField('page')
     submit = SubmitField('Search')
 
 class userSearch(FlaskForm):
-    username = StringField('username')
-    usertype = StringField('usertype')
-    first = StringField('firstname')
-    last = StringField('lastname')
-    phone = StringField('phone no')
-    email = StringField('email add')
+    username = StringField('Username')
+    usertype = SelectField('User Type',
+                        choices=[('', 'Any'),
+                        	  ('Customer', 'Customer'),
+                                 ('Engineer', 'Engineer'),
+                                 ('Manager', 'Manager'),
+                                 ('Admin', 'Admin')])
+    first = StringField('First Name')
+    last = StringField('Last Name')
+    phone = StringField('Phone no.')
+    email = StringField('Email Add')
     page = StringField('page')
     submit = SubmitField('Search')
     
@@ -122,7 +148,7 @@ class carSearch(FlaskForm):
     """Car search form. for users"""
     make = StringField('Make')
     body = StringField('Body Type')
-    colour = SelectField('Colour', 
+    colour = SelectField('Colour',
                         choices=[('', 'Any'),
                         	  ('red', 'Red'),
                                  ('green', 'Green'),
@@ -139,7 +165,7 @@ class carSearch(FlaskForm):
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
-    cost = StringField('Cost')
+    cost = DecimalField('Max Cost')
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')

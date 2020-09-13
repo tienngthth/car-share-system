@@ -9,6 +9,7 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run_flow
 import jinja2
+import sys
 
 CLIENT_SECRET_FILE = 'credentials.json'
 OAUTH_SCOPE = 'https://www.googleapis.com/auth/gmail.compose'
@@ -16,8 +17,8 @@ STORAGE = Storage('gmail.storage')
 
 class send_mail(object):
   def __init__(self,car_id):
-    self.send_to = "info@test.com" #fill this in with sender address
-    self.send_from = "info@test.com" #fill this in with receiver address
+    self.send_to = "sean.a.boyce@gmail.com" #fill this in with sender address
+    self.send_from = "sean.a.boyce@gmail.com" #fill this in with receiver address
     self.send_title = "Car Maintenance Request"
     self.car_id = car_id
     with open ("email.html", "r") as myfile:
@@ -44,4 +45,6 @@ class send_mail(object):
     try:
         message = (gmail_service.users().messages().send(userId="me",     body=body).execute())
     except Exception as error: print('An error occurred: %s' % error)
+mail = send_mail(str(3))
+mail.send()
 
