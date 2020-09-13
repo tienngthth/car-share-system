@@ -10,7 +10,7 @@ from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash
 from flaskr.source.model.database import Database
 
-from flaskr.auth import login_required
+from flaskr.auth import login_customer_required, login_admin_required, login_manager_required, login_engineer_required
 from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
@@ -61,7 +61,10 @@ def index():
         
 #DONE        
 @bp.route("/adminusers", methods=("GET", "POST"))
+@login_admin_required
 def adminusers():
+    if g.type != "Admin":
+        return redirect(url_for("blog.index"))
     form = userSearch()
     if request.method == "POST":
         username = request.form['username']
@@ -84,7 +87,10 @@ def adminusers():
         
 #DONE        
 @bp.route("/admincars", methods=("GET", "POST"))
+@login_admin_required
 def admincars():
+    if g.type != "Admin":
+        return redirect(url_for("blog.index"))
     form = adminCarSearch()
     if request.method == "POST":
         make = request.form['make']
@@ -107,7 +113,10 @@ def admincars():
 
 #DONE        
 @bp.route("/engineercars", methods=("GET", "POST"))
+@login_engineer_required
 def engineercars():
+    if g.type != "Engineer":
+        return redirect(url_for("blog.index"))
     if request.method == "GET":
         cars = requests.get("http://127.0.0.1:8080/backlogs/engineer/get/cars").json()
         #do I need these next 2 lines?
@@ -116,7 +125,10 @@ def engineercars():
 
 #DONE
 @bp.route("/bookings", methods=("GET", "POST"))
+@login_admin_required
 def bookings():
+    if g.type != "Admin":
+        return redirect(url_for("blog.index"))
     form = bookingSearch()
     if request.method == "POST":
         start = request.form['start']
@@ -219,8 +231,10 @@ def editCar(ID):
 
 #DONE
 @bp.route("/<int:ID>/bookings/confirm", methods=("GET", "POST"))
+@login_customer_required
 def confirm(ID):
-    """Update a car if the current user is the author."""
+    if g.type != "Customer":
+        return redirect(url_for("blog.index"))
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     datestart=request.args['datestart']
     dateend=request.args['dateend']

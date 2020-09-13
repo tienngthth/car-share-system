@@ -48,10 +48,10 @@ def create_sample_staffs_data():
     #Staffs
     global staffs 
     staffs = []
-    staffs.append(("Cuong_Nguyen", Account.hash_salt_password("11111111abcd"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Admin", ""))
-    staffs.append(("Tien_Nguyen", Account.hash_salt_password("abcd22222222"), "Tien", "Nguyen", "tien222@gmail.com", "1234567", "Manager", ""))
-    staffs.append(("Minh33", Account.hash_salt_password("ab33333333cd"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Engineer", ""))
-    staffs.append(("Tom", Account.hash_salt_password("abcdefgh"), "Tom", "Nguyen", "tom@gmail.com", "12345678970", "Engineer", ""))
+    staffs.append(("Cuong_Nguyen", "11111111abcd", "Cuong", "Nguyen", "cuong@gmail.com","123456", "Admin", ""))
+    staffs.append(("Tien_Nguyen", "abcd22222222", "Tien", "Nguyen", "tien222@gmail.com", "1234567", "Manager", ""))
+    staffs.append(("Minh33", "ab33333333cd", "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Engineer", ""))
+    staffs.append(("Tom", "abcdefgh", "Tom", "Nguyen", "tom@gmail.com", "12345678970", "Engineer", ""))
 
 def create_sample_cars_data():
     #Cars
@@ -98,9 +98,9 @@ def create_sample_customers_data():
     #Customers
     global customers 
     customers = []
-    customers.append(("Tam", Account.hash_salt_password("12345678"), "Tam", "Nguyen", "tam@gmail.com", "123456"))
-    customers.append(("Nguyen", Account.hash_salt_password("23456781"), "Nguyen", "Thanh", "nguyen123@gmail.com", "12343456"))
-    customers.append(("Thanh", Account.hash_salt_password("13572468abc"), "Thanh", "Nguyen", "thanh456@gmail.com", "12345678"))
+    customers.append(("Tam", "12345678", "Tam", "Nguyen", "tam@gmail.com", "123456"))
+    customers.append(("Nguyen", "23456781", "Nguyen", "Thanh", "nguyen123@gmail.com", "12343456"))
+    customers.append(("Thanh", "13572468abc", "Thanh", "Nguyen", "thanh456@gmail.com", "12345678"))
 
 def add_sample_data():
     create_sample_staffs_data()

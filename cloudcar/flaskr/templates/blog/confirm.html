@@ -38,7 +38,7 @@
 <hr>
 <p>*** You will receive a Google Calendar notification once your booking is confirmed.</p>
 
-<a class="greenbutton" style="margin-top: 10px;" href="{{ url_for('blog.createBooking', ID=car[0]['ID'], UserID = g.user, Start=datestart, End=dateend, Cost=total, action='confirm') }}">Confirm Booking</a>
+<a class="greenbutton" style="margin-top: 10px;" href="{{ url_for('blog.createBooking', ID=car[0]['ID'], UserID = g.user['ID'], Start=datestart, End=dateend, Cost=total, action='confirm') }}">Confirm Booking</a>
 <a class="greenbutton danger" style="margin-top: 10px; float:right;" href="{{ url_for('blog.index') }}">Cancel Booking</a>
 
 </div>
