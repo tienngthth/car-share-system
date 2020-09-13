@@ -89,7 +89,7 @@ def get_booked_times_wrt_car_id():
 def get_all_bookings_for_booking_page():
     results = Database.select_record(
         "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
-        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
+        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
         ""
     )
     return {"booking" : results}
@@ -98,8 +98,8 @@ def get_all_bookings_for_booking_page():
 def get_booking_for_booking_page():
     results = Database.select_record_parameterized(
         "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
-        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.ID", 
-        " WHERE Bookings.RentTime > %s AND Bookings.RentTime < %s",
+        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
+        " WHERE Bookings.RentTime < %s AND Bookings.ReturnTime > %s",
         (request.args.get("start"), request.args.get("end"))
     )
     return {"booking" : results}

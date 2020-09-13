@@ -37,11 +37,17 @@ def index():
     form = carSearch()
     if request.method == "POST":
         make = request.form['make']
+        body = request.form['body']
         colour = request.form['colour']
+        seats = request.form['seats']
+        cost = request.form['cost']
         datestart = request.form['start']
         dateend = request.form['end']
+        start_date = datetime.strptime(datestart, '%Y-%m-%dT%H:%M')
+        end_date = datetime.strptime(dateend, '%Y-%m-%dT%H:%M')
         # search form
-        cars = requests.get("http://127.0.0.1:8080/cars/index/get/car?brand={}&color={}".format(str(make), str(colour))).json()
+        cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        .format(str(make), str(body), str(colour), str(seats), str(cost), str(start_date), str(end_date))).json()
         return render_template("blog/index.html", cars=cars["car"], form=form, datestart=datestart, dateend=dateend)
     """Show all the cars, most recent first."""
     if request.method == "GET":
@@ -58,8 +64,13 @@ def adminusers():
     form = userSearch()
     if request.method == "POST":
         username = request.form['username']
+        first = request.form['first']
+        last = request.form['last']
+        email = request.form['email']
+        phone = request.form['phone']
         # search form
-        users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name=&last_name=&email=&phone=".format(str(username))).json()
+        users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
+        .format(str(username), str(first), str(last), str(email), str(phone))).json()
         return render_template("blog/adminusers.html", users=users["results"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
@@ -76,13 +87,18 @@ def admincars():
     form = adminCarSearch()
     if request.method == "POST":
         make = request.form['make']
+        body = request.form['body']
         colour = request.form['colour']
+        seat = request.form['seats']
+        cost = request.form['cost']
+        status = request.form['status']
         # search form
-        cars = requests.get("http://127.0.0.1:8080/cars/admin/search/car?brand={}&color={}".format(str(make), str(colour))).json()
+        cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand={}&car_type={}&status={}&color={}&seat={}&cost={}&start=&end="
+        .format(str(make), str(body), str(status), str(colour), str(seat), str(cost))).json()
         return render_template("blog/admincars.html", cars=cars["car"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = requests.get("http://127.0.0.1:8080/cars/admin/get/all/cars").json()
+        cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end=").json()
         #do I need these next 2 lines?
         if form.validate_on_submit():
             return redirect(url_for('success'))
@@ -236,3 +252,17 @@ def report(ID):
             .format(str(engineer_ID), str(car_id), str(new_date)))
             return redirect(url_for("blog.admincars"))
     return render_template("blog/backlog.html", form=form)
+
+    
+@bp.route("/<int:ID>/cancel", methods=("POST",))
+def cancel_booking(ID):
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
+    requests.get("http://127.0.0.1:8080/bookings/update?status=Cancelled&id={}".format(str(car["car"][0]["ID"])))
+    return redirect(url_for("blog.bookings"))
+
+@bp.route("/<int:ID>/history", methods=("GET",))
+def get_history(ID):
+    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
+    history = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(str(car["car"][0]["ID"]))).json()
+    return render_template("blog/history.html", history=history["history"])
+

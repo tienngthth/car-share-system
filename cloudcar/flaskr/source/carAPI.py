@@ -51,22 +51,24 @@ def create():
 @car_api.route("/read")
 def read():
     results = Database.select_record_parameterized(
-        "*", 
-        "Cars", 
+        "Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost, Cars.Status", 
+        "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID LEFT JOIN Bookings ON Cars.ID = Bookings.CarID", 
         " WHERE MacAddress LIKE CASE WHEN %(mac_address)s = '' OR %(mac_address)s IS NULL " +
         " THEN MacAddress ELSE %(mac_address)s END " +
         " AND Brand LIKE CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
         " THEN Brand ELSE %(brand)s END " +
         " AND Type LIKE CASE WHEN %(car_type)s = '' OR %(car_type)s IS NULL " +
         " THEN Type ELSE %(car_type)s END " +
-        " AND Status LIKE CASE WHEN %(status)s = '' OR %(status)s IS NULL " +
-        " THEN Status ELSE %(status)s END " +
+        " AND Cars.Status LIKE CASE WHEN %(status)s = '' OR %(status)s IS NULL " +
+        " THEN Cars.Status ELSE %(status)s END " +
         " AND Color LIKE CASE WHEN %(color)s = '' OR %(color)s IS NULL " +
         " THEN Color ELSE %(color)s END " +
         " AND Seat LIKE CASE WHEN %(seat)s = '' OR %(seat)s IS NULL " +
         " THEN Seat ELSE %(seat)s END " +
         " AND Cost LIKE CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
-        " THEN Cost ELSE %(cost)s END ",
+        " THEN Cost ELSE %(cost)s END " +
+        " AND Bookings.RentTime IS NULL OR Bookings.ReturnTime IS NULL OR Bookings.ReturnTime < %(rent_time)s OR Bookings.RentTime > %(return_time)s" +
+        " OR Bookings.Status IS NULL OR Bookings.Status = 'Cancelled'",
         {
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
@@ -74,10 +76,12 @@ def read():
             "status": request.args.get("status"), 
             "color": request.args.get("color"), 
             "seat": request.args.get("seat"), 
-            "cost": request.args.get("cost")
+            "cost": request.args.get("cost"),
+            "rent_time": request.args.get("start"),
+            "return_time": request.args.get("end")
         }
     ) 
-    return {"results:": Util.paginatedDisplay(results, request.args.get("page"))}
+    return {"car": Util.paginatedDisplay(results, request.args.get("page"))}
 
 @car_api.route("/update", methods=['GET', 'PUT'])
 def update():
@@ -140,35 +144,6 @@ def get_car_id_by_mac_address():
     return {"car_id": results}
 
 #New API starts from here
-@car_api.route("index/get/car")
-def get_car_for_index_page():
-    results = Database.select_record_parameterized(
-        "Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost", 
-        "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
-        " WHERE Brand LIKE %s AND Color LIKE %s",
-        (request.args.get("brand"), request.args.get("color"))
-    )
-    return {"car": results}
-
-@car_api.route("admin/search/car")
-def get_car_for_admin_page():
-    results = Database.select_record_parameterized(
-        "Cars.ID, Cars.Type, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-        "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-        " WHERE Cars.Brand LIKE %s AND Cars.Color LIKE %s ORDER BY Bookings.RentTime DESC",
-        (request.args.get("brand"), request.args.get("color"))
-    )
-    return {"car": results}
-
-@car_api.route("admin/get/all/cars")
-def get_all_cars_for_admin_page():
-    results = Database.select_record(
-        "Cars.ID, Cars.Type, Cars.Brand, Cars.Color, Locations.Address, Bookings.Status",
-        "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-        " ORDER BY Bookings.RentTime DESC"
-    )
-    return {"car": results}
-
 @car_api.route("get/car/by/ID")
 def get_car_by_ID():
     results = Database.select_record_parameterized(
@@ -178,3 +153,13 @@ def get_car_by_ID():
         request.args.get("id")
     )
     return {"car": results}
+
+@car_api.route("history")
+def get_car_history():
+    results = Database.select_record_parameterized(
+        "Bookings.ID, Bookings.RentTime, Bookings.ReturnTime, Bookings.Status", 
+        "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID",
+        " WHERE Cars.ID = %s",
+        request.args.get("id")
+    )
+    return {"history": results}

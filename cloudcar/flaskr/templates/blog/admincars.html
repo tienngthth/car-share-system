@@ -30,7 +30,6 @@
       <div style="display:block; width:100%; clear:both; float:none;">
       
       <div class="form-field">{{ form.status.label }} {{ form.status() }}</div>
-      <div class="form-field">{{ form.location.label }} {{ form.location() }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
       <div class="form-submit"> {{ form.submit }} 
@@ -60,7 +59,7 @@
   <td>{{ car["Address"] }}</td>
   <td>{{ car["Status"] }}</td>
 <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.update', ID=car['ID']) }}">History</a>
+          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.get_history', ID=car['ID']) }}">History</a>
 </td>
     <td style="max-width:40px;">
           <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', ID=car['ID']) }}">Edit</a>
