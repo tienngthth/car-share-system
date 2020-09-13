@@ -16,7 +16,7 @@ from flaskr.auth import login_customer_required, login_admin_required, login_man
 from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
-from datetime impo`  rt *
+from datetime import *
 import math
 import re
 import os
@@ -710,7 +710,7 @@ def editCar(ID):
         cost = request.form["cost"]
         status = request.form["status"]
         error = None
-# placeholder for input validation
+        # placeholder for input validation
         if not make:
             error = "Make is required."
         if error is not None:
@@ -806,6 +806,7 @@ def calendar(id):
     #
     #
     return redirect(url_for("blog.index"))
+    
 #Report a car (can only be done by admin)  
 @bp.route("/<int:ID>/admincars/update/report", methods=("GET", "POST"))
 @login_admin_required

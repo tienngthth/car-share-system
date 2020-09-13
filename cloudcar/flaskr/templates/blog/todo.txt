@@ -1,4 +1,0 @@
--User search for admin
--Engineer repair list
--engineer car details popup
--maybe let admin clear repair status
