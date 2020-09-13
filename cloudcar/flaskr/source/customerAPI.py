@@ -131,3 +131,24 @@ def get_all_users():
         ""
     ) 
     return {"user": results}
+
+@customer_api.route("/get/user/by/id")
+def get_user_by_id():
+    results = Database.select_record_parameterized(
+        "*", 
+        "Customers", 
+        " WHERE ID = %s",
+        request.args.get("id")
+    ) 
+    return {"user": results}
+
+@customer_api.route("/get/user/by/username")
+def get_user_by_username():
+    results = Database.select_record_parameterized(
+        "*", 
+        "Customers", 
+        " WHERE Username = %s",
+        request.args.get("username")
+    ) 
+    return {"user": results}
+    

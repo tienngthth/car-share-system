@@ -7,6 +7,7 @@ from flask import request
 import requests
 from flask import url_for
 from werkzeug.exceptions import abort
+from werkzeug.security import generate_password_hash
 from flaskr.source.model.database import Database
 
 from flaskr.auth import login_required
@@ -134,23 +135,37 @@ def bookings():
         return render_template("blog/bookings.html", bookings=bookings["booking"], form=form)
 
 
-
-@bp.route("/updateBooking", methods=("GET", "POST"))
-@login_required
-def updateBooking():
-   
-
+@bp.route("/<int:ID>/<string:Start>/<string:End>/<int:UserID>/<int:Cost>/bookings/confirm/createBooking", methods=("GET", "POST"))
+def createBooking(ID, Start, End, UserID, Cost):
+    requests.get("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
+    .format(str(UserID), str(ID), str(Start), str(End), str(Cost)))
     return redirect(url_for("blog.index"))
     
-@bp.route("/edituser", methods=("GET", "POST"))
-@login_required
-def edituser():
-   
-
-    return redirect(url_for("blog.adminusers"))
+@bp.route("/<int:ID>/adminuser/update", methods=("GET", "POST"))
+def editUser(ID):
+    user = requests.get("http://127.0.0.1:8080/customers/get/user/by/id?id={}".format(str(ID))).json()
+    form = updateUserForm()
+    if request.method == "POST":
+        user_id = user["user"][0]["ID"]
+        username = request.form["username"]
+        password = request.form["password"]
+        first = request.form["first"]
+        last = request.form["last"]
+        phone = request.form["phone"]
+        email = request.form["email"]
+        error = None
+        if not username:
+            error = "Username is required."
+        if error is not None:
+            flash(error)
+        else:
+            requests.get("http://127.0.0.1:8080/customers/update?id={}&username={}&password={}&first_name={}&last_name={}&email={}&phone={}"
+            .format(str(user_id), str(username), str(generate_password_hash(password)), str(first), str(last), str(email), str(phone)))
+            return redirect(url_for("blog.adminusers"))
+    return render_template("blog/update_user.html", user=user["user"], form=form)
 
 #DONE
-@bp.route("/create", methods=("GET", "POST"))
+@bp.route("/admincars/create", methods=("GET", "POST"))
 def create():
     form=newCarForm()
     """Create a new car for the current user."""
@@ -176,8 +191,8 @@ def create():
     return render_template("blog/create.html", form=form)
 
 #DONE
-@bp.route("/<int:ID>/update", methods=("GET", "POST"))
-def update(ID):
+@bp.route("/<int:ID>/admincars/update", methods=("GET", "POST"))
+def editCar(ID):
     """Update a car if the current user is the author."""
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     form=updateCarForm()
@@ -203,7 +218,7 @@ def update(ID):
     return render_template("blog/update.html", car=car["car"], form=form)
 
 #DONE
-@bp.route("/<int:ID>/confirm", methods=("GET", "POST"))
+@bp.route("/<int:ID>/bookings/confirm", methods=("GET", "POST"))
 def confirm(ID):
     """Update a car if the current user is the author."""
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
@@ -215,7 +230,7 @@ def confirm(ID):
     return render_template("blog/confirm.html", car=car["car"],datestart=datestart,dateend=dateend,total=total)
 
 #DONE
-@bp.route("/<int:ID>/delete", methods=("POST",))
+@bp.route("/<int:ID>/admincars/update/delete", methods=("POST",))
 def delete(ID):
     """Delete a car.
     Ensures that the car exists and that the logged in user is the
@@ -226,14 +241,14 @@ def delete(ID):
     return redirect(url_for("blog.index"))
     
 #DONE    
-@bp.route("/<int:ID>/repair", methods=("POST",))
+@bp.route("/<int:ID>/engineercars/repair", methods=("POST",))
 def repair(ID):
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     requests.get("http://127.0.0.1:8080/backlogs/fix/car?car_id={}".format(str(car["car"][0]["ID"])))
     return redirect(url_for("blog.engineercars"))
     
 #DONE    
-@bp.route("/<int:ID>/report", methods=("GET", "POST"))
+@bp.route("/<int:ID>/admincars/update/report", methods=("GET", "POST"))
 def report(ID):
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     form=newBacklogForm()
@@ -254,13 +269,13 @@ def report(ID):
     return render_template("blog/backlog.html", form=form)
 
     
-@bp.route("/<int:ID>/cancel", methods=("POST",))
+@bp.route("/<int:ID>/bookings/cancel", methods=("POST",))
 def cancel_booking(ID):
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     requests.get("http://127.0.0.1:8080/bookings/update?status=Cancelled&id={}".format(str(car["car"][0]["ID"])))
     return redirect(url_for("blog.bookings"))
 
-@bp.route("/<int:ID>/history", methods=("GET",))
+@bp.route("/<int:ID>/admincars/history", methods=("GET",))
 def get_history(ID):
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(ID))).json()
     history = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(str(car["car"][0]["ID"]))).json()

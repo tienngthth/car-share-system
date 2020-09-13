@@ -10,5 +10,4 @@ def test_2():
     resp = requests.get('http://127.0.0.1:8080/cars/create?mac_address=&brand=ABC&type=&latitude=&longitude=&status=to%20be%20repaired&color=&seat=5&cost=50')
     print(resp.text)
 
-car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id=1").json()
-print(car["car"])
+print(requests.get("http://127.0.0.1:8080/customers/update?id=1&username=Tamm&password=12345&first_name=Tam&last_name=Nguyen&email=123@gmail.com&phone=12345"))

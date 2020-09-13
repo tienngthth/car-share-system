@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Update User ID {{ user[0]["ID"] }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="POST" action="update">
+  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
+    <div class="form-field" style="float:left;"> {{ form.username.label }} {{ form.username }}</div>
+    <div class="form-field" style="float:left;"> {{ form.password.label }} {{ form.password }}</div>
+    <div class="form-field" style="float:left;">{{ form.first.label }} {{ form.first }}</div>
+    </div>
+ <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">   
+    <div class="form-field" style="float:left;">{{ form.last.label }} {{ form.last }}</div>
+    
+    <div class="form-field" style="float:left;">{{ form.phone.label }} {{ form.phone }}</div>
+    
+    <div class="form-field" style="float:left;">{{ form.email.label }} {{ form.email }}</div>
+    </div>
+    <div class="form-submit"> {{ form.submit }} </div>
+  </form>
+{% endblock %}

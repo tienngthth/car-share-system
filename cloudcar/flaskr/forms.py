@@ -154,3 +154,12 @@ class newBacklogForm(FlaskForm):
     engineer_ID = StringField('Engineer ID')
     date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     submit = SubmitField('Create')
+
+class updateUserForm(FlaskForm):
+    username = StringField('username')
+    password = StringField('password')
+    first = StringField('firstname')
+    last = StringField('lastname')
+    phone = StringField('phone no')
+    email = StringField('email')
+    submit = SubmitField('Update')

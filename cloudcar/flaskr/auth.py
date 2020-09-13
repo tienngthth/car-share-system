@@ -8,10 +8,12 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
+from .forms import *
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
-
-from flaskr.db import get_db
+from wtforms.fields.html5 import DateField
+from wtforms.widgets.html5 import DateTimeLocalInput
+import requests
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -39,10 +41,10 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = (
-            get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+            requests.get("http://127.0.0.1:8080/customers/get/user/by/id?id={}".format(str(user_id))).json()["user"][0]["ID"]
         )
 
-
+#DONE
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     """Register a new user.
@@ -53,31 +55,26 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
+        first = request.form["first"]
+        last = request.form["last"]
+        email = request.form["email"]
+        phone = request.form["phone"]
         error = None
 
         if not username:
             error = "Username is required."
         elif not password:
             error = "Password is required."
-        elif (
-            db.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
-            is not None
-        ):
+        elif len(requests.get("http://127.0.0.1:8080/customers/get/user/by/username?username={}".format(str(username))).json()["user"]) > 0:
             error = "User {0} is already registered.".format(username)
 
         if error is None:
             # the name is available, store it in the database and go to
             # the login page
-            db.execute(
-                "INSERT INTO user (username, password) VALUES (?, ?)",
-                (username, generate_password_hash(password)),
-            )
-            db.commit()
+            requests.get("http://127.0.0.1:8080/customers/create?username={}&password={}&first_name={}&last_name={}&email={}&phone={}"
+            .format(str(username), generate_password_hash(password), str(first), str(last), str(email), str(phone)))
             return redirect(url_for("auth.login"))
-
         flash(error)
-
     return render_template("auth/register.html")
 
 
@@ -87,21 +84,18 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
         error = None
-        user = db.execute(
-            "SELECT * FROM user WHERE username = ?", (username,)
-        ).fetchone()
+        user = requests.get("http://127.0.0.1:8080/customers/get/user/by/username?username={}".format(str(username))).json()["user"]
 
-        if user is None:
+        if len(user) == 0:
             error = "Incorrect username."
-        elif not check_password_hash(user["password"], password):
+        elif not check_password_hash(user[0]["Password"], password):
             error = "Incorrect password."
 
         if error is None:
             # store the user id in a new session and return to the index
             session.clear()
-            session["user_id"] = user["id"]
+            session["user_id"] = user[0]["ID"]
             return redirect(url_for("index"))
 
         flash(error)
