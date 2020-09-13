@@ -14,8 +14,6 @@ from wtforms.fields.html5 import DateField
 from datetime import *
 from wtforms.widgets.html5 import DateTimeLocalInput
 
-
-
 class AdminUserForm(FlaskForm):
     username = StringField('Username', [DataRequired()])
     usertype = SelectField('User Type',[DataRequired()], 
@@ -43,7 +41,6 @@ class Register(FlaskForm):
 class bookingSearch(FlaskForm):   
     """ My Booking search form. for users"""
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
-    end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
 
@@ -51,18 +48,20 @@ class newCarForm(FlaskForm):
     """New car form. for admin"""
     make = StringField('Make',[DataRequired()])
     body = StringField('Body',[DataRequired()])
-    colour = SelectField('Colour',[DataRequired()], 
+    mac_address = StringField('MAC')
+    colour = SelectField('Colour', [DataRequired()],
                         choices=[('', 'Any'),
-                        	  ('red', 'Red'),
+                        	     ('red', 'Red'),
                                  ('green', 'Green'),
                                  ('blue', 'Blue'),
                                  ('black', 'Black'),
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
+                                 ('yellow', "Yellow"),
                                  ('other', 'Other')])
     seats = SelectField('Seats',[DataRequired()],
                         choices=[('', 'Any'),
-                        	  ('4', '4'),
+                        	     ('4', '4'),
                                  ('5', '5'),
                                  ('6', '6'),
                                  ('7', '7'),
@@ -74,20 +73,22 @@ class newCarForm(FlaskForm):
 
 class updateCarForm(FlaskForm):
     """New car form. for admin"""
-    make = StringField('Make',[DataRequired()])
-    body = StringField('Body',[DataRequired()])
-    colour = SelectField('Colour', [DataRequired()],
+    mac_address = StringField('MAC')
+    make = StringField('Make')
+    body = StringField('Body')
+    colour = SelectField('Colour', 
                         choices=[('', 'Any'),
-                        	  ('red', 'Red'),
+                        	     ('red', 'Red'),
                                  ('green', 'Green'),
                                  ('blue', 'Blue'),
                                  ('black', 'Black'),
                                  ('white', 'White'),
                                  ('silver', 'Silver'),
+                                 ('yellow', "Yellow"),
                                  ('other', 'Other')])
     seats = SelectField('Seats',[DataRequired()],
                         choices=[('', 'Any'),
-                        	  ('4', '4'),
+                        	     ('4', '4'),
                                  ('5', '5'),
                                  ('6', '6'),
                                  ('7', '7'),
@@ -95,6 +96,7 @@ class updateCarForm(FlaskForm):
                                  ])
     cost = DecimalField('Cost',[DataRequired()])
     location = StringField('Location',[DataRequired()])
+    status = StringField('Status',[DataRequired()])
     submit = SubmitField('Update')
 
 
@@ -170,3 +172,17 @@ class carSearch(FlaskForm):
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
+
+class newBacklogForm(FlaskForm):
+    engineer_ID = StringField('Engineer ID')
+    date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    submit = SubmitField('Create')
+
+class updateUserForm(FlaskForm):
+    username = StringField('username')
+    password = StringField('password')
+    first = StringField('firstname')
+    last = StringField('lastname')
+    phone = StringField('phone no')
+    email = StringField('email')
+    submit = SubmitField('Update')

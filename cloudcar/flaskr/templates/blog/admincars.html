@@ -30,22 +30,21 @@
       <div style="display:block; width:100%; clear:both; float:none;">
       
       <div class="form-field">{{ form.status.label }} {{ form.status() }}</div>
-      <div class="form-field">{{ form.location.label }} {{ form.location() }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
-      <div class="form-submit"> {{ form.submit }}  {% if g.user %}
-    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.create') }}">Add New</a>
-  {% endif %}</div>
+      <div class="form-submit"> {{ form.submit }} 
+      <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.create') }}">Add New</a>
+      </div>
       </div>
      
   </form>
 </div>
-<p>Showing results 1 - {{cars|length}}</p>
+<p>Showing results</p>
     
      <table>
   <tr>
-    <th style="border-top-left-radius: 8px;">Car ID</th>
-    <th>Make</th>
+    <th style="border-top-left-radius: 8px;">Type</th>
+    <th>Brand</th>
     <th>Colour</th>
     <th>Location</th>
     <th>Status</th>
@@ -54,16 +53,16 @@
   </tr>
   {% for car in cars %}
   <tr>
-  <td>{{ car['id'] }}</td>
-  <td>{{ car['make'] }}</td>
-    <td>{{ car['colour'] }}</td>
-    <td>{{ car['location'] }}</td>
-    <td>{{ car['status'] }}</td>
+  <td>{{ car["Type"] }}</td>
+  <td>{{ car["Brand"] }}</td>
+  <td>{{ car["Color"] }}</td>
+  <td>{{ car["Address"] }}</td>
+  <td>{{ car["Status"] }}</td>
 <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.carbookings', id=car['id']) }}">History</a>
+          <a class="greenbutton" style="margin-left: 25px;" href="{{ url_for('blog.get_history', ID=car['ID']) }}">History</a>
 </td>
     <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.update', id=car['id']) }}">Edit</a>
+          <a class="greenbutton" style="margin-left: 45px;" href="{{ url_for('blog.editCar', ID=car['ID']) }}">Edit</a>
 </td>
   </tr>
   

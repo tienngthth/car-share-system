@@ -5,12 +5,34 @@
 
 {% block content %}
 <div class="loginbox">
-  <form method="POST" action="/auth/register">
-  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
-    <div class="form-field" style="float:left; margin-left: 40px;"> {{ form.username.label }} &nbsp;{{ form.username }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.email.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.email }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.firstname.label }} {{ form.firstname }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.lastname.label }} &nbsp;{{ form.lastname }}</div>
+  <form method="post">
+  <div class="clearfix centerlogin">
+    <label for="username">Username</label>
+    <input name="username" id="username" required>
+  </div>
+  <div class="clearfix centerlogin">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required>
+  </div>
+  <div class="clearfix centerlogin">
+    <label for="first">Fist Name</label>
+    <input type="first" name="first" id="first">
+  </div>
+  <div class="clearfix centerlogin">
+    <label for="last">Last Name</label>
+    <input type="last" name="last" id="last">
+  </div>
+  <div class="clearfix centerlogin">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email">
+  </div>
+  <div class="clearfix centerlogin">
+    <label for="phone">Phone</label>
+    <input type="phone" name="phone" id="phone">
+  </div>
+    <div class="clearfix centerlogin">
+    <input type="submit" value="Register">
+    <p>Already registered? <a href="/auth/login">Log in here.</a></p>
     </div>
  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">   
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.password.label }}&nbsp;&nbsp; {{ form.password }}</div>

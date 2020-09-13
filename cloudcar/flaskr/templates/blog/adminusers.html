@@ -17,7 +17,6 @@
   <form method="POST" action="/adminusers">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
       <div class="form-field" style="float:left;">{{ form.username.label }} {{ form.username }}</div>
-      <div class="form-field" style="float:left;">{{ form.usertype.label }} {{ form.usertype }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
       <div class="form-field" style="float:left;">{{ form.first.label }} {{ form.first }}</div>
@@ -40,11 +39,9 @@
      <table>
   <tr>
     <th style="border-top-left-radius: 8px;">Username</th>
-    <th>Type</th>
     <th>First</th>
     <th>Last</th>
     <th>Email</th>
-    <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
   {% for user in users %}
   <tr>

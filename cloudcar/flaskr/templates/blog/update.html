@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Update Car ID {{ car['id'] }}{% endblock %}</h1>
+  <h1>{% block title %}Update Car ID {{ car[0]["ID"] }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <form method="POST" action="update">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
+    <div class="form-field" style="float:left;"> {{ form.mac_address.label }} {{ form.mac_address }}</div>
     <div class="form-field" style="float:left;"> {{ form.make.label }} {{ form.make }}</div>
     <div class="form-field" style="float:left;">{{ form.body.label }} {{ form.body }}</div>
     <div class="form-field" style="float:left;">{{ form.colour.label }} {{ form.colour }}</div>
@@ -14,21 +15,17 @@
  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">   
     <div class="form-field" style="float:left;">{{ form.seats.label }} {{ form.seats }}</div>
     
-    <div class="form-field" style="float:left;">{{ form.location.label }} {{ form.location }}</div>
-    
     <div class="form-field" style="float:left;">{{ form.cost.label }} {{ form.cost }}</div>
     
+    <div class="form-field" style="float:left;">{{ form.status.label }} {{ form.status }}</div>
     </div>
     <div class="form-submit"> {{ form.submit }} </div>
   </form>
 
 <div style="width:100%; display:block; height:40px;">
-<form style="float:right; margin-top:-65px;" action="{{ url_for('blog.delete', id=car['id']) }}" method="post">
+<form style="float:right; margin-top:-65px;" action="{{ url_for('blog.delete', ID=car[0]['ID']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
-<form style="float:right; margin-top:-65px; padding-right:30px;" action="{{ url_for('blog.repair', id=car['id']) }}" method="post">
-    <input class="warning" type="submit" value="Repair" onclick="return confirm('Are you sure?');">
-    </form>
-  
+  <a class="greenbutton" style="float:right; margin-top:-65px; padding-right:30px;" href="{{ url_for('blog.report', ID=car[0]['ID']) }}">Report</a>  
   <div>
 {% endblock %}
