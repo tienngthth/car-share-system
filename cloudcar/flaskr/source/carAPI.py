@@ -15,7 +15,7 @@ def get_car_latitude():
     if len(results) == 0:
         return "No car found"
     else: 
-        return str(Database.get_list_from_tuple_list(results))
+        return {"car": results}
 
 @car_api.route("get/car/longitude/from/backlog")
 def get_car_longitude():
@@ -28,7 +28,7 @@ def get_car_longitude():
     if len(results) == 0:
         return "No car found"
     else: 
-        return str(Database.get_list_from_tuple_list(results))
+        return {"car": results}
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create():

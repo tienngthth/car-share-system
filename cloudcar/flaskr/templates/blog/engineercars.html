@@ -23,6 +23,7 @@
     <th style="border-top-left-radius: 8px;">Car ID</th>
     <th>Location</th>
     <th>Request Date</th>
+    <th>Map</th>
     <th>Status</th>
     <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
@@ -31,13 +32,15 @@
   <td>{{ car["ID"] }}</td>
   <td>{{ car["Address"] }}</td>
   <td>{{ car["Date"] }}</td>
+  <td><a class="greenbutton" style="margin-left:20px;" href="http://127.0.0.1:8080/backlogs/map/backlog?id={{ car['Backlog_number']}}">View Map</a></td>
   <td>{{ car["Status"] }}</td>
-<td style="max-width:40px;">{% if car["Status"] == "Not done" %}
-          <form style="margin:0px;" action="{{ url_for('blog.repair', ID=car['ID']) }}" method="post">
+  <td style="max-width:40px;">
+    {% if car["Status"] == "Not done" %}
+    <form style="margin:0px;" action="{{ url_for('blog.repair', ID=car['ID']) }}" method="post">
     <input style="margin:0px;" class="warning" type="submit" value="Repair" onclick="return confirm('Are you sure you want to mark this car as repaired?');">
     </form>
-          {% endif %}
-</td>
+    {% endif %}
+  </td>
  
   </tr>
   

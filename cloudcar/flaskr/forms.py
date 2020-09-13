@@ -21,7 +21,6 @@ from wtforms.widgets.html5 import DateTimeLocalInput
 class bookingSearch(FlaskForm):   
     """ My Booking search form. for users"""
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
-    end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
 

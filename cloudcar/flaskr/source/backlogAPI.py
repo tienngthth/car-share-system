@@ -35,23 +35,14 @@ def update():
     except:
         return "Fail"
 
-@backlog_api.route("/get/all/repaired/car/ids")
+@backlog_api.route("/get/backlogs/data")
 def get_all_repaired_car_ids():
     results = Database.select_record(
-        " CarID ", 
+        " CarID, CONVERT(COUNT(CarID), SIGNED) as Total", 
         " Backlogs ", 
         " GROUP BY CarID "
     ) 
-    return {"car_ids": results}
-
-@backlog_api.route("/get/repaired/times/wrt/car/id")
-def get_repaired_times_wrt_car_id():
-    results = Database.select_record(
-        " COUNT(CarID) as SUM ", 
-        " Backlogs ", 
-        " GROUP BY CarID"
-    ) 
-    return results[0]
+    return {"results": results}
 
 @backlog_api.route("/map/backlog")
 def get_map():
@@ -63,7 +54,7 @@ def get_map():
 @backlog_api.route("/engineer/get/cars")
 def get_cars_for_engineer_page():
     results = Database.select_record(
-        "Cars.ID, Locations.Address, Backlogs.Date, Backlogs.Status", 
+        "Cars.ID, Locations.Address, Backlogs.Date, Backlogs.Status, Backlogs.ID AS Backlog_number", 
         "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
         ""
     )

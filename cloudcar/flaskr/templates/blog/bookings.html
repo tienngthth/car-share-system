@@ -17,10 +17,9 @@
 
 <div class="formwrapper">
   <h2 class="title">Manage my Bookings</h2>
-  <form method="POST" action="/bookings">
+  <form method="POST" action="bookings">
       <div style="display:block; width:100%; clear:both; float:none;">
       <div class="form-field">{{ form.start.label }} {{ form.start() }}</div>
-      <div class="form-field">{{ form.end.label }} {{ form.end() }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
       <div class="form-submit"> {{ form.submit }} </div>
@@ -38,7 +37,12 @@
     <th>Colour</th>
     <th>Duration</th>
     <th>Status</th>
+    {% if g.type == "Customer" %}
     <th style="border-top-right-radius: 8px;">Action</th>
+    {% endif %}
+    {% if g.type == "Admin" %}
+    <th style="border-top-right-radius: 8px;">Customer ID</th>
+    {% endif %}
   </tr>
   {% for booking in bookings %}
   <tr>
@@ -48,12 +52,16 @@
   <td>{{ booking["Color"] }}</td>
   <td>{{ booking["Duration"] }}</td>
   <td>{{ booking["Status"] }}</td>
-  <td style="max-width:40px;">{% if booking["Status"] == "Booked" %}
+  {% if g.type == "Admin" %}
+  <td>{{ booking["CustomerID"] }}</td>
+  {% endif %}
+  {% if booking["Status"] == "Booked" and g.type == "Customer" %}
+  <td style="max-width:40px;">
     <form style="margin:0px;" action="{{ url_for('blog.cancel_booking', ID=booking['ID']) }}" method="post">
     <input style="margin:0px;" class="warning" type="submit" value="Cancel" onclick="return confirm('Are you sure you want to cancel this booking?');">
-  </form>
-  {% endif %}
+    </form>
   </td>
+  {% endif %}
   </tr>
   
   {% endfor %}

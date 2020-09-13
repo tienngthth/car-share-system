@@ -30,9 +30,23 @@
       <div class="form-field">{{ form.end.label }} {{ form.end() }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
-      <div class="form-submit"> {{ form.submit }}  {% if g.type == "Admin" %}
-    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.create') }}">Add New</a>
-  {% endif %}</div>
+      <div class="form-submit"> {{ form.submit }}  
+    {% if g.type == "Admin" %}
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.admin_bookings') }}">View Bookings</a>
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.adminusers') }}">View Users</a>
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.admin_bookings') }}">View Cars</a>
+    {% endif %}
+    {% if g.type == "Engineer" %}
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.engineercars') }}">View Backlogs</a>
+    {% endif %}
+    {% if g.type == "Manager" %}
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.get_graphs') }}">View Graphs</a>
+    {% endif %}
+    {% if g.type == "Customer" %}
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.customer_bookings') }}">View Bookings</a>
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.editUser', ID=g.user['ID']) }}">Edit information</a>
+    {% endif %}
+  </div>
       </div>
      
   </form>

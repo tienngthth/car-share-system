@@ -109,11 +109,4 @@ class Database:
         Database.curs.execute(command)
         Database.curs.connection.commit()
         Database.conn.close()
-
-    #Whenever a query is executed, the result is a list of tuples. We need to convert it into a list of data without the tuples
-    @staticmethod
-    def get_list_from_tuple_list(tuple_list):
-        new_list = []
-        for tuple_data in tuple_list:
-            new_list.append(tuple_data[0])
-        return new_list
+    

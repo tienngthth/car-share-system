@@ -47,59 +47,65 @@ def read():
     ) 
     return {"results:": Util.paginatedDisplay(results, request.args.get("page"))}
 
-@booking_api.route("/get/all/rent/time")
+@booking_api.route("/get/profit/data")
 def get_all_rent_time():
     results = Database.select_record(
-        "DATE(RentTime) AS Date", 
+        "DATE(RentTime) AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
         "Bookings", 
         " WHERE Status = 'Booked' GROUP BY DATE(RentTime)"
     ) 
-    return {"rent_times": results}
+    return {"results": results}
 
-@booking_api.route("/get/total/costs/wrt/rent/times")
-def get_total_cost_wrt_rent_time():
-    results = Database.select_record_parameterized(
-        " SUM(TotalCost) AS SUM ", 
-        " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY DATE(RentTime) "
-        , ()
-    ) 
-    return {"total_costs" : results}
-
-@booking_api.route("/get/all/booked/car/ids")
+@booking_api.route("/get/bookings/data")
 def get_all_booked_car_ids():
     results = Database.select_record(
-        " CarID ", 
+        " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 
         " WHERE Status = 'Booked' GROUP BY CarID"
     ) 
-    return {"car_ids": results}
-
-@booking_api.route("/get/booked/times/wrt/car/ids")
-def get_booked_times_wrt_car_id():
-    results = Database.select_record_parameterized(
-        " SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)) as SUM ", 
-        " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY CarID", ()
-    ) 
-    return {"booked_times" : results}
+    return {"results": results}
 
 #New APIs start here
-@booking_api.route("/get/all/bookings")
-def get_all_bookings_for_booking_page():
+@booking_api.route("/get/all/admin/bookings")
+def get_all_admin_bookings_for_booking_page():
     results = Database.select_record(
-        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
+        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," + 
+        "Bookings.Status, Bookings.CustomerID, Bookings.ID", 
         "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
         ""
     )
     return {"booking" : results}
 
-@booking_api.route("/get/booking")
-def get_booking_for_booking_page():
+@booking_api.route("/get/admin/booking")
+def get_admin_booking_for_admin_booking_page():
     results = Database.select_record_parameterized(
-        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration, Bookings.Status, Bookings.ID", 
+        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," + 
+        "Bookings.Status, Bookings.CustomerID, Bookings.ID", 
         "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
-        " WHERE Bookings.RentTime < %s AND Bookings.ReturnTime > %s",
-        (request.args.get("start"), request.args.get("end"))
+        " WHERE Bookings.RentTime > %s",
+        request.args.get("start")
     )
     return {"booking" : results}
+
+@booking_api.route("/get/all/customer/bookings")
+def get_all_customer_bookings_for_booking_page():
+    results = Database.select_record_parameterized(
+        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," +  
+        "Bookings.Status, Bookings.ID", 
+        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
+        " WHERE Bookings.CustomerID = %s",
+        request.args.get("id")
+    )
+    return {"booking" : results}
+
+@booking_api.route("/get/customer/booking")
+def get_customer_booking_for_admin_booking_page():
+    results = Database.select_record_parameterized(
+        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," +
+        "Bookings.Status, Bookings.ID", 
+        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
+        " WHERE Bookings.RentTime > %s AND Bookings.CustomerID = %s",
+        (request.args.get("start"), request.args.get("id"))
+    )
+    return {"booking" : results}
+

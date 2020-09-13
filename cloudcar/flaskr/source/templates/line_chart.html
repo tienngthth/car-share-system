@@ -10,14 +10,14 @@
   <center>
     <h1>{{ title }}</h1>
 
-    <canvas id="chart" width="600" height="400"></canvas>
+    <canvas id="chart" width="1000" height="500"></canvas>
     <script>
 
       // bar chart data
       var barData = {
         labels : [
-          {% for item in labels %}
-            "{{ item }}",
+          {% for item in data %}
+            "{{ item['Date'] }}",
           {% endfor %}
         ],
 
@@ -30,11 +30,10 @@
           pointHighlightStroke: "rgba(151,187,205,1)",
           bezierCurve : false,
           data : [
-	    {% for item in values %}
-              {{ item }},
-            {% endfor %}]
-          }
-	]
+	        {% for item in data %}
+            {{ item['Total'] }},
+          {% endfor %}]
+          }]
       }
 
       Chart.defaults.global.animationSteps = 50;
