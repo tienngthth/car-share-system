@@ -28,7 +28,6 @@ class AdminUserForm(FlaskForm):
     password = StringField('Password', [DataRequired()])
     submit = SubmitField('Register')
 
-
 class Register(FlaskForm):   
     username = StringField('Username', [DataRequired()])
     firstname = StringField('First Name', [DataRequired()])
@@ -36,7 +35,6 @@ class Register(FlaskForm):
     email = StringField('Email', [DataRequired()])
     password = StringField('Password', [DataRequired()])
     submit = SubmitField('Register')
-
 
 class bookingSearch(FlaskForm):   
     """ My Booking search form. for users"""

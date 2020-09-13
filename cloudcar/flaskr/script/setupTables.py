@@ -20,7 +20,7 @@ def create_staff_table():
         "Staffs", 
         """ (
             ID INT NOT NULL AUTO_INCREMENT, 
-            Username VARCHAR(30),
+            Username VARCHAR(30), 
             Password VARCHAR(256), 
             FirstName VARCHAR(20), 
             LastName VARCHAR(20),
@@ -87,7 +87,8 @@ def create_backlog_table():
             AssignedEngineerID INT,
             SignedEngineerID INT,
             CarID INT,
-            Date DATETIME, 
+            CreatedDate DATETIME, 
+            ClosedDate DATETIME, 
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
