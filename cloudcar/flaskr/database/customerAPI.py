@@ -111,7 +111,10 @@ def get_encrypted_password():
         " WHERE Username = %s ", 
         (request.args.get("username"),)
     ) 
-    return {"passwords": results}
+    if len(results) == 0:
+        return "invalid"
+    else:
+        return results[0]["Password"]
 
 @customer_api.route("/check/existed/username")
 def check_username():
@@ -121,7 +124,7 @@ def check_username():
         " WHERE Username = %s", 
         (request.args.get("username"),)
     )
-    return result[0]
+    return str(result[0]["SUM"])
 
 @customer_api.route("/get/all/users")
 def get_all_users():

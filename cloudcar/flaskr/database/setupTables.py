@@ -27,7 +27,7 @@ def create_staff_table():
             Email VARCHAR(50),
             Phone VARCHAR(20),
             UserType VARCHAR(10),
-            EngineerMACAddress VARCHAR(50),
+            EngineerMacAddress VARCHAR(50),
             PRIMARY KEY(ID)
         ) """
     )
@@ -87,8 +87,7 @@ def create_backlog_table():
             AssignedEngineerID INT,
             SignedEngineerID INT,
             CarID INT,
-            CreatedDate DATETIME, 
-            ClosedDate DATETIME, 
+            CreatedDate DATETIME,
             Status VARCHAR(20),
             Description VARCHAR(100),
             PRIMARY KEY(ID),
@@ -111,3 +110,5 @@ def create_all_tables():
     create_booking_table()
     create_backlog_table()
     print("Tables succesfully created")
+
+create_all_tables()

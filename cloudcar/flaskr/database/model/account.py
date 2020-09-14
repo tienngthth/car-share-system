@@ -18,16 +18,17 @@ class Account(ABC):
 
     @staticmethod
     def verify_password(username, input_password, user_type):
-        #user_type == staffs/customers
-        #retrieve password from database by username
-        encryptedPassword = requests.get(
-            "http://127.0.0.1:8080/" +
-            user_type +
-            "/get/encrypted/password/by/username?username=" +
-            username
-        ).text
         try:
-            return hash.sha256_crypt.verify(input_password, encryptedPassword)
+            encryptedPassword = requests.get(
+                "http://127.0.0.1:8080/" +
+                user_type +
+                "/get/encrypted/password?username=" +
+                username
+            ).text
+            if encryptedPassword == "invalid":
+                return False
+            else: 
+                return hash.sha256_crypt.verify(input_password, encryptedPassword)
         except:
             return False
 
@@ -37,7 +38,7 @@ class Account(ABC):
         existed_username = requests.get(
             "http://127.0.0.1:8080/" +
             user_type +
-            "/get/number/of/existed/username?username=" + 
+            "/check/existed/username?username=" + 
             username
         ).text == "0"
         if existed_username and re.search("^[A-Za-z0-9]{6,15}$", username) and username != "invalid":
