@@ -1,6 +1,10 @@
 # Car-Share-System
 #Instruction
 
+1. Connect to GCP
+2. Run api.py (database)
+3. Run flask
+
 To connect to the GCP database:
 * Download the Cloud SQL Proxy (go to https://cloud.google.com/sql/docs/mysql/sql-proxy)
 * Download the clean-wonder-286803-fd26772409c0.json file included in this project (located in source/files)
