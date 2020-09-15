@@ -34,7 +34,6 @@ def register_blueprint():
     app.register_blueprint(manager, url_prefix="/manager")
     app.register_blueprint(auth, url_prefix="/auth")
     app.register_blueprint(home)
-    app.add_url_rule("/", endpoint="index")
 
 def update_test_config(test_config=None):
     if test_config is None:

@@ -21,7 +21,7 @@ admin = Blueprint("admin", __name__)
 
 @admin.route("/adminusers", methods=("GET", "POST"))
 @login_required
-def adminusers():
+def users():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
     form = AdminUserSearch()
@@ -46,7 +46,7 @@ def adminusers():
         
 @admin.route("/admincars", methods=("GET", "POST"))
 @login_required
-def admincars():
+def cars():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
     form = AdminCarSearch()
@@ -126,7 +126,7 @@ def create():
         except: 
             error = "Cost must be a number"
             flash(error)
-            return render_template("blog/create.html", form=form)
+            return render_template("admin/create.html", form=form)
         if not make:
             error = "Make is required."
         elif not body:
@@ -151,9 +151,9 @@ def create():
             )
             db.commit()
             return redirect(url_for("admin.admincars"))
-        return render_template("blog/create.html", form=form)
+        return render_template("admin/create.html", form=form)
 
-    return render_template("blog/create.html", form=form)
+    return render_template("admin/create.html", form=form)
 
 
 @admin.route("/createuser", methods=("GET", "POST"))

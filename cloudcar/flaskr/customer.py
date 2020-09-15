@@ -12,17 +12,65 @@ from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
 from datetime import *
+import requests
 import math
 import re
 import os
 
 customer = Blueprint("customer", __name__)
 
+@customer.route("/cars", methods=("GET", "POST"))
+@login_required
+def cars():
+    """Search car by filter"""
+    if request.method == "POST":
+        return search_car()
+    """Show all the cars"""
+    if request.method == "GET":
+        return display_all_car()
+        
+def display_all_car():
+    form = UserCarSearchForm()
+    cars = requests.get("http://127.0.0.1:8080/cars/read?rent_time=?return_time=?").json()
+    return render_template("/customer/customer_car.html", cars=cars["car"], form=form, start_date="", end_date="")
+
+def search_car():
+    form = UserCarSearchForm()
+    brand = request.form['brand']
+    car_type = request.form['car_type']
+    color = request.form['color']
+    seat = request.form['seat']
+    cost = request.form['cost']
+    start_date = request.form['start']
+    end_date = request.form['end']
+    start_date = datetime.strptime(start_date, '%Y-%m-%dT%H:%M')
+    end_date = datetime.strptime(end_date, '%Y-%m-%dT%H:%M')
+    if (end_date - start_date).days < 0:
+        flash("End date must be later than start date")
+        return display_all_car()
+    if cost:
+        try:
+            cost=float(cost)
+        except: 
+            flash("Cost must be a number")
+        return display_all_car()
+    cars = requests.get(
+        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        .format(str(brand), str(car_type), str(color), str(seat), str(cost), str(start_date), str(end_date))).json()
+    # Results are displayed in this page
+    return render_template("customer/customer_car.html", cars=cars["car"], form=form, start_date=start_date, end_date=end_date)
+    
+    # else:   
+    #     # search form
+    #     cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+    #         .format(str(brand), str(car_type), str(color), str(seat), str(cost), str(start_date), str(end_date))).json()
+    #     return render_template("/index.html", cars=cars["car"], form=form, start_date=start_date, end_date=end_date)
+
 
 @customer.route("/bookings", methods=("GET", "POST"))
 @login_required
 def bookings():
-    user = g.user['id']
+    user = g.user['user_id']
     form = bookingSearch()
     db = get_db()
     if request.method == "POST":
@@ -54,7 +102,6 @@ def bookings():
         #if form.validate_on_submit():
         #    return redirect(url_for('success'))
         return render_template("blog/bookings.html", bookings=bookings, form=form)
-
 
 @customer.route("/<int:id>/createbooking", methods=("GET", "POST"))
 @login_required
@@ -90,9 +137,6 @@ def createbooking(id):
         db.commit()
         return redirect(url_for("blog.bookings"))
 
-
-
-
 @customer.route("/<int:id>/confirm", methods=("GET", "POST"))
 @login_required
 def confirm(id):
@@ -120,10 +164,6 @@ def confirm(id):
         cost = math.ceil((dateend - datestart).total_seconds()/3600) * car['cost']
         return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend, total_cost=cost)
 
-
-
-    
-    
 @customer.route("/<int:id>/calendar", methods=("GET",))
 @login_required
 def calendar(id):
