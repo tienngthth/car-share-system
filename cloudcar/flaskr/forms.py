@@ -14,17 +14,23 @@ from wtforms.fields.html5 import DateField
 from datetime import *
 from wtforms.widgets.html5 import DateTimeLocalInput
 
-class Register(FlaskForm):  
+class LoginForm(FlaskForm):
+    """Login to the system""" 
+    username = StringField('Username', [DataRequired()])
+    password = PasswordField('Password', [DataRequired()])
+    submit = SubmitField('Log in')
+
+class RegisterForm(FlaskForm):  
     """Create new customer account""" 
     username = StringField('Username', [DataRequired()])
-    password = StringField('Password', [DataRequired()])
+    password = PasswordField('Password', [DataRequired()])
     firstname = StringField('FirstName', [DataRequired()])
     lastname = StringField('LastName', [DataRequired()])
     email = StringField('Email', [DataRequired()])
-    phone = StringField('Phone', [DataRequired()])
+    phone = StringField('Phone No', [DataRequired()])
     submit = SubmitField('Register')
 
-class BookingSearch(FlaskForm):   
+class BookingSearchForm(FlaskForm):   
     """ My Booking search form for users"""
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
@@ -84,8 +90,7 @@ class UpdateCarForm(FlaskForm):
     location_id = StringField('LocationID')
     submit = SubmitField('Update')
 
-
-class AdminCarSearch(FlaskForm):
+class AdminCarSearchForm(FlaskForm):
     """Car search form for admin"""
     brand = StringField('Brand')
     car_type = StringField('Type')
@@ -113,7 +118,7 @@ class AdminCarSearch(FlaskForm):
     page = StringField('Page')
     submit = SubmitField('Search')
 
-class AdminUserSearch(FlaskForm):
+class AdminUserSearcFormh(FlaskForm):
     """User search form for admin"""
     username = StringField('Username')
     usertype = SelectField('UserType',
@@ -129,11 +134,10 @@ class AdminUserSearch(FlaskForm):
     page = StringField('Page')
     submit = SubmitField('Search')
     
-class UserCarSearch(FlaskForm):
+class UserCarSearchForm(FlaskForm):
     """Car search form for users"""
     brand = StringField('Brand')
     car_type = StringField('Type')
-    mac_address = StringField('MacAddress')
     color = SelectField('Color',
                         choices=[('', 'Any'),
                         	     ('red', 'Red'),
@@ -152,7 +156,7 @@ class UserCarSearch(FlaskForm):
                                  ('7', '7'),
                                  ('8', '8')
                                  ])
-    cost = DecimalField('MaxCost')
+    cost = DecimalField('Max Cost')
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('Page')

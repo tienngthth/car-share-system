@@ -52,7 +52,7 @@ def create():
 def read():
     results = Database.select_record_parameterized(
         "Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost, Cars.Status", 
-        "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID LEFT JOIN Bookings ON Cars.ID = Bookings.CarID", 
+        "Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID ", 
         " WHERE MacAddress LIKE CASE WHEN %(mac_address)s = '' OR %(mac_address)s IS NULL " +
         " THEN MacAddress ELSE %(mac_address)s END " +
         " AND Brand LIKE CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
@@ -67,8 +67,8 @@ def read():
         " THEN Seat ELSE %(seat)s END " +
         " AND Cost LIKE CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
         " THEN Cost ELSE %(cost)s END " +
-        " AND Bookings.RentTime IS NULL OR Bookings.ReturnTime IS NULL OR Bookings.ReturnTime < %(rent_time)s OR Bookings.RentTime > %(return_time)s" +
-        " OR Bookings.Status IS NULL OR Bookings.Status = 'Cancelled'",
+        " AND Cars.ID NOT IN (SELECT Bookings.CarID AS ID From Bookings " +
+        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s)",
         {
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
@@ -77,8 +77,8 @@ def read():
             "color": request.args.get("color"), 
             "seat": request.args.get("seat"), 
             "cost": request.args.get("cost"),
-            "rent_time": request.args.get("start"),
-            "return_time": request.args.get("end")
+            "start": request.args.get("start"),
+            "end": request.args.get("end")
         }
     ) 
     return {"car": Util.paginatedDisplay(results, request.args.get("page"))}
