@@ -22,7 +22,7 @@ class Account(ABC):
         elif not Account.validate_phone_input(self.phone):
             return "Invalid formatted phone"
         requests.post(
-            "http://127.0.0.1:8080/customers/create?" +
+            "http://127.0.0.1:8081/customers/create?" +
             "username=" + self.username +
             "&password=" + self.hash_salt_password(self.password) +
             "&first_name=" + self.firstname +
