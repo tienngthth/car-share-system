@@ -18,7 +18,6 @@ import os
 
 engineer = Blueprint("engineer", __name__)
 
-        
 @engineer.route("/engineercars", methods=("GET", "POST"))
 @login_required
 def engineercars():

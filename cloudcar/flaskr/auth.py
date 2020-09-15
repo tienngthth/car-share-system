@@ -7,8 +7,7 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from flaskr.database.model.account import Account
 from .forms import *
 import re
 import requests
@@ -67,7 +66,6 @@ def register():
         email = request.form["email"].strip()
         valid_email = re.findall(r"[^@]+@[^@]+\.[^@]+",email)
         usertype = "Customer"
-        db = get_db()
         error = None
 
         if not username:
@@ -101,7 +99,7 @@ def register():
 
         flash(error)
 
-    return render_template("html/auth/register.html", form=form)
+    return render_template("auth/register.html", form=form)
 
 
 @auth.route("/login", methods=("GET", "POST"))
@@ -110,26 +108,15 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
-        error = None
-        user = db.execute(
-            "SELECT * FROM User WHERE UserName = ?", (username,)
-        ).fetchone()
-
-        if user is None:
-            error = "Incorrect username."
-        elif not check_password_hash(user["Password"], password):
-            error = "Incorrect password."
-
-        if error is None:
+        validate = Account.verify_password(username, password, "customers")
+        if not validate:
+            flash("Incorrect username or password.")
+        else:
             # store the user id in a new session and return to the index
             session.clear()
-            session["user_id"] = user["id"]
+            session["user_id"] = int(requests.get("http://127.0.0.1:8080/customers/get/id?username=" + username).text)
             return redirect(url_for("index"))
-
-        flash(error)
-
-    return render_template("html/auth/login.html")
+    return render_template("auth/login.html")
 
 
 @auth.route("/logout")

@@ -18,7 +18,6 @@ import os
 
 admin = Blueprint("admin", __name__)
 
-
 @admin.route("/adminusers", methods=("GET", "POST"))
 @login_required
 def adminusers():

@@ -1,11 +1,11 @@
 import os
 from flask import Flask
-from admin import admin
-from customer import customer
-from engineer import engineer
-from manager import manager
-from home import home
-from auth import auth
+from flaskr.admin import admin
+from flaskr.customer import customer
+from flaskr.engineer import engineer
+from flaskr.manager import manager
+from flaskr.home import home
+from flaskr.auth import auth
 
 def create_app():
     initate_flask_app()
@@ -26,7 +26,6 @@ def initate_flask_app():
         SECRET_KEY="dev",
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
-    app.add_url_rule("/", endpoint="index")
 
 def register_blueprint():
     app.register_blueprint(customer, url_prefix="/customer")
@@ -35,6 +34,7 @@ def register_blueprint():
     app.register_blueprint(manager, url_prefix="/manager")
     app.register_blueprint(auth, url_prefix="/auth")
     app.register_blueprint(home)
+    app.add_url_rule("/", endpoint="index")
 
 def update_test_config(test_config=None):
     if test_config is None:

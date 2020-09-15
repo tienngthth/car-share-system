@@ -116,6 +116,19 @@ def get_encrypted_password():
     else:
         return results[0]["Password"]
 
+@customer_api.route("/get/id")
+def get_id():
+    results = Database.select_record_parameterized(
+        " ID ", 
+        " Customers ", 
+        " WHERE Username = %s ", 
+        (request.args.get("username"),)
+    ) 
+    if len(results) == 0:
+        return "invalid"
+    else:
+        return str(results[0]["ID"])
+
 @customer_api.route("/check/existed/username")
 def check_username():
     result = Database.select_record_parameterized(

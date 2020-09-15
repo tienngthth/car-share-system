@@ -12,19 +12,19 @@ import requests
 
 home = Blueprint("home", __name__)
 
-@index.errorhandler(404)
+@home.errorhandler(404)
 def page_not_found(e):
     return "Page not found"
 
-@index.route("/", methods=("GET", "POST"))
+@home.route("/", methods=("GET", "POST"))
 @login_required
 def index():
 #redirect user types to their homepages
-    if (g.user['UserType'] == "Admin"):
+    if (g.type == "Admin"):
         return redirect(url_for("admin.admincars"))
-    if (g.user['UserType'] == "Engineer"):
+    if (g.type == "Engineer"):
         return redirect(url_for("engineer.engineercars"))
-    if (g.user['UserType'] == "Manager"):
+    if (g.type == "Manager"):
         return redirect(url_for("manager.manager"))
     form = UserCarSearch()
     if request.method == "POST":
@@ -65,14 +65,14 @@ def index():
             # search form
             cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
                 .format(str(make), str(body), str(colour), str(seats), str(cost), str(datestart), str(dateend))).json()
-            return render_template("blog/index.html", cars=cars["car"], form=form, datestart=datestart, dateend=dateend)
+            return render_template("/index.html", cars=cars["car"], form=form, datestart=datestart, dateend=dateend)
     
     """Show all the cars, most recent first."""
     if request.method == "GET":
         datestart = ""
         dateend = ""
         cars = []
-        return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
+        return render_template("/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
 
 
 

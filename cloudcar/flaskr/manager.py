@@ -18,7 +18,6 @@ import os
 
 manager = Blueprint("manager", __name__)
 
-
 #graph integration
 def make_profit_line_chart():
     Database = get_db()
@@ -70,8 +69,8 @@ def pie():
     return render_template('pie_chart.html', title='Most repaired cars', max=10, set=zip(pie_values, pie_labels, pie_colors))
 
 
-@manager.route("/manager", methods=("GET", "POST"))
-def manager():
+@manager.route("/dashboard", methods=("GET", "POST"))
+def manager_dashboard():
     if request.method == "GET":
         try:
             graph = request.args["graph"]
