@@ -108,13 +108,17 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        validate = Account.verify_password(username, password, "customers")
-        if not validate:
+        validated_user = Account.verify_password(username, password)
+        if validated_user == "invalid":
             flash("Incorrect username or password.")
         else:
             # store the user id in a new session and return to the index
             session.clear()
-            session["user_id"] = int(requests.get("http://127.0.0.1:8080/customers/get/id?username=" + username).text)
+            session["user_id"] = validated_user["ID"]
+            try:
+                session["user_type"] = validated_user["UserType"]
+            except:
+                session["user_type"] = None
             return redirect(url_for("index"))
     return render_template("auth/login.html")
 

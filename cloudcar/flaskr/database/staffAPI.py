@@ -1,7 +1,6 @@
 from flask import Blueprint, request
 from model.database import Database
 
-
 staff_api = Blueprint("staff_api", __name__)
 
 @staff_api.route("/get/encrypted/password")
