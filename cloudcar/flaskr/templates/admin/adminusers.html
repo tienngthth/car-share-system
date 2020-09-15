@@ -14,7 +14,7 @@
 
 <div class="formwrapper">
   <h2 class="title">Search for a User</h2>
-  <form method="POST" action="/adminusers">
+  <form method="POST" action="/admin/adminusers">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
       <div class="form-field" style="float:left;">{{ form.username.label }} {{ form.username }}</div>
       </div>
@@ -28,8 +28,9 @@
       </div>
 </div>
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
-      <div class="form-submit">{{ form.submit }} 
-    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('blog.createuser') }}">Add New</a>
+      <div class="form-submit">
+        {{ form.submit }} 
+    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('admin.createuser') }}">Add New</a>
 </div>
       </div>
      
@@ -42,18 +43,18 @@
     <th>First</th>
     <th>Last</th>
     <th>Email</th>
+    <th>Edit</th>
   </tr>
   {% for user in users %}
   <tr>
   <td>{{ user['Username'] }}</td>
-  <td>{{ user['UserType'] }}</td>
   <td>{{ user['FirstName'] }}</td>
   <td>{{ user['LastName'] }}</td>
   <td>{{ user['Email'] }}</td>
   
     
     <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.updateuser', id=user['id']) }}">Edit</a>
+          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('admin.updateuser', id=user['ID']) }}">Edit</a>
 </td>
   </tr>
   
