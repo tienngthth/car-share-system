@@ -1,5 +1,4 @@
-from flask import Blueprint, request, jsonify
-import json
+from flask import Blueprint, request
 from model.database import Database
 from model.util import Util
 
@@ -102,19 +101,6 @@ def check_email_phone_combination():
         (request.args.get("email"), request.args.get("phone"))
     )
     return result[0]
-
-@customer_api.route("/get/encrypted/password")
-def get_encrypted_password():
-    results = Database.select_record_parameterized(
-        " Password ", 
-        " Customers ", 
-        " WHERE Username = %s ", 
-        (request.args.get("username"),)
-    ) 
-    if len(results) == 0:
-        return "invalid"
-    else:
-        return results[0]["Password"]
 
 @customer_api.route("/get/id")
 def get_id():

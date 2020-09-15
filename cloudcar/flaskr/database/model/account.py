@@ -17,20 +17,18 @@ class Account(ABC):
         return hash.sha256_crypt.hash(raw_input)
 
     @staticmethod
-    def verify_password(username, input_password, user_type):
-        try:
-            encryptedPassword = requests.get(
-                "http://127.0.0.1:8080/" +
-                user_type +
-                "/get/encrypted/password?username=" +
-                username
-            ).text
-            if encryptedPassword == "invalid":
-                return False
-            else: 
-                return hash.sha256_crypt.verify(input_password, encryptedPassword)
-        except:
-            return False
+    def verify_password(username, input_password):
+        # try:
+        user = requests.get(
+            "http://127.0.0.1:8080/get/user/info?username=" +
+            username
+        ).json()
+        if hash.sha256_crypt.verify(input_password, user["Password"]):
+            return user
+        else: 
+            return "invalid"
+        # except:
+        #     return "invalid"
 
     @staticmethod
     def validate_username_input(username, user_type):
