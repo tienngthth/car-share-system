@@ -23,7 +23,7 @@ def select_from_cars(cursor):
 
 def select_from_bookings(cursor):
     print("Bookings table:")
-    cursor.execute("SELECT * FROM Bookings")
+    cursor.execute("SELECT * FROM Locations")
     for x in cursor:
         print(x)
 

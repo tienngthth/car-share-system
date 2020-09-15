@@ -48,7 +48,7 @@ def create():
     )
     return "Done"
 
-@car_api.route("/read")
+@car_api.route("/get/available/car")
 def read():
     results = Database.select_record_parameterized(
         "Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.Seat, Locations.Address, Cars.Cost, Cars.Status", 
@@ -65,7 +65,7 @@ def read():
         " THEN Color ELSE %(color)s END " +
         " AND Seat LIKE CASE WHEN %(seat)s = '' OR %(seat)s IS NULL " +
         " THEN Seat ELSE %(seat)s END " +
-        " AND Cost LIKE CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
+        " AND Cost <= CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
         " THEN Cost ELSE %(cost)s END " +
         " AND Cars.ID NOT IN (SELECT Bookings.CarID AS ID From Bookings " +
         " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s)",
@@ -144,8 +144,8 @@ def get_car_id_by_mac_address():
     return {"car_id": results}
 
 #New API starts from here
-@car_api.route("get/car/by/ID")
-def get_car_by_ID():
+@car_api.route("get")
+def get_car_by_id():
     results = Database.select_record_parameterized(
         "*", 
         "Cars",
@@ -163,3 +163,13 @@ def get_car_history():
         request.args.get("id")
     )
     return {"history": results}
+
+@car_api.route("get/location")
+def get_location():
+    results = Database.select_record_parameterized(
+        "*", 
+        "Locations",
+        " WHERE Locations.ID = %s",
+        request.args.get("id")
+    )
+    return {"location": results}

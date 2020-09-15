@@ -15,8 +15,8 @@
         <div class="form-field">{{ form.seat.label }} {{ form.seat }}</div>
       </div>
       <div style="display:block; width:100%; clear:both; float:none;">
-        <div class="form-field">{{ form.start.label }} {{ form.start() }}</div>
-        <div class="form-field">{{ form.end.label }} {{ form.end() }}</div>
+        <div class="form-field">{{ form.start.label }} {{ form.start }}</div>
+        <div class="form-field">{{ form.end.label }} {{ form.end }}</div>
       </div>
         <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
         <div class="form-submit"> {{ form.submit }} 
@@ -25,7 +25,7 @@
   </form>
 </div>
 <p>Showing results - {{cars|length}}</p>
-     <table>
+<table>
   <tr>
     <th style="border-top-left-radius: 8px;">Brand</th>
     <th>Type</th>
@@ -37,17 +37,19 @@
   </tr>
   {% for car in cars %}
   <tr>
-  <td>{{ car['Brand'] }}</td>
-    <td>{{ car['Type'] }}</td>
-    <td>{{ car['Color'] }}</td>
-    <td>{{ car['Seat'] }}</td>
-    <td>{{ car['Address'] }}</td>
-    <td>{{ car['Cost'] }}</td>
-    <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('customer.confirm', id=car['ID'],start_date=start_date,end_date=end_date) }}">Book now</a>
-</td>
+    <td>{{ car['Brand'] }}</td>
+      <td>{{ car['Type'] }}</td>
+      <td>{{ car['Color'] }}</td>
+      <td>{{ car['Seat'] }}</td>
+      <td>{{ car['Address'] }}</td>
+      <td>{{ car['Cost'] }}</td>
+      <td style="max-width:40px;">
+        <a class="greenbutton" style="margin-left: 5px;" 
+            href="{{ url_for('customer.book_car', car=car,start_date=start_date,end_date=end_date)}}">
+          Book now
+        </a>
+      </td>
   </tr>
-  
   {% endfor %}
   </table> 
 {% endblock %}

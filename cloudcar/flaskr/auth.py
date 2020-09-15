@@ -7,7 +7,7 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
-from flaskr.database.model.account import Account
+from flaskr.script.model.account import Account
 from .forms import *
 import re
 import requests
@@ -16,8 +16,8 @@ auth = Blueprint("auth", __name__)
 
 @auth.route("/login", methods=("GET", "POST"))
 def login():
+    form = LoginForm()
     if request.method == "GET":
-        form = LoginForm()
         return render_template("auth/login.html", form=form)
     """Log in a registered user by adding the user id to the session."""
     if request.method == "POST":
@@ -35,8 +35,7 @@ def login():
             except:
                 session["user_type"] = None
             return redirect(url_for("home.index"))
-    return render_template("auth/login.html")
-
+        return render_template("auth/login.html", form=form)
 
 @auth.route("/logout")
 def logout():

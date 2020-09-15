@@ -12,16 +12,16 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
-class googleCalendar():
+class GoogleCalendar():
     service = None
 
     def  __init__(self, user_name):
         SCOPES = "https://www.googleapis.com/auth/calendar"
-        store = file.Storage(pathlib.Path(__file__).parent.parent/"files"/ "{}-token.json".format(user_name))
+        store = file.Storage("flaskr/script/files/{}-token.json".format(user_name))
         creds = store.get()
         if(not creds or creds.invalid):
             flow = client.flow_from_clientsecrets(
-                pathlib.Path(__file__).parent.parent/"files"/"credentials.json", 
+                "flaskr/script/files/credentials.json", 
                 SCOPES
             )
             creds = tools.run_flow(flow, store)
@@ -51,5 +51,5 @@ class googleCalendar():
         event = self.service.events().insert(calendarId = "primary", body = event).execute()
         print("Event created: {}".format(event.get("htmlLink")))
 
-calendar = googleCalendar("tien")
-calendar.insert_event("2020-09-03", "10")
+# calendar = GoogleCalendar("abc")
+# calendar.insert_event("2020-09-03", "10")

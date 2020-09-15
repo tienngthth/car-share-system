@@ -22,10 +22,10 @@ def index():
     if (g.type == "Admin"):
         return redirect(url_for("admin.cars"))
     if (g.type == "Engineer"):
-        return redirect(url_for("engineer.cars"))
+        return redirect(url_for("engineer.car_view"))
     if (g.type == "Manager"):
         return redirect(url_for("manager.manager"))
-    return redirect(url_for("customer.cars"))
+    return redirect(url_for("customer.car_view"))
 
 
 

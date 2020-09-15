@@ -92,16 +92,6 @@ def delete():
     except:
         return "Fail"
 
-@customer_api.route("/check/email/and/phone/combination")
-def check_email_phone_combination():
-    result = Database.select_record_parameterized(
-        "COUNT(*) AS SUM ", 
-        " Customers ", 
-        " WHERE Email = %s AND Phone = %s", 
-        (request.args.get("email"), request.args.get("phone"))
-    )
-    return result[0]
-
 @customer_api.route("/get/id")
 def get_id():
     results = Database.select_record_parameterized(

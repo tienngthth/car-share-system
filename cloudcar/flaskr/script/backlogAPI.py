@@ -22,7 +22,7 @@ def create_backlog():
     except:
         return "Fail"
 
-@backlog_api.route("/update", methods=['GET', 'PUT'])
+@backlog_api.route("/close", methods=['GET', 'PUT'])
 def update():
     try:
         Database.update_record_parameterized(
@@ -51,25 +51,12 @@ def get_map():
     return render_template('map.html', title='Map', lattitude=lattitude, longitude=longitude)
 
 #New API starts here
-@backlog_api.route("/engineer/get/cars")
-def get_cars_for_engineer_page():
+@backlog_api.route("/get/all")
+def get_all_backlogs():
     results = Database.select_record(
-        "Cars.ID, Locations.Address, Backlogs.Date, Backlogs.Status, Backlogs.ID AS Backlog_number", 
+        "Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID," +
+        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status" , 
         "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
         ""
     )
-    return {"car": results}
-
-#This one does not require signed engineer's ID (Temporary API)
-@backlog_api.route("/fix/car", methods=['GET', 'PUT'])
-def fix_car():
-    try:
-        Database.update_record_parameterized(
-            " Backlogs ", 
-            " Status = 'Done'",
-            " WHERE CarID = (%s) AND Status = 'Not done' ",
-            request.args.get("car_id")
-        ) 
-        return "Success"
-    except:
-        return "Fail"
+    return {"backlogs": results}

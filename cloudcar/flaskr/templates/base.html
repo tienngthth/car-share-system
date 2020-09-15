@@ -6,20 +6,6 @@
     <a style="padding:0px; width:25%; float:left;" href="{{ url_for('home.index') }}">
       <img style="width:80px;padding: 5px 0px 0px 0px;" src="/static/cloudcar_logo.png">
     </a>
-    <div style = "float:left; margin-top: 20px;">
-      {% if g.user['UserType']=="Admin" %}
-        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/admin/adminusers">Search Users</a>
-      {% endif %}
-      {% if g.user['UserType']=="Customer" %}
-        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/customer/bookings">My Bookings</a>
-      {% endif %}
-      {% if g.user['UserType']=="Engineer" %}
-        <a style = "margin-right:55px;" href="/">Repair Requests</a>
-      {% endif %}
-      {% if g.user['UserType']=="Manager" %}
-        <a style = "margin-right:55px;" href="/">Dashboard</a>
-      {% endif %}
-    </div>
     <ul style="float:right; margin-top: 12px;">
       {% if g.user %}
         <li><span>Welcome, {{ g.user["Username"] }}</span>
@@ -29,6 +15,20 @@
         <li><a href="{{ url_for('auth.login') }}">Log In</a>
       {% endif %}
     </ul>
+    <div style = "float:left; margin-top: 20px;">
+      {% if g.type == "Admin" %}
+        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/admin/adminusers">Search Users</a>
+      {% endif %}
+      {% if g.type == "Customer" %}
+        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/customer/bookings">My Bookings</a>
+      {% endif %}
+      {% if g.type == "Engineer" %}
+        <a style = "margin-right:55px;" href="/">Repair Requests</a>
+      {% endif %}
+      {% if g.type == "Manager" %}
+        <a style = "margin-right:55px;" href="/">Dashboard</a>
+      {% endif %}
+    </div>
   </div>
 </nav>
 <section class="content">

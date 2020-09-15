@@ -11,28 +11,32 @@ from .auth import login_required
 from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
+from flaskr.script.model.car import Car
+from flaskr.script.model.googleCalendar import GoogleCalendar
+from flaskr.script.model.booking import Booking
 from datetime import *
+from datetime import datetime
 import requests
 import math
 import re
+import json
 import os
 
 customer = Blueprint("customer", __name__)
 
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
-def cars():
+def car_view():
     """Search car by filter"""
     if request.method == "POST":
         return search_car()
-    """Show all the cars"""
+    """Display no car"""
     if request.method == "GET":
-        return display_all_car()
+        return display_no_car()
         
-def display_all_car():
+def display_no_car():
     form = UserCarSearchForm()
-    cars = requests.get("http://127.0.0.1:8080/cars/read?rent_time=?return_time=?").json()
-    return render_template("/customer/customer_car.html", cars=cars["car"], form=form, start_date="", end_date="")
+    return render_template("/customer/car_view.html", cars=[], form=form, start_date="", end_date="")
 
 def search_car():
     form = UserCarSearchForm()
@@ -41,135 +45,122 @@ def search_car():
     color = request.form['color']
     seat = request.form['seat']
     cost = request.form['cost']
-    start_date = request.form['start']
-    end_date = request.form['end']
-    start_date = datetime.strptime(start_date, '%Y-%m-%dT%H:%M')
-    end_date = datetime.strptime(end_date, '%Y-%m-%dT%H:%M')
-    if (end_date - start_date).days < 0:
-        flash("End date must be later than start date")
-        return display_all_car()
-    if cost:
-        try:
-            cost=float(cost)
-        except: 
-            flash("Cost must be a number")
-        return display_all_car()
+    start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
+    end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
+    validate_result = validate_search_car_input(cost, start_date, end_date)
+    if validate_result != "Valid":
+        flash(validate_result)
+        return display_no_car()
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
-        .format(str(brand), str(car_type), str(color), str(seat), str(cost), str(start_date), str(end_date))).json()
-    # Results are displayed in this page
-    return render_template("customer/customer_car.html", cars=cars["car"], form=form, start_date=start_date, end_date=end_date)
+        "http://127.0.0.1:8080/cars/get/available/car?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        .format(brand, car_type, color, seat, cost, start_date, end_date)).json()["car"]
+    return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
     
-    # else:   
-    #     # search form
-    #     cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
-    #         .format(str(brand), str(car_type), str(color), str(seat), str(cost), str(start_date), str(end_date))).json()
-    #     return render_template("/index.html", cars=cars["car"], form=form, start_date=start_date, end_date=end_date)
+def validate_search_car_input(cost, start_date, end_date):
+    date_validation = Booking.validate_date(start_date, end_date)
+    car_validation = Car.validate_cost(cost)
+    if date_validation != "Valid":
+        return date_validation
+    elif car_validation != "Valid":
+        return car_validation
+    return "Valid"
 
+@customer.route("/book/car", methods=("GET", "POST"))
+@login_required
+def book_car():
+    """Full booking detail"""
+    try:
+        car = json.loads(request.args['car'].replace("'", "\""))
+        start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
+        end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
+    except: 
+        return "Missing start_date, end_date or car arguments"
+    total_cost = math.ceil((end_date - start_date).total_seconds()/3600) * car['Cost']
+    action = "confirm"
+    return render_template("customer/booking_detail.html", car=car,start_date=start_date,end_date=end_date, total_cost=total_cost,action=action)
+
+@customer.route("/confirm/booking", methods=("GET", "POST"))
+@login_required
+def confirm_booking():
+    try:
+        car_id = request.args['car_id']
+        start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
+        end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
+        total_cost = request.args['total_cost']
+    except: 
+        return "Missing start_date, end_date, car or total cost arguments"
+    requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
+    .format(g.user['ID'], car_id, start_date, end_date, total_cost))
+    # Results are displayed in this page
+    create_calendar_event(start_date)
+    return redirect(url_for("customer.booking_view"))
+
+def create_calendar_event(start_date):
+    # calendar = GoogleCalendar(g.user['Username'])
+    # date = datetime.strptime(start_date, '%Y-%m-%d')
+    # time = datetime.strptime(start_date, '%H')
+    # calendar.insert_event(date, time)
+    calendar = GoogleCalendar("tien")
+    calendar.insert_event("2020-09-03", "10")
 
 @customer.route("/bookings", methods=("GET", "POST"))
 @login_required
-def bookings():
-    user = g.user['user_id']
-    form = bookingSearch()
-    db = get_db()
+def booking_view():
+    form = UserBookingSearchForm()
     if request.method == "POST":
-        bookings = []
-        error = None
-        try:
-            start = request.form['start']
-            start = datetime.strptime(start, '%Y-%m-%dT%H:%M')
-        except: return "Start date required"
-        try:
-           end = request.form['end']
-           end = datetime.strptime(end, '%Y-%m-%dT%H:%M')
-        except: return "End date required"
-        if (end - start).days < 0:
-            error = "End date must be later than start date"
-            return render_template("blog/bookings.html", bookings=bookings, form=form)
-        if error is not None:
-            flash(error)
-        else:   
-            bookings = db.execute(
-                "SELECT id, Car, User, Created, Starttime, Endtime FROM Booking WHERE User = ? AND Starttime >= ? AND Endtime <= ? ORDER BY Created DESC",(user,start,end,)
-            ).fetchall()
-        return render_template("blog/bookings.html", bookings=bookings, form=form)
-
+        return filter_booking(form)
     if request.method == "GET":
-        bookings = db.execute(
-            "SELECT id, Car, User, Created, Starttime, Endtime FROM Booking WHERE User = ? ORDER BY Created DESC",(user,)).fetchall()
-        #do I need these next 2 lines?
-        #if form.validate_on_submit():
-        #    return redirect(url_for('success'))
-        return render_template("blog/bookings.html", bookings=bookings, form=form)
+        return display_all_bookings(form)
 
-@customer.route("/<int:id>/createbooking", methods=("GET", "POST"))
-@login_required
-def createbooking(id):
-    car = get_car(id)
-    user = g.user['id']
-    error = None
-    try:
-        datestart=request.args['datestart']
-        datestart = datetime.strptime(datestart, '%Y-%m-%d %H:%M:%S')
-    except: return "Start date required"
-    try:
-        dateend = request.args['dateend']
-        dateend = datetime.strptime(dateend, '%Y-%m-%d %H:%M:%S')
-    except: return "End date required"
-    if (dateend - datestart).days < 0:
-        error = "End date must be later than start date"
-        form = carSearch()
-        datestart = ""
-        dateend = ""
-        cars = []
-        return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
-    if error is not None:
-        flash(error)
+def filter_booking(form):
+    start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
+    end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
+    date_validation = Booking.validate_date(start_date, end_date)
+    if date_validation != "Valid":
+        flash(date_validation)
+        return display_all_bookings(form)
     else:
-        datestart = datestart.strftime("%Y-%m-%d %H:%M")
-        dateend = dateend.strftime("%Y-%m-%d %H:%M")
-        db = get_db()
-        db.execute(
-            "INSERT INTO Booking (Car, User, Starttime, Endtime) VALUES (?, ?, ?, ?)",
-            (car['id'], user, datestart, dateend),
-        )
-        db.commit()
-        return redirect(url_for("blog.bookings"))
+        return display_match_bookings(start_date, end_date, form)
+        
+def display_match_bookings(start_date, end_date, form):
+    user_id = g.user['ID']
+    bookings = requests.get(
+        "http://127.0.0.1:8080/bookings/get/by/time?customer_id={}&start={}&end={}"
+        .format(user_id, start_date, end_date)
+    ).json()["bookings"]
+    return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
-@customer.route("/<int:id>/confirm", methods=("GET", "POST"))
-@login_required
-def confirm(id):
-    """Update a car if the current user is the author."""
-    car = get_car(id)
-    error = None
-    try:
-        datestart=request.args['datestart']
-        datestart = datetime.strptime(datestart, '%Y-%m-%d %H:%M:%S')
-    except: return "Start time required"
-    try:
-        dateend = request.args['dateend']
-        dateend = datetime.strptime(dateend, '%Y-%m-%d %H:%M:%S')
-    except: return "End date required"
-    if (dateend - datestart).days < 0:
-        error = "End date must be later than start date"
-        form = carSearch()
-        datestart = ""
-        dateend = ""
-        cars = []
-        return render_template("blog/index.html", cars=cars, form=form, datestart=datestart, dateend=dateend)
-    if error is not None:
-            flash(error)
-    else:
-        cost = math.ceil((dateend - datestart).total_seconds()/3600) * car['cost']
-        return render_template("blog/confirm.html", car=car,datestart=datestart,dateend=dateend, total_cost=cost)
+def display_all_bookings(form):
+    user_id = g.user['ID']
+    bookings = requests.get(
+        "http://127.0.0.1:8080/bookings/get/all?customer_id=" + str(user_id)
+    ).json()["bookings"]
+    return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
-@customer.route("/<int:id>/calendar", methods=("GET",))
+@customer.route("/bookings/details", methods=("GET", "POST"))
 @login_required
-def calendar(id):
-    user = get_user(g.user['id'])
-    booking = get_booking(id)
-    # Calendar Sending integration goes here
-    #
-    #
-    return redirect(url_for("blog.index"))
+def view_booking_detail():
+    action = "view"
+    booking = json.loads(request.args['booking'].replace("'", "\""))
+    start_date = booking["RentTime"]
+    end_date = booking["ReturnTime"]
+    total_cost = booking["TotalCost"]
+    car = requests.get("http://127.0.0.1:8080/cars/get?id=" + str(booking['CarID'])).json()["car"][0]
+    status = booking["Status"]
+    booking_id=booking["BookingID"]
+    return render_template(
+        "customer/booking_detail.html", 
+        car=car,start_date=start_date,
+        end_date=end_date, total_cost=total_cost,
+        status=status,booking_id=booking_id,action=action
+    )
+
+#Cancel booking (Can only be done by customer)    
+@customer.route("/bookings/cancel", methods=("GET", "POST"))
+@login_required
+def cancel_booking():
+    if g.type != "Customer":
+        return redirect(url_for("blog.index"))
+    booking_id = request.args["booking_id"]
+    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(booking_id))
+    return redirect(url_for("customer.booking_view"))
