@@ -12,6 +12,7 @@ from .forms import *
 from wtforms.fields.html5 import DateField
 from wtforms.widgets.html5 import DateTimeLocalInput
 from datetime import *
+import requests
 import math
 import re
 import os
@@ -23,8 +24,7 @@ admin = Blueprint("admin", __name__)
 def users():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
-    form = userSearch()
-    db = get_db()
+    form = AdminUserSearch()
     if request.method == "POST":
         username = '%' + request.form['username'].strip() + '%'
         usertype = '%' + request.form['usertype'].strip() + '%'
@@ -33,39 +33,31 @@ def users():
         email = '%' + request.form['email'].strip() + '%'
         error = None
         users = []
-        users = db.execute(
-            "SELECT id, Created, Username, Password, FirstName, LastName, Email, UserType FROM User WHERE username LIKE ? AND usertype LIKE ? AND FirstName LIKE ? AND LastName LIKE ? AND Email LIKE ? ORDER BY username DESC",(username,usertype, first,last,email,)
-        ).fetchall()
+        users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
+        .format(str(username), str(first), str(last), str(email), str(phone))).json()
         # all in the search box will return all the tuples
-        return render_template("blog/adminusers.html", users=users, form=form)
+        return render_template("admin/adminusers.html", users=users, form=form)
     if request.method == "GET":
-        users = db.execute(
-            "SELECT id, Created, Username, Password, FirstName, LastName, Email, UserType"
-            " FROM User "
-            " ORDER BY Username DESC"
-        ).fetchall()
+        users = requests.get("http://127.0.0.1:8080/customers/get/all/users").json()
        
         #if form.validate_on_submit():
         #    return redirect(url_for('success'))
-        return render_template("blog/adminusers.html", users=users, form=form)
+        return render_template("admin/adminusers.html", users=users["user"], form=form)
         
 @admin.route("/admincars", methods=("GET", "POST"))
 @login_required
 def cars():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
-    form = adminCarSearch()
-    db = get_db()
+    form = AdminCarSearch()
     if request.method == "POST":
         error = None
         cars=[]
-        make = '%' + request.form['make'] + '%'
-        body = '%' + request.form['body'] + '%'
-        colour = '%' + request.form['colour'] + '%'
-        seats = '%' + request.form['seats'].strip() + '%'
+        brand = '%' + request.form['brand'] + '%'
+        car_type = '%' + request.form['car_type'] + '%'
+        color = '%' + request.form['color'] + '%'
+        seat = '%' + request.form['seat'].strip() + '%'
         cost =request.form['cost'].strip()
-        location = '%' + request.form['location'].strip() + '%'
-        status = '%' + request.form['status'].strip() + '%'
         if not cost:
             cost = 1000
         if cost:
@@ -75,22 +67,17 @@ def cars():
                 error = "Cost must be a number"
                 flash(error)
                 cars = []
-                return render_template("blog/admincars.html", form=form, cars=cars)
-        cars = db.execute(
-            "SELECT id, make, body, colour, seats, location, cost, status FROM Car WHERE make LIKE ? AND body LIKE ? AND colour LIKE ? AND seats LIKE ? AND Cost <= ? AND location LIKE ? AND status LIKE ? ORDER BY created DESC",(make,body,colour,seats,cost,location,status)
-        ).fetchall()
-        return render_template("blog/admincars.html", cars=cars, form=form)
+                return render_template("admin/admincars.html", form=form, cars=cars)
+        cars = requests.get("http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}"
+        .format(str(brand), str(car_type), str(color), str(seat), str(cost))).json()
+        return render_template("admin/admincars.html", cars=cars["car"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = db.execute(
-            "SELECT id, make, body, colour, seats, location, status, cost, created"
-            " FROM Car "
-            " ORDER BY created DESC"
-        ).fetchall()
+        cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end=").json()
         #do I need these next 2 lines?
         #if form.validate_on_submit():
         #    return redirect(url_for('success'))
-        return render_template("blog/admincars.html", cars=cars, form=form)
+        return render_template("admin/admincars.html", cars=cars["car"], form=form)
 
 
 @admin.route("/<int:id>/carbookings", methods=("GET", "POST"))
@@ -98,13 +85,11 @@ def cars():
 def carbookings(id):
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
-    db = get_db()
     bookings = []
     error = None
-    bookings = db.execute(
-        "SELECT id, Car, User, Created, Starttime, Endtime FROM Booking WHERE Car = ? ORDER BY Created DESC",(id,)
-    ).fetchall()
-    return render_template("blog/carbookings.html", bookings=bookings, id=id)
+    bookings = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(id)).json()
+
+    return render_template("customer/carbookings.html", bookings=bookings["history"], id=id)
 
 @admin.route("/<int:id>/deletebooking", methods=("GET", "POST"))
 @login_required
@@ -125,7 +110,7 @@ def deletebooking(id):
 def create():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
-    form=newCarForm()
+    form=NewCarForm()
     """Create a new car for the current user."""
     if request.method == "POST":
         make = request.form["make"].strip()
@@ -165,7 +150,7 @@ def create():
                 (make, body, colour, seats, location, cost),
             )
             db.commit()
-            return redirect(url_for("blog.admincars"))
+            return redirect(url_for("admin.admincars"))
         return render_template("admin/create.html", form=form)
 
     return render_template("admin/create.html", form=form)
@@ -177,7 +162,7 @@ def createuser():
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
     db = get_db()
-    form=AdminUserForm()
+    form = AdminUserForm()
     if request.method == "GET":
         render_template("blog/createuser.html", form=form)
     """Create a new car for the current user."""
@@ -234,7 +219,7 @@ def updateuser(id):
         return "Access Denied"
     """Update a user."""
     user = get_user(id)
-    form=AdminUserForm()
+    form = AdminUserForm()
     if request.method == "GET":
         return render_template("blog/updateuser.html", user=user, form=form)
     if request.method == "POST":
@@ -306,7 +291,7 @@ def update(id):
         except: 
             error = "Cost must be a number"
             flash(error)
-            return render_template("blog/update.html", form=form, car=car)
+            return render_template("admin/update.html", form=form, car=car)
         if not make:
             error = "Make is required."
         elif not body:

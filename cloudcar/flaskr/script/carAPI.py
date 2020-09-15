@@ -157,7 +157,7 @@ def get_car_by_id():
 @car_api.route("history")
 def get_car_history():
     results = Database.select_record_parameterized(
-        "Bookings.ID, Bookings.RentTime, Bookings.ReturnTime, Bookings.Status", 
+        "Bookings.ID, Bookings.CarID, Bookings.CustomerID, Bookings.RentTime, Bookings.ReturnTime, Bookings.TotalCost, Bookings.Status ", 
         "Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID",
         " WHERE Cars.ID = %s",
         request.args.get("id")

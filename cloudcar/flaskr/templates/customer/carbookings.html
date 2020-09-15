@@ -15,25 +15,23 @@
     
      <table>
   <tr>
-    <th style="border-top-left-radius: 8px;">Date Created</th>
+    <th style="border-top-left-radius: 8px;">Booking ID</th>
     <th>Car ID</th>
-    <th>Start Time</th>
-    <th>End Time</th>
-    <th>Duration</th>
-    <th>Cost</th>
-    <th style="border-top-right-radius: 8px;">Action</th>
+    <th>Customer ID</th>
+    <th>Rent Time</th>
+    <th>Return Time</th>
+    <th>Total Cost</th>
+    <th>Status</th>
   </tr>
   {% for booking in bookings %}
   <tr>
-  <td>{{ booking['Created'] }}</td>
-  <td>{{ booking['Car'] }}</td>
-    <td>{{ booking['Starttime'] }}</td>
-    <td>{{ booking['Endtime'] }}</td>
-    <td>(duration here)</td>
-    <td>(cost here)</td>
-    <td style="max-width:40px;">
-          <a class="greenbutton" style="margin-left: 5px;" href="{{ url_for('blog.deletebooking', id=booking['id']) }}">Cancel</a>
-</td>
+    <td>{{ booking['ID'] }}</td>
+    <td>{{ booking['CarID'] }}</td>
+    <td>{{ booking['CustomerID'] }}</td>
+    <td>{{ booking['RentTime'] }}</td>
+    <td>{{ booking['ReturnTime'] }}</td>
+    <td>{{ booking['Status'] }}</td>
+    <td>{{ booking['TotalCost'] }}</td>
   </tr>
   
   {% endfor %}
