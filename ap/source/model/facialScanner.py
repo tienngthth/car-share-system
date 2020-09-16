@@ -5,7 +5,7 @@ from .camera import Camera
 from .util import Util
 
 class FacialScanner():
-    names = ['invalid', 'abcdefg', 'Tien','Tam', 'Minh'] 
+    names = ['invalid', 'cuongnguyen', 'tiennguyen','tamnguyen', 'minhnguyen'] 
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read('model/trainer/trainer.yml')
 
