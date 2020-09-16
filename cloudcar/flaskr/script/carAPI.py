@@ -4,32 +4,6 @@ from model.util import Util
 
 car_api = Blueprint("car_api", __name__)
 
-@car_api.route("get/car/latitude/from/backlog")
-def get_car_latitude():
-    results = Database.select_record_parameterized(
-        "Locations.Latitude", 
-        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
-        " WHERE Backlogs.ID = %s",
-        request.args.get("id")
-    )
-    if len(results) == 0:
-        return "No car found"
-    else: 
-        return {"car": results}
-
-@car_api.route("get/car/longitude/from/backlog")
-def get_car_longitude():
-    results = Database.select_record_parameterized(
-        "Locations.Longitude", 
-        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID", 
-        " WHERE Backlogs.ID = %s",
-        request.args.get("id")
-    )
-    if len(results) == 0:
-        return "No car found"
-    else: 
-        return {"car": results}
-
 @car_api.route("/create", methods=['GET', 'POST'])
 def create():
     Database.insert_record_parameterized(
@@ -133,15 +107,18 @@ def delete_car():
     except:
         return "Fail"
 
-@car_api.route("get/car/id/by/mac/address")
+@car_api.route("get/id")
 def get_car_id_by_mac_address():
     results = Database.select_record_parameterized(
         " ID ",
         " Cars ",
-        " WHERE MacAddress = %s ",
+        " WHERE MacAddress = %s AND MacAddress NOT LIKE ''",
         (request.args.get("mac_address"),)
     )
-    return {"car_id": results}
+    if len(results) == 0:
+        return "No car found"
+    else:
+        return results[0]
 
 #New API starts from here
 @car_api.route("get")

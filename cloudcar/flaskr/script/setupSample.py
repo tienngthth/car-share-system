@@ -157,9 +157,9 @@ def create_sample_backlogs_data():
     #Backlogs
     global backlogs 
     backlogs = []
-    backlogs.append((1,  "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel"))
-    backlogs.append((1,  "4", "2020-8-22 15:45:00", "Done", "Replace the windshield"))
-    backlogs.append((2,  "7", "2020-8-23 11:15:00", "Not done", "Change the oil"))
+    backlogs.append((1, "3", "2020-8-21 10:30:00", "Done", "Car ran out of fuel"))
+    backlogs.append((1, "4", "2020-8-22 15:45:00", "Not done", "Replace the windshield"))
+    backlogs.append((1, "7", "2020-8-23 11:15:00", "Not done", "Change the oil"))
    
 def add_sample_data():
     create_sample_staffs_data()

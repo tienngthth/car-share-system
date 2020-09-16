@@ -53,3 +53,16 @@ def get_all_backlogs():
         ""
     )
     return {"backlogs": results}
+
+@backlog_api.route("/get/engineer/id")
+def get_engineer_id():
+    results = Database.select_record_parameterized(
+        " AssignedEngineerID ", 
+        " Backlogs ", 
+        " WHERE CarID LIKE %s AND Status LIKE 'Not done' ",
+        (request.args.get("car_id"),)
+    ) 
+    if len(results) == 0:
+        return "No engineer found"
+    else:
+        return results[0]
