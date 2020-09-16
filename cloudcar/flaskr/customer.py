@@ -69,6 +69,8 @@ def validate_search_car_input(cost, start_date, end_date):
 @login_required
 def book_car():
     """Full booking detail"""
+    if (g.user['UserType'] != "Customer"):
+        return "Access Denied"
     try:
         car = json.loads(request.args['car'].replace("'", "\""))
         start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
@@ -82,6 +84,8 @@ def book_car():
 @customer.route("/confirm/booking", methods=("GET", "POST"))
 @login_required
 def confirm_booking():
+    if (g.user['UserType'] != "Customer"):
+        return "Access Denied"
     try:
         car_id = request.args['car_id']
         start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
@@ -106,6 +110,8 @@ def create_calendar_event(start_date):
 @customer.route("/bookings", methods=("GET", "POST"))
 @login_required
 def booking_view():
+    if (g.user['UserType'] != "Customer"):
+        return "Access Denied"
     form = UserBookingSearchForm()
     if request.method == "POST":
         return filter_booking(form)
