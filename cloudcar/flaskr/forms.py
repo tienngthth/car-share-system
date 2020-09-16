@@ -44,14 +44,14 @@ class NewCarForm(FlaskForm):
     mac_address = StringField('MacAddress')
     color = SelectField('Color', [DataRequired()],
                         choices=[('', 'Any'),
-                        	     ('red', 'Red'),
-                                 ('green', 'Green'),
-                                 ('blue', 'Blue'),
-                                 ('black', 'Black'),
-                                 ('white', 'White'),
-                                 ('silver', 'Silver'),
-                                 ('yellow', "Yellow"),
-                                 ('other', 'Other')])
+                          	     ('Red', 'Red'),
+                                 ('Green', 'Green'),
+                                 ('Blue', 'Blue'),
+                                 ('Black', 'Black'),
+                                 ('White', 'White'),
+                                 ('Silver', 'Silver'),
+                                 ('Yellow', "Yellow"),
+                                 ('Other', 'Other')])
     seat = SelectField('Seat',[DataRequired()],
                         choices=[('', 'Any'),
                         	     ('4', '4'),
@@ -71,14 +71,14 @@ class AdminCarSearchForm(FlaskForm):
     mac_address = StringField('MacAddress')
     color = SelectField('Color',
                         choices=[('', 'Any'),
-                        	     ('red', 'Red'),
-                                 ('green', 'Green'),
-                                 ('blue', 'Blue'),
-                                 ('black', 'Black'),
-                                 ('white', 'White'),
-                                 ('silver', 'Silver'),
-                                 ('yellow', "Yellow"),
-                                 ('other', 'Other')])
+                        	     ('Red', 'Red'),
+                                 ('Green', 'Green'),
+                                 ('Blue', 'Blue'),
+                                 ('Black', 'Black'),
+                                 ('White', 'White'),
+                                 ('Silver', 'Silver'),
+                                 ('Yellow', "Yellow"),
+                                 ('Other', 'Other')])
     seat = SelectField('Seat',
                         choices=[('', 'Any'),
                         	     ('4', '4'),
@@ -99,14 +99,14 @@ class UpdateCarForm(FlaskForm):
     mac_address = StringField('MacAddress')
     color = SelectField('Color',
                         choices=[('', 'Any'),
-                        	     ('red', 'Red'),
-                                 ('green', 'Green'),
-                                 ('blue', 'Blue'),
-                                 ('black', 'Black'),
-                                 ('white', 'White'),
-                                 ('silver', 'Silver'),
-                                 ('yellow', "Yellow"),
-                                 ('other', 'Other')])
+                        	     ('Red', 'Red'),
+                                 ('Green', 'Green'),
+                                 ('Blue', 'Blue'),
+                                 ('Black', 'Black'),
+                                 ('White', 'White'),
+                                 ('Silver', 'Silver'),
+                                 ('Yellow', "Yellow"),
+                                 ('Other', 'Other')])
     seat = SelectField('Seat',
                         choices=[('', 'Any'),
                         	     ('4', '4'),
@@ -150,14 +150,14 @@ class UserCarSearchForm(FlaskForm):
     car_type = StringField('Type')
     color = SelectField('Color',
                         choices=[('', 'Any'),
-                        	     ('red', 'Red'),
-                                 ('green', 'Green'),
-                                 ('blue', 'Blue'),
-                                 ('black', 'Black'),
-                                 ('white', 'White'),
-                                 ('silver', 'Silver'),
-                                 ('yellow', "Yellow"),
-                                 ('other', 'Other')])
+                        	     ('Red', 'Red'),
+                                 ('Green', 'Green'),
+                                 ('Blue', 'Blue'),
+                                 ('Black', 'Black'),
+                                 ('White', 'White'),
+                                 ('Silver', 'Silver'),
+                                 ('Yellow', "Yellow"),
+                                 ('Other', 'Other')])
     seat = SelectField('Seat',
                         choices=[('', 'Any'),
                         	     ('4', '4'),
@@ -189,12 +189,6 @@ class UpdateUserForm(FlaskForm):
 
 class CreateUserForm(FlaskForm):
     username = StringField('Username', [DataRequired()])
-    usertype = SelectField('User Type',[DataRequired()], 
-                        choices=[('', 'Select One'),
-                        	  ('Admin', 'Admin'),
-                                 ('Engineer', 'Engineer'),
-                                 ('Manager', 'Manager'),
-                                 ('Customer', 'Customer')])
     firstname = StringField('First Name', [DataRequired()])
     lastname = StringField('Last Name', [DataRequired()])
     email = StringField('Email', [DataRequired()])

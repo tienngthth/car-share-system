@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Update Car ID {{ car[0]["ID"] }}{% endblock %}</h1>
+  <h1>{% block title %}Update Car ID {{ car["ID"] }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -24,9 +24,9 @@
   </form>
 
 <div style="width:100%; display:block; height:40px;">
-  <form style="float:right; margin-top:-65px;" action="{{ url_for('admin.delete', id=car[0]['ID']) }}" method="post">
+  <form style="float:right; margin-top:-65px;" action="{{ url_for('admin.delete', id=car['ID']) }}" method="post">
       <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
-  <a class="greenbutton" style="float:right; margin-top:-65px; padding-right:30px;" href="{{ url_for('admin.report', id=car[0]['ID']) }}">Report</a>  
+  <a class="greenbutton" style="float:right; margin-top:-65px; padding-right:30px;" href="{{ url_for('admin.report', id=car['ID']) }}">Report</a>  
   <div>
 {% endblock %}

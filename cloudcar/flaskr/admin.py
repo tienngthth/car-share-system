@@ -22,7 +22,7 @@ admin = Blueprint("admin", __name__)
 @admin.route("/adminusers", methods=("GET", "POST"))
 @login_required
 def users():
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     form = AdminUserSearchForm()
     if request.method == "POST":
@@ -39,15 +39,12 @@ def users():
         return render_template("admin/adminusers.html", users=users["user"], form=form)
     if request.method == "GET":
         users = requests.get("http://127.0.0.1:8080/customers/get/all/users").json()
-       
-        #if form.validate_on_submit():
-        #    return redirect(url_for('success'))
         return render_template("admin/adminusers.html", users=users["user"], form=form)
         
 @admin.route("/admincars", methods=("GET", "POST"))
 @login_required
 def cars():
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     form = AdminCarSearchForm()
     if request.method == "POST":
@@ -79,11 +76,10 @@ def cars():
         #    return redirect(url_for('success'))
         return render_template("admin/admincars.html", cars=cars["car"], form=form)
 
-
 @admin.route("/<int:id>/carbookings", methods=("GET", "POST"))
 @login_required
 def carbookings(id):
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     bookings = []
     error = None
@@ -91,24 +87,11 @@ def carbookings(id):
 
     return render_template("customer/carbookings.html", bookings=bookings["history"], id=id)
 
-@admin.route("/<int:id>/deletebooking", methods=("GET", "POST"))
-@login_required
-def deletebooking(id):
-    booking = get_booking(id)
-    if (g.user['UserType'] != "Admin") and (int(g.user['id']) != int(booking['User'])):
-        return "You cannot delete another user's booking unless you are logged in as an Admin"
-    elif (int(g.user['id']) == int(booking['User'])) or (g.user['UserType'] == "Admin"):
-        db = get_db()
-        db.execute("DELETE FROM Booking WHERE id = ?", (id,))
-        db.commit()
-        return redirect(url_for("blog.bookings"))
-    return "Unknown Error"
-
 
 @admin.route("/create", methods=("GET", "POST"))
 @login_required
 def create():
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     form=NewCarForm()
     """Create a new car for the current user."""
@@ -121,7 +104,7 @@ def create():
         location_id = request.form["location_id"].strip()
         cost = request.form["cost"].strip()
         error = None
-#input validation
+        #input validation
         try:
             cost=float(cost)
         except: 
@@ -154,11 +137,10 @@ def create():
 
     return render_template("admin/create.html", form=form)
 
-
 @admin.route("/createuser", methods=("GET", "POST"))
 @login_required
 def createuser():
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     form = CreateUserForm()
     if request.method == "GET":
@@ -166,7 +148,6 @@ def createuser():
     """Create a new car for the current user."""
     if request.method == "POST":
         username = request.form["username"].strip()
-        usertype = request.form["usertype"].strip()
         firstname = request.form["firstname"].strip()
         lastname = request.form["lastname"].strip()
         email = request.form["email"].strip()
@@ -175,8 +156,6 @@ def createuser():
         error = None
         if not username:
             error = "Username is required."
-        if not usertype:
-            error = "User type is required."
         elif not password:
             error = "Password is required."
         elif not firstname:
@@ -208,12 +187,10 @@ def createuser():
 
     return render_template("admin/createuser.html", form=form)
 
-
-
 @admin.route("/<int:id>/updateuser", methods=("GET", "POST"))
 @login_required
 def updateuser(id):
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     """Update a user."""
     user = get_user(id)
@@ -259,7 +236,7 @@ def updateuser(id):
 @admin.route("/<int:id>/deleteuser", methods=("GET", "POST"))
 @login_required
 def deleteuser(id):
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"    
     user = get_user(id)
     db = get_db()
@@ -270,66 +247,60 @@ def deleteuser(id):
 @admin.route("/<int:id>/update", methods=("GET", "POST"))
 @login_required
 def update(id):
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
     """Update a car."""
-    car = requests.get("http://127.0.0.1:8080/cars/get?id={}".format(str(id))).json()
+    car = requests.get("http://127.0.0.1:8080/cars/get?id={}".format(str(id))).json()["car"][0]
     form=UpdateCarForm()
     if request.method == "POST":
-        make = request.form["make"].strip()
-        body = request.form["body"].strip()
-        colour = request.form["colour"].strip()
-        seats = request.form["seats"].strip()
-        location = request.form["location"].strip()
+        mac_address = request.form["mac_address"].strip()
+        brand = request.form["brand"].strip()
+        car_type = request.form["car_type"].strip()
+        color = request.form["color"].strip()
+        seat = request.form["seat"].strip()
+        location_id = request.form["location_id"].strip()
         cost = request.form["cost"].strip()
         error = None
-#input validation
+        if not mac_address:
+            mac_address = car["MacAddress"]
+        if not brand:
+            brand = car["Brand"]
+        if not car_type:
+            car_type = car["Type"]
+        if not color:
+            color = car["Color"]
+        if not seat:
+            seat = car["Seat"]
+        if not location_id:
+            location_id = car["LocationID"]
+        if not cost:
+            cost = car["Cost"]
+        elif cost < 1 or cost > 1000:
+            error = "Cost must be a number between 1 and 1000."
+        #input validation
         try:
             cost=float(cost)
         except: 
             error = "Cost must be a number"
             flash(error)
             return render_template("admin/update.html", form=form, car=car)
-        if not make:
-            error = "Make is required."
-        elif not body:
-            error = "Body is required."
-        elif not colour:
-            error = "Colour is required."
-        elif not seats:
-            error = "Seats is required."
-        elif not location:
-            error = "Location is required."
-        elif cost < 1 or cost > 1000:
-            error = "Cost must be a number between 1 and 1000."
-        elif not cost:
-            error = "Cost is required."
+        
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                "UPDATE Car SET make = ?, body = ?, colour = ?, seats = ?, location = ?, cost = ? WHERE id = ?", (make, body, colour, seats, location, cost, id)
-            )
-            db.commit()
+            requests.get("http://127.0.0.1:8080/cars/update?id={}&mac_address={}&brand={}&type={}&location_id={}&status=Available&color={}&seat={}&cost={}"
+            .format(str(id), str(mac_address), str(brand), str(car_type), str(location_id), str(color), str(seat), str(cost)))
             return redirect(url_for("admin.cars"))
         return render_template("admin/update.html", car=car, form=form)
-    return render_template("admin/update.html", car=car["car"], form=form)
+    return render_template("admin/update.html", car=car, form=form)
 
 
 @admin.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
-    if (g.user['UserType'] != "Admin"):
+    if (g.type != "Admin"):
         return "Access Denied"
-    """Delete a car.
-    Ensures that the car exists and that the logged in user is the
-    author of the car.
-    """
     car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(id))).json()
-    db = get_db()
-    db.execute("DELETE FROM Car WHERE id = ?", (id,))
-    db.commit()
     return redirect(url_for("blog.admincars"))
 
 
