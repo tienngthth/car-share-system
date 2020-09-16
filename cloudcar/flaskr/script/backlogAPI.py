@@ -5,20 +5,19 @@ backlog_api = Blueprint("backlog_api", __name__)
 
 @backlog_api.route("/create", methods=['GET', 'POST'])
 def create_backlog():
-    try:
+    # try:
         Database.insert_record_parameterized(
-            "Backlogs(AssignedEngineerID, CarID, Date, Status, Description) ",
-            "(%s, %s, %s, %s, %s)",
+            "Backlogs(AssignedEngineerID, CarID, CreatedDate, Status, Description) ",
+            "(%s, %s, CURDATE(), %s, %s)",
             (
                 request.args.get("assigned_engineer_id"),
                 request.args.get("car_id"),
-                request.args.get("created_date"),
                 request.args.get("status"),
                 request.args.get("description")
             )
         )
         return "Success"
-    except:
+    # except:
         return "Fail"
 
 @backlog_api.route("/close", methods=['GET', 'PUT'])

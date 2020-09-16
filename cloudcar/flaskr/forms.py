@@ -177,3 +177,26 @@ class NewBacklogForm(FlaskForm):
     date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     description = StringField('Description')
     submit = SubmitField('Create')
+
+class UpdateUserForm(FlaskForm):
+    username = StringField('Username')
+    password = StringField('Password')
+    first = StringField('FirstName')
+    last = StringField('LastName')
+    phone = StringField('Phone')
+    email = StringField('Email')
+    submit = SubmitField('Update')
+
+class CreateUserForm(FlaskForm):
+    username = StringField('Username', [DataRequired()])
+    usertype = SelectField('User Type',[DataRequired()], 
+                        choices=[('', 'Select One'),
+                        	  ('Admin', 'Admin'),
+                                 ('Engineer', 'Engineer'),
+                                 ('Manager', 'Manager'),
+                                 ('Customer', 'Customer')])
+    firstname = StringField('First Name', [DataRequired()])
+    lastname = StringField('Last Name', [DataRequired()])
+    email = StringField('Email', [DataRequired()])
+    password = StringField('Password', [DataRequired()])
+    submit = SubmitField('Register')
