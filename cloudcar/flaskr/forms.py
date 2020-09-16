@@ -30,9 +30,10 @@ class RegisterForm(FlaskForm):
     phone = StringField('Phone No', [DataRequired()])
     submit = SubmitField('Register')
 
-class BookingSearchForm(FlaskForm):   
+class UserBookingSearchForm(FlaskForm):   
     """ My Booking search form for users"""
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
+    end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
 
@@ -63,33 +64,6 @@ class NewCarForm(FlaskForm):
     location_id = StringField('LocationID',[DataRequired()])
     submit = SubmitField('Create')
 
-class UpdateCarForm(FlaskForm):
-    """Update car form for admin"""
-    brand = StringField('Brand')
-    car_type = StringField('Type')
-    mac_address = StringField('MacAddress')
-    color = SelectField('Color',
-                        choices=[('', 'Any'),
-                        	     ('red', 'Red'),
-                                 ('green', 'Green'),
-                                 ('blue', 'Blue'),
-                                 ('black', 'Black'),
-                                 ('white', 'White'),
-                                 ('silver', 'Silver'),
-                                 ('yellow', "Yellow"),
-                                 ('other', 'Other')])
-    seat = SelectField('Seat',
-                        choices=[('', 'Any'),
-                        	     ('4', '4'),
-                                 ('5', '5'),
-                                 ('6', '6'),
-                                 ('7', '7'),
-                                 ('8', '8')
-                                 ])
-    cost = DecimalField('Cost')
-    location_id = StringField('LocationID')
-    submit = SubmitField('Update')
-
 class AdminCarSearchForm(FlaskForm):
     """Car search form for admin"""
     brand = StringField('Brand')
@@ -118,6 +92,33 @@ class AdminCarSearchForm(FlaskForm):
     page = StringField('Page')
     submit = SubmitField('Search')
 
+class UpdateCarForm(FlaskForm):
+    """Update car form for admin"""
+    brand = StringField('Brand')
+    car_type = StringField('Type')
+    mac_address = StringField('MacAddress')
+    color = SelectField('Color',
+                        choices=[('', 'Any'),
+                        	     ('red', 'Red'),
+                                 ('green', 'Green'),
+                                 ('blue', 'Blue'),
+                                 ('black', 'Black'),
+                                 ('white', 'White'),
+                                 ('silver', 'Silver'),
+                                 ('yellow', "Yellow"),
+                                 ('other', 'Other')])
+    seat = SelectField('Seat',
+                        choices=[('', 'Any'),
+                        	     ('4', '4'),
+                                 ('5', '5'),
+                                 ('6', '6'),
+                                 ('7', '7'),
+                                 ('8', '8')
+                                 ])
+    cost = DecimalField('Cost')
+    location_id = StringField('LocationID')
+    submit = SubmitField('Update')
+
 class AdminUserSearchForm(FlaskForm):
     """User search form for admin"""
     username = StringField('Username')
@@ -134,6 +135,15 @@ class AdminUserSearchForm(FlaskForm):
     page = StringField('Page')
     submit = SubmitField('Search')
     
+class UpdateUserForm(FlaskForm):
+    username = StringField('Username')
+    password = StringField('Password')
+    first = StringField('FirstName')
+    last = StringField('LastName')
+    phone = StringField('Phone')
+    email = StringField('Email')
+    submit = SubmitField('Update')
+
 class UserCarSearchForm(FlaskForm):
     """Car search form for users"""
     brand = StringField('Brand')

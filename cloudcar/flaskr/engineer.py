@@ -14,43 +14,40 @@ from wtforms.widgets.html5 import DateTimeLocalInput
 from datetime import *
 import math
 import re
+import requests
 import os
 
 engineer = Blueprint("engineer", __name__)
 
-@engineer.route("/engineercars", methods=("GET", "POST"))
+@engineer.route("/cars", methods=("GET", "POST"))
 @login_required
-def engineercars():
+def car_view():
     if (g.user['UserType'] != "Engineer"):
         return "Access Denied"
-    db = get_db()
     if request.method == "GET":
-        cars = db.execute(
-            "SELECT id, make, body, colour, seats, location, status, cost, created"
-            " FROM Car WHERE status = 'Repair' "
-            " ORDER BY created DESC"
-        ).fetchall()
-        return render_template("blog/engineercars.html", cars=cars)
+        backlogs = requests.get("http://127.0.0.1:8080/backlogs/get/all").json()["backlogs"]
+        return render_template("engineer/backlog_view.html", backlogs=backlogs)
 
-
-@engineer.route("/<int:id>/location", methods=("GET", "POST"))
+@engineer.route("/location", methods=("GET", "POST"))
 @login_required
-def location(id):
+def location_map():
     if (g.user['UserType'] != "Engineer"):
         return "Access Denied"
-    car = get_car(id)
-    db = get_db()
-    return render_template("blog/location.html", car=car)
+    car = requests.get("http://127.0.0.1:8080/cars/get?id=" + request.args['car_id']).json()["car"][0]
+    location = requests.get("http://127.0.0.1:8080/cars/get/location?id=" + request.args['location_id']).json()["location"][0]
+    return render_template("engineer/location_map.html", car=car, location=location)
 
-@engineer.route("/<int:id>/fix", methods=("POST",))
+@engineer.route("/close/backlog", methods=("POST",))
 @login_required
-def fix(id):
+def close_backlog():
     if (g.user['UserType'] != "Engineer"):
         return "Access Denied"
-    get_car(id)
-    db = get_db()
-    db.execute(
-            "UPDATE Car SET status = 'Available' WHERE id = ?", (id,)
-            )
-    db.commit()
-    return redirect(url_for("blog.engineercars"))
+    requests.put(
+        "http://127.0.0.1:8080/backlogs/close?car_id={}&engineer_id={}"
+        .format(request.args['car_id'], g.user['ID'])
+    )
+    requests.put(
+        "http://127.0.0.1:8080/cars/update?id={}&status=Available"
+        .format(request.args['car_id'])
+    )
+    return redirect(url_for("engineer.car_view"))

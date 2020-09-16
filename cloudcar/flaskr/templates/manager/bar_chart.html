@@ -1,70 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>{{ title }}</title>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-</head>
-
-<body>
+{% extends 'base.html' %}
+{% block header %}
+<meta charset="utf-8" />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<title>{{ title }}</title>
+{% endblock %}
+{% block content %}
+<div class="formwrapper">
+  <div
+    style="display:block; width:fit-content; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto; margin-top:30px; margin-bottom:30px">
+    <div style="float:left;"><a class="greenbutton" style="background-color:steelblue;  margin-left:10px;"
+        href="{{ url_for('manager.bar_chart')}}">Most booked cars</a></div>
+    <div style="float:left;"><a class="greenbutton" style="margin-left:120px;"
+        href="{{ url_for('manager.line_chart')}}">Profit by date</a></div>
+    <div style="float:left;"><a class="greenbutton" style="margin-left:120px;"
+        href="{{ url_for('manager.pie_chart')}}">Most repaired cars</a></div>
+  </div>
+</div>
+<div>
   <center>
-    <h1>{{ title }}</h1>
-
-    <canvas id="chart" width="1000" height="500"></canvas>
+    <canvas id="chart" width="600" height="400" onload=""></canvas>
     <script>
 
       // bar chart data
       var barData = {
-        labels : [
+        labels: [
           {% for item in data %}
-            "{{ item['Date'] }}",
+          "{{ item['CarID'] }}",
           {% endfor %}
         ],
-
-        datasets : [{
+        datasets: [{
           fillColor: "rgba(151,187,205,0.2)",
           strokeColor: "rgba(151,187,205,1)",
           pointColor: "rgba(151,187,205,1)",
-          pointStrokeColor: "#fff",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(151,187,205,1)",
-          bezierCurve : false,
-          data : [
-	        {% for item in data %}
-            {{ item['Total'] }},
-          {% endfor %}]
-          }]
+          data: [
+            {% for item in data %}
+                {{ item["Total"] }},
+            {% endfor %}
+          ]
+        }],
+        options: {
+          responsive: true,
+            scales: {
+            xAxes: [{
+              type: 'time',
+              display: true,
+              labelString: 'Date'
+            }],
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'value'
+              }
+            }]
+          }
+        }
       }
-
-      Chart.defaults.global.animationSteps = 50;
-      Chart.defaults.global.tooltipYPadding = 16;
-      Chart.defaults.global.tooltipCornerRadius = 0;
-      Chart.defaults.global.tooltipTitleFontStyle = "normal";
-      Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
-      Chart.defaults.global.animationEasing = "easeOutBounce";
-      Chart.defaults.global.responsive = false;
-      Chart.defaults.global.scaleLineColor = "black";
-      Chart.defaults.global.scaleFontSize = 16;
 
       // get bar chart canvas
       var mychart = document.getElementById("chart").getContext("2d");
 
       steps = 10
       max = {{ max }}
+
       // draw bar chart
-      var LineChartDemo = new Chart(mychart).Line(barData, {
+      new Chart(mychart).Bar(barData, {
         scaleOverride: true,
         scaleSteps: steps,
         scaleStepWidth: Math.ceil(max / steps),
         scaleStartValue: 0,
         scaleShowVerticalLines: true,
-        scaleShowGridLines : true,
-        barShowStroke : true,
-        scaleShowLabels: true,
-        bezierCurve: false,
-      });
-
+        scaleShowGridLines: true,
+        barShowStroke: true,
+        scaleShowLabels: true
+      }
+      );
     </script>
   </center>
-</body>
-</html>
+</div>
+{% endblock %}

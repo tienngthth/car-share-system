@@ -1,10 +1,8 @@
 import re, requests
 from passlib import hash
-from abc import ABC, ABCMeta, abstractmethod
 
-class Account(ABC):
+class Account():
     def __init__(self, username, password, email, firstname, lastname, phone):
-        super().__init__()
         self.username = username
         self.password = password
         self.firstname = firstname

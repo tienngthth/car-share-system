@@ -18,7 +18,7 @@ def get_admin():
     results = Database.select_record_parameterized(
         " * ", 
         " Staffs ", 
-        " WHERE UserType = 'Admin' ", 
+        " WHERE UserType = 'Admin'", 
         ()
     ) 
     return {"admin": results}
@@ -28,7 +28,7 @@ def get_manager():
     results = Database.select_record_parameterized(
         " * ", 
         " Staffs ", 
-        " WHERE UserType = 'Manager' ", 
+        " WHERE UserType = 'Manager'", 
         ()
     ) 
     return {"manager": results}
@@ -38,7 +38,7 @@ def get_engineer():
     results = Database.select_record_parameterized(
         " * ", 
         " Staffs ", 
-        " WHERE UserType = 'Engineer'",
+        " WHERE UserType = 'Engineer'", 
         ()
     ) 
     return {"engineer": results}

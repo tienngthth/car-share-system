@@ -7,7 +7,7 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
-from flaskr.database.model.account import Account
+from flaskr.script.model.account import Account
 from .forms import *
 import re
 import requests
@@ -25,17 +25,16 @@ def login():
         password = request.form["password"]
         validated_user = Account.verify_password(username, password)
         if validated_user == "invalid":
-            flash("Incorrect username or password.")
-        else:
-            # store the user id in a new session and return to the index
-            session.clear()
-            session["user_id"] = validated_user["ID"]
-            try:
-                session["user_type"] = validated_user["UserType"]
-            except:
-                session["user_type"] = None
-            return redirect(url_for("home.index"))
-        return render_template("auth/login.html", form=form)
+            flash("Incorrect username or password.") 
+            return render_template("auth/login.html", form=form)
+        # store the user id in a new session and return to the index
+        session.clear()
+        session["user_id"] = validated_user["ID"]
+        try:
+            session["user_type"] = validated_user["UserType"]
+        except:
+            session["user_type"] = None
+        return redirect(url_for("home.index"))
 
 @auth.route("/logout")
 def logout():
@@ -91,11 +90,11 @@ def load_logged_in_user():
             g.user = requests.get("http://127.0.0.1:8080/customers/get/user/by/id?id={}".format(str(user_id))).json()["user"][0]
             g.type = "Customer"
         elif user_type == "Admin":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/get/admin?username=&id={}".format(str(user_id))).json()["admin"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/get/admin").json()["admin"][0]
             g.type = user_type
         elif user_type == "Manager":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/get/manager?username=&id={}".format(str(user_id))).json()["manager"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/get/manager").json()["manager"][0]
             g.type = user_type
         elif user_type == "Engineer":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/get/engineer?username=&id={}".format(str(user_id))).json()["engineer"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/get/engineer").json()["engineer"][0]
             g.type = user_type
