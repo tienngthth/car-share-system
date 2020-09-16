@@ -68,7 +68,7 @@ def read():
         " AND Cost <= CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
         " THEN Cost ELSE %(cost)s END " +
         " AND Cars.ID NOT IN (SELECT Bookings.CarID AS ID From Bookings " +
-        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s)",
+        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s AND Bookings.Status NOT LIKE 'Cancelled')",
         {
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 

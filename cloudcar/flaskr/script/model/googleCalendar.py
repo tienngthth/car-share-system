@@ -14,6 +14,8 @@ from oauth2client import file, client, tools
 
 class GoogleCalendar():
     service = None
+    link = "https://accounts.google.com/o/oauth2/auth?client_id=300342828762-gqfckm5drdbrjb585cjj3rehfebd8r42.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar&access_type=offline&response_type=code"
+
 
     def  __init__(self, user_name):
         SCOPES = "https://www.googleapis.com/auth/calendar"
@@ -51,5 +53,5 @@ class GoogleCalendar():
         event = self.service.events().insert(calendarId = "primary", body = event).execute()
         print("Event created: {}".format(event.get("htmlLink")))
 
-# calendar = GoogleCalendar("abc")
-# calendar.insert_event("2020-09-03", "10")
+calendar = GoogleCalendar("abc")
+calendar.insert_event("2020-09-03", "10")
