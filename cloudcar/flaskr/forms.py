@@ -119,7 +119,7 @@ class UpdateCarForm(FlaskForm):
     location_id = StringField('LocationID')
     submit = SubmitField('Update')
 
-class AdminUserSearcFormh(FlaskForm):
+class AdminUserSearchForm(FlaskForm):
     """User search form for admin"""
     username = StringField('Username')
     usertype = SelectField('UserType',

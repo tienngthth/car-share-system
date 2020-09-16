@@ -56,13 +56,22 @@ def read():
 @booking_api.route("/get/profit/data")
 def get_all_rent_time():
     results = Database.select_record(
-        "DATE(RentTime) AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
+        "DATE_FORMAT(RentTime, '%Y-%m-%d') AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
         "Bookings", 
-        " WHERE Status = 'Booked' GROUP BY DATE(RentTime)"
+        " WHERE Status = 'Booked' GROUP BY Date"
     ) 
     return {"results": results}
 
-@booking_api.route("/get/bookings/data")
+@booking_api.route("/get/most/profit")
+def get_most_profit():
+    results = Database.select_record(
+        " CONVERT(SUM(TotalCost), SIGNED) AS Total", 
+        " Bookings ", 
+        " WHERE Status = 'Booked' GROUP BY DATE(RentTime) ORDER BY Total DESC LIMIT 1"
+    ) 
+    return results[0]
+
+@booking_api.route("/get/data")
 def get_all_booked_car_ids():
     results = Database.select_record(
         " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
@@ -70,6 +79,15 @@ def get_all_booked_car_ids():
         " WHERE Status = 'Booked' GROUP BY CarID"
     ) 
     return {"results": results}
+
+@booking_api.route("/get/longest/duration")
+def get_longest_duration():
+    results = Database.select_record(
+        " CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
+        " Bookings ", 
+        " WHERE Status = 'Booked' GROUP BY CarID ORDER BY Total DESC LIMIT 1"
+    ) 
+    return results[0]
 
 @booking_api.route("/get/all")
 def get_all_customer_bookings():

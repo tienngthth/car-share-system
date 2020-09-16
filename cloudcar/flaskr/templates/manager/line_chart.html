@@ -1,40 +1,28 @@
 {% extends 'base.html' %}
-
-{% block scripts %}
-<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-{% endblock %}
-
 {% block header %}
-
- 
+<meta charset="utf-8" />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<title>{{ title }}</title>
 {% endblock %}
-
-
-
 {% block content %}
-
 <div class="formwrapper">
-  <h2 class="title">Dashboard</h2>
-  <div style="display:block; width:600px; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto;">
-      <div style="float:left;"><a class="greenbutton" style="margin-left:10px;" href="/manager?graph=barchart">Bar Chart</a></div>
-      <div style="float:left;"><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=linechart">Line Chart</a></div>
-      <div><a class="greenbutton" style="margin-left:120px;" href="/manager?graph=piechart">Pie Chart</a></div>
+  <div style="display:block; width:fit-content; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto; margin-top:30px; margin-bottom:30px;">
+    <div style="float:left;"><a class="greenbutton" style="margin-left:10px;" href="{{ url_for('manager.bar_chart')}}">Most booked cars</a></div>
+    <div style="float:left;"><a class="greenbutton" style="margin-left:120px; background-color:steelblue; " href="{{ url_for('manager.line_chart')}}">Profit by date</a></div>
+    <div style="float:left;"><a class="greenbutton" style="margin-left:120px;" href="{{ url_for('manager.pie_chart')}}">Most repaired cars</a></div>
+  </div>
 </div>
-
-</div>
-<center>
-<p>Name of Line Chart</p>
-    <canvas style="border: 1px black solid;" id="chart" width="600" height="400"></canvas>
+<div>
+  <center>
+    <canvas id="chart" width="1000" height="500"></canvas>
     <script>
-
-      // line chart data
+      // bar chart data
       var barData = {
         labels : [
-          {% for item in labels %}
-            "{{ item }}",
+          {% for item in data %}
+            "{{ item['Date'] }}",
           {% endfor %}
         ],
-
         datasets : [{
           fillColor: "rgba(151,187,205,0.2)",
           strokeColor: "rgba(151,187,205,1)",
@@ -44,13 +32,11 @@
           pointHighlightStroke: "rgba(151,187,205,1)",
           bezierCurve : false,
           data : [
-	    {% for item in values %}
-              {{ item }},
-            {% endfor %}]
-          }
-	]
+	        {% for item in data %}
+            {{ item['Total'] }},
+          {% endfor %}]
+          }]
       }
-
       Chart.defaults.global.animationSteps = 50;
       Chart.defaults.global.tooltipYPadding = 16;
       Chart.defaults.global.tooltipCornerRadius = 0;
@@ -60,10 +46,8 @@
       Chart.defaults.global.responsive = false;
       Chart.defaults.global.scaleLineColor = "black";
       Chart.defaults.global.scaleFontSize = 16;
-
       // get bar chart canvas
       var mychart = document.getElementById("chart").getContext("2d");
-
       steps = 10
       max = {{ max }}
       // draw bar chart
@@ -78,12 +62,7 @@
         scaleShowLabels: true,
         bezierCurve: false,
       });
-
     </script>
   </center>
-
-
-
+</div> 
 {% endblock %}
-
-

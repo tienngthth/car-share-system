@@ -47,10 +47,24 @@ def create_sample_staffs_data():
     #Staffs
     global staffs 
     staffs = []
-    staffs.append(("Cuong_Nguyen", Account.hash_salt_password("1!aA2222"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Engineer", "DC:F7:56:2D:C1:97"))
-    staffs.append(("Tien_Nguyen", Account.hash_salt_password("12!@asAS"), "Tien", "Nguyen", "tien222@gmail.com", "1234567", "Engineer", "44:03:2C:9F:9A:BF"))
-    staffs.append(("Minh33", Account.hash_salt_password("3#dD4444"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Admin", ""))
-    staffs.append(("Tom", Account.hash_salt_password("34#$dfDF"), "Tom", "Nguyen", "tom@gmail.com", "12345678970", "Manager", ""))
+    staffs.append(("cuong_nguyen", Account.hash_salt_password("1!aA2222"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Engineer", "DC:F7:56:2D:C1:97"))
+    staffs.append(("minh_nguyen", Account.hash_salt_password("2@aA3333"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Admin", ""))
+    staffs.append(("tam_nguyen", Account.hash_salt_password("3#aA4444"), "Tam", "Nguyen", "tom@gmail.com", "12345678970", "Manager", ""))
+
+def create_sample_customers_data():
+    #Customers
+    global customers 
+    customers = []
+    customers.append(("tamnguyen", Account.hash_salt_password("1!aA1111"), "Tam", "Nguyen", "tam@gmail.com", "123456"))
+    customers.append(("tiennguyen", Account.hash_salt_password("2@aA2222"), "Tien", "Nguyen", "tien@gmail.com", "12343456"))
+    customers.append(("minhnguyen", Account.hash_salt_password("3#aA3333"), "Minh", "Nguyen", "minh@gmail.com", "12345678"))
+   
+def create_sample_locations_data():
+    #Customers
+    global locations
+    locations = []
+    locations.append(("10.729792", "106.692107", "RMIT Vietnam, 702 Nguyễn Văn Linh, Tân Hưng, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
+    locations.append(("10.728943" , "106.718845", "Crescent Mall, 101 Tôn Dật Tiên, Tân Phong, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
 
 def create_sample_cars_data():
     #Cars
@@ -77,21 +91,6 @@ def create_sample_cars_data():
     cars.append(("", "Audi", "Minivan", 2, "Available", "White", 4, 5))
     cars.append(("", "Ford", "Minivan", 2, "Available", "Red", 4, 5))
     
-def create_sample_customers_data():
-    #Customers
-    global customers 
-    customers = []
-    customers.append(("Tam", Account.hash_salt_password("56%^ghGH"), "Tam", "Nguyen", "tam@gmail.com", "123456"))
-    customers.append(("Nguyen", Account.hash_salt_password("24)!Siuu"), "Nguyen", "Thanh", "nguyen123@gmail.com", "12343456"))
-    customers.append(("Thanh", Account.hash_salt_password(")@04pkchU"), "Thanh", "Nguyen", "thanh456@gmail.com", "12345678"))
-   
-def create_sample_locations_data():
-    #Customers
-    global locations
-    locations = []
-    locations.append(("10.7500", "106.6667", "702 Nguyễn Văn Linh, Tân Hưng, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
-    locations.append(("10.728943" , "106.718845", "Crescent Mall, 101 Tôn Dật Tiên, Tân Phong, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
-
 def create_sample_bookings_data():
     #Bookings
     global bookings 
@@ -176,19 +175,18 @@ def add_sample_data():
     for car in cars:
         add_sample_car(car)
 
+    for staff in staffs:
+        add_sample_staff(staff)
+
     for customer in customers:
         add_sample_customer(customer)
 
     for booking in bookings:
         add_sample_booking(booking)
 
-    for staff in staffs:
-        add_sample_staff(staff)
-
     for backlog in backlogs:
         add_sample_backlog(backlog)
 
-
-        
     print("Data successfully added")
+
 add_sample_data()

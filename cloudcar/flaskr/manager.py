@@ -15,73 +15,35 @@ from datetime import *
 import math
 import re
 import os
+from flask import Blueprint, Flask, Markup, render_template
+import requests
 
 manager = Blueprint("manager", __name__)
 
-#graph integration
-def make_profit_line_chart():
-    Database = get_db()
-    labels = Database.select_record("DATE(RentTime) AS Date", "Bookings", " WHERE Status = 'Booked' GROUP BY DATE(RentTime)")
-    values = Database.select_record("SUM(TotalCost) AS Daily_Profit", "Bookings", " WHERE Status = 'Booked' GROUP BY DATE(RentTime)")
-    return Database.get_list_from_tuple_list(labels), Database.get_list_from_tuple_list(values)
-
-def make_booked_car_bar_chart():
-    Database = get_db()
-    labels = Database.select_record("CarID", "Bookings", " WHERE Status = 'Booked' GROUP BY CarID")
-    values = Database.select_record("SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)) as Booked_time", 
-    "Bookings", " WHERE Status = 'Booked' GROUP BY CarID")
-    return Database.get_list_from_tuple_list(labels), Database.get_list_from_tuple_list(values)
-
-def make_backlog_pie_chart():
-    Database = get_db()
-    labels = Database.select_record("CarID", "Backlogs", " GROUP BY CarID")
-    values = Database.select_record("COUNT(CarID) as Number_of_repairs", "Backlogs", " GROUP BY CarID")
-    colors = ["#F7464A", "#46BFBD", "#FDB45C"]
-    return Database.get_list_from_tuple_list(labels), Database.get_list_from_tuple_list(values), colors
-
-
-@manager.route("/bar", methods=("GET", "POST"))
-@login_required
-def bar():
-    if (g.user['UserType'] != "Manager"):
-        return "Access Denied"
-    bar_labels = make_booked_car_bar_chart()[0]
-    bar_values = make_booked_car_bar_chart()[1]
-    return render_template('bar_chart.html', title='Most booked cars in minutes', max=15000, labels=bar_labels, values=bar_values)
-
-@manager.route("/line", methods=("GET", "POST"))
-@login_required
-def line():
-    if (g.user['UserType'] != "Manager"):
-        return "Access Denied"
-    line_labels = make_profit_line_chart()[0]
-    line_values = make_profit_line_chart()[1]
-    return render_template('line_chart.html', title='Profit by date', max=1000, labels=line_labels, values=line_values)
-
-@manager.route("/pie", methods=("GET", "POST"))
-@login_required
-def pie():
-    if (g.user['UserType'] != "Manager"):
-        return "Access Denied"
-    pie_labels = make_backlog_pie_chart()[0]
-    pie_values = make_backlog_pie_chart()[1]
-    pie_colors = make_backlog_pie_chart()[2]
-    return render_template('pie_chart.html', title='Most repaired cars', max=10, set=zip(pie_values, pie_labels, pie_colors))
-
-
-@manager.route("/dashboard", methods=("GET", "POST"))
+@manager.route("/dashboard", methods=("GET",))
 def manager_dashboard():
+    if g.type != "Manager":
+        return redirect(url_for("home.index"))
     if request.method == "GET":
-        try:
-            graph = request.args["graph"]
-        except: graph = "barchart"
-        
-        if graph == "barchart":
-            return render_template("blog/bar_chart.html")
-        elif graph == "linechart":
-            return render_template("blog/line_chart.html")
-        elif graph == "piechart":
-            return render_template("blog/pie_chart.html")
-        
-        else:
-            return "No graph of that type."
+        return render_template("manager/manager_dashboard.html")
+
+@manager.route("/bar_chart", methods=("GET",))
+def bar_chart():
+    data = requests.get("http://127.0.0.1:8080/bookings/get/data").json()
+    max_value = requests.get("http://127.0.0.1:8080/bookings/get/longest/duration").json()["Total"]
+    return render_template('manager/bar_chart.html', title='Most booked cars in minutes', max=max_value, data=data["results"])
+
+@manager.route("/line_chart", methods=("GET", "POST"))
+def line_chart():
+    data = requests.get("http://127.0.0.1:8080/bookings/get/profit/data").json()
+    max_value = requests.get("http://127.0.0.1:8080/bookings/get/most/profit").json()["Total"]
+    return render_template('manager/line_chart.html', title='Profit by date', max=max_value, data=data["results"])
+
+@manager.route("/pie_chart", methods=("GET",))
+def pie_chart():
+    pie_colors = [
+    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
+    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
+    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
+    data = requests.get("http://127.0.0.1:8080/backlogs/get/backlogs/data").json()
+    return render_template('manager/pie_chart.html', title='Most repaired cars', max=20, set=zip(data["results"], pie_colors))

@@ -88,7 +88,7 @@ def confirm_booking():
     requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
     flash("Booking confirmed!")
-    # create_calendar_event(start_date)
+    # return create_calendar_event(start_date)
     return redirect(url_for("customer.booking_view"))
 
 def create_calendar_event(start_date):
@@ -97,8 +97,6 @@ def create_calendar_event(start_date):
     # time = datetime.strptime(start_date, '%H')
     # calendar.insert_event(date, time)
     calendar = GoogleCalendar("abc")
-    return calendar.link
-    return webbrowser.open_new_tab(calendar.link)
     calendar.insert_event("2020-09-03", "10")
 
 @customer.route("/bookings", methods=("GET", "POST"))
