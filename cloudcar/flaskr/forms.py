@@ -118,7 +118,7 @@ class AdminCarSearchForm(FlaskForm):
     page = StringField('Page')
     submit = SubmitField('Search')
 
-class AdminUserSearcFormh(FlaskForm):
+class AdminUserSearchForm(FlaskForm):
     """User search form for admin"""
     username = StringField('Username')
     usertype = SelectField('UserType',
@@ -176,3 +176,17 @@ class UpdateUserForm(FlaskForm):
     phone = StringField('Phone')
     email = StringField('Email')
     submit = SubmitField('Update')
+
+class CreateUserForm(FlaskForm):
+    username = StringField('Username', [DataRequired()])
+    usertype = SelectField('User Type',[DataRequired()], 
+                        choices=[('', 'Select One'),
+                        	  ('Admin', 'Admin'),
+                                 ('Engineer', 'Engineer'),
+                                 ('Manager', 'Manager'),
+                                 ('Customer', 'Customer')])
+    firstname = StringField('First Name', [DataRequired()])
+    lastname = StringField('Last Name', [DataRequired()])
+    email = StringField('Email', [DataRequired()])
+    password = StringField('Password', [DataRequired()])
+    submit = SubmitField('Register')

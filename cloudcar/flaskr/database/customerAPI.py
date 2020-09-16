@@ -46,7 +46,7 @@ def read():
             "phone": request.args.get("phone")
         }
     ) 
-    return {"results": Util.paginatedDisplay(results, request.args.get("page"))}
+    return {"user": Util.paginatedDisplay(results, request.args.get("page"))}
 
 @customer_api.route("/update", methods=['GET', 'PUT'])
 def update():
