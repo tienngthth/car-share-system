@@ -43,7 +43,7 @@ def close_backlog():
     if (g.user['UserType'] != "Engineer"):
         return "Access Denied"
     requests.put(
-        "http://127.0.0.1:8080/backlogs/close?car_id={}&engineer_id={}"
+        "http://127.0.0.1:8080/backlogs/close?car_id={}&signed_engineer_id={}"
         .format(request.args['car_id'], g.user['ID'])
     )
     requests.put(
