@@ -67,8 +67,8 @@ class Util:
             print("\nInvalid code!")
         elif message == "close_backlog_confirm":
             print("\nAre you sure you want to close all back logs of this car and update status car value to 'Available'?")
-            print("\nIf you only want to close one back log of the car, please log in to the web app.")
-            print("\nConfirm: Input key \"Y\"")
-            print("\nCancel: Input anything else")
+            print("If you only want to close one back log of the car, please log in to the web app.")
+            print("Confirm: Input key \"Y\"")
+            print("Cancel: Input anything else")
 
     
