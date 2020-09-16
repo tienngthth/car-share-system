@@ -68,12 +68,12 @@ def cars():
                 flash(error)
                 cars = []
                 return render_template("admin/admincars.html", form=form, cars=cars)
-        cars = requests.get("http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}"
+        cars = requests.get("http://127.0.0.1:8080/cars/get/available/car?brand={}&car_type={}&color={}&seat={}&cost={}"
         .format(str(brand), str(car_type), str(color), str(seat), str(cost))).json()
         return render_template("admin/admincars.html", cars=cars["car"], form=form)
     """Show all the cars, most recent first."""
     if request.method == "GET":
-        cars = requests.get("http://127.0.0.1:8080/cars/read?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end=").json()
+        cars = requests.get("http://127.0.0.1:8080/cars/get/available/car?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end=").json()
         #do I need these next 2 lines?
         #if form.validate_on_submit():
         #    return redirect(url_for('success'))
@@ -273,7 +273,7 @@ def update(id):
     if (g.user['UserType'] != "Admin"):
         return "Access Denied"
     """Update a car."""
-    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(id))).json()
+    car = requests.get("http://127.0.0.1:8080/cars/get?id={}".format(str(id))).json()
     form=UpdateCarForm()
     if request.method == "POST":
         make = request.form["make"].strip()
