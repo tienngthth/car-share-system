@@ -55,8 +55,6 @@ def update():
             "Customers",
             " Username = CASE WHEN %(username)s = '' OR %(username)s IS NULL " +
             " THEN Username ELSE %(username)s END, " +
-            " Password = CASE WHEN %(password)s = '' OR %(password)s IS NULL " +
-            " THEN Password ELSE %(password)s END, " +
             " FirstName = CASE WHEN %(first_name)s = '' OR %(first_name)s IS NULL " + 
             " THEN FirstName ELSE %(first_name)s END, " +
             " LastName = CASE WHEN %(last_name)s = '' OR %(last_name)s IS NULL " + 

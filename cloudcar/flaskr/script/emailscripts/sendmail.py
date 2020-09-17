@@ -11,14 +11,14 @@ from oauth2client.tools import run_flow
 import jinja2
 import sys
 
-CLIENT_SECRET_FILE = 'credentials.json'
+CLIENT_SECRET_FILE = 'script/files/credentials.json'
 OAUTH_SCOPE = 'https://www.googleapis.com/auth/gmail.compose'
 STORAGE = Storage('gmail.storage')
 
 class send_mail(object):
   def __init__(self,car_id):
-    self.send_to = "sean.a.boyce@gmail.com" #fill this in with sender address
-    self.send_from = "sean.a.boyce@gmail.com" #fill this in with receiver address
+    self.send_to = "ahjhj24012000@gmail.com" #fill this in with sender address
+    self.send_from = "ahjhj24012000@gmail.com" #fill this in with receiver address
     self.send_title = "Car Maintenance Request"
     self.car_id = car_id
     with open ("email.html", "r") as myfile:
@@ -43,8 +43,11 @@ class send_mail(object):
     raw = raw.decode()
     body = {'raw': raw}
     try:
-        message = (gmail_service.users().messages().send(userId="me",     body=body).execute())
+        message = (gmail_service.users().messages().send(userId="me", body=body).execute())
     except Exception as error: print('An error occurred: %s' % error)
+
+
 mail = send_mail(str(3))
 mail.send()
+print("Done")
 
