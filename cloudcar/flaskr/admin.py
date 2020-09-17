@@ -209,9 +209,7 @@ def report_car():
     # Create the plain-text and HTML version of your message
     text = """\
     Hi,
-    How are you?
-    Real Python has many great tutorials:
-    www.realpython.com"""
+    How are you?"""
     html = """\
     <!doctype html>
     <html>

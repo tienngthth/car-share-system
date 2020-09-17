@@ -87,7 +87,7 @@ class Account():
         if re.search("^[A-Za-z0-9_]{6,15}$", username) and username != "invalid":
             return True
         else:
-            flash("Incorrectly formatted username.")
+            flash("Incorrectly formatted username. Valid username contains 6-15 letters.")
             return False
 
     @staticmethod
@@ -113,7 +113,7 @@ class Account():
         """
         if not re.search("^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$", password):
             return True
-        flash("Invalid formatted password.")
+        flash("Invalid formatted password. Valid password contains at least 8 characters, 1 upper case, 1 lower case, 1 digit, 1 special characters")
         return False
 
     @staticmethod
@@ -131,7 +131,7 @@ class Account():
 
     @staticmethod      
     def validate_phone_input(phone):
-        # Valid phone contains at least 5 characters, all is numbers
+        # Valid phone contains at least 5 characters, all is digits
         if re.search("^[0-9]{5,}$", phone):
             return True
         flash("Invalid formatted phone.")
