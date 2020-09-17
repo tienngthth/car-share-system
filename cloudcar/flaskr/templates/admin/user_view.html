@@ -1,20 +1,10 @@
 {% extends 'base.html' %}
-
-
-
-
-
 {% block header %}
- 
 {% endblock %}
-
-
-
 {% block content %}
-
 <div class="formwrapper">
   <h2 class="title">Search for a User</h2>
-  <form method="POST" action="/admin/adminusers">
+  <form method="POST" action="{{url_for('admin.user_view')}}">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
       <div class="form-field" style="float:left;">{{ form.username.label }} {{ form.username }}</div>
       </div>
@@ -30,7 +20,7 @@
       <div style="display:block; width:100%; clear:both; float:none; min-height:50px; padding-top:10px;">
       <div class="form-submit">
         {{ form.submit }} 
-    <a class="greenbutton" style="margin-left:20px;" href="{{ url_for('admin.createuser') }}">Add New</a>
+    <a class="greenbutton" style="margin-left:20px;" href="{{url_for('admin.createuser') }}">Add New</a>
 </div>
       </div>
      

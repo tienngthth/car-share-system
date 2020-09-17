@@ -11,6 +11,7 @@ class Booking():
     @staticmethod
     def validate_date(start_date, end_date):
         if (end_date - start_date).days < 0:
+            flash("End date must be later than start date.")
             return False
         return True
 
@@ -20,13 +21,13 @@ class Booking():
             try:
                 cost = float(cost)
             except: 
+                flash("Cost must be a number.")
                 return False
         return True
         
     @staticmethod
     def validate_booking_input(cost, start_date, end_date):
-        if not Booking.validate_date(start_date, end_date):
-            return "End date must be later than start date"
-        elif not Booking.validate_cost(cost):
-            return "Cost must be a number"
-        return "Valid"
+        if Booking.validate_date(start_date, end_date):
+            if Booking.validate_cost(cost):
+                return True
+        return False

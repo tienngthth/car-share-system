@@ -1,15 +1,8 @@
 import functools
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
-from flask import url_for
+from flask import Blueprint, flash, g, redirect
+from flask import render_template, request, session, url_for
 from flaskr.script.model.account import Account
-from .forms import *
-import re
+from .forms import LoginForm, RegisterForm
 import requests
 
 auth = Blueprint("auth", __name__)
@@ -24,8 +17,7 @@ def login():
         username = request.form["username"].strip()
         password = request.form["password"]
         validated_user = Account.verify_password(username, password)
-        if validated_user == "invalid":
-            flash("Incorrect username or password.") 
+        if not validated_user:
             return render_template("auth/login.html", form=form)
         # store the user id in a new session and return to the index
         session.clear()
@@ -58,11 +50,7 @@ def register():
         email = request.form["email"].strip()
         phone = request.form["phone"].strip()
         account = Account(username, password, email, firstname, lastname, phone)
-        validate_account = account.validate_new_account()
-        if validate_account != "Valid":
-            flash(validate_account)
-        else:
-            print(validate_account)
+        if account.validate_new_account():
             return redirect(url_for("auth.login"))
     return render_template("auth/register.html", form=form)
 

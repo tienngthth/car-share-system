@@ -1,14 +1,5 @@
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
+from flask import Blueprint, g, redirect, url_for
 from .auth import login_required
-from .forms import *
-from datetime import *
-import requests
 
 home = Blueprint("home", __name__)
 
@@ -20,7 +11,7 @@ def page_not_found(e):
 @login_required
 def index():
     if (g.type == "Admin"):
-        return redirect(url_for("admin.cars"))
+        return redirect(url_for("admin.car_view"))
     if (g.type == "Engineer"):
         return redirect(url_for("engineer.car_view"))
     if (g.type == "Manager"):

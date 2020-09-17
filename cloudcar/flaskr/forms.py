@@ -68,7 +68,7 @@ class AdminCarSearchForm(FlaskForm):
     """Car search form for admin"""
     brand = StringField('Brand')
     car_type = StringField('Type')
-    mac_address = StringField('MacAddress')
+    mac_address = StringField('Mac Address')
     color = SelectField('Color',
                         choices=[('', 'Any'),
                         	     ('Red', 'Red'),
@@ -89,7 +89,6 @@ class AdminCarSearchForm(FlaskForm):
                                  ])
     cost = DecimalField('Cost')
     location_id = StringField('LocationID')
-    page = StringField('Page')
     submit = SubmitField('Search')
 
 class UpdateCarForm(FlaskForm):
@@ -169,7 +168,6 @@ class UserCarSearchForm(FlaskForm):
     cost = DecimalField('Max Cost')
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
-    page = StringField('Page')
     submit = SubmitField('Search')
 
 class NewBacklogForm(FlaskForm):

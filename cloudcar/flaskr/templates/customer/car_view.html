@@ -4,7 +4,7 @@
 {% block content %}
 <div class="formwrapper">
   <h2 class="title">Search for a Car</h2>
-  <form method="POST" action="/customer/cars">
+  <form method="POST" action="{{url_for('customer.cars'}}">
     <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
         <div class="form-field" style="float:left;">{{ form.brand.label }} {{ form.brand }}</div>
         <div class="form-field" style="float:left;">{{ form.car_type.label }} {{ form.car_type }}</div>

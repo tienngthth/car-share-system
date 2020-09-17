@@ -20,12 +20,48 @@ import requests
 import math
 import re
 import os
+from flaskr.script.model.booking import Booking
 
 admin = Blueprint("admin", __name__)
 
-@admin.route("/adminusers", methods=("GET", "POST"))
+@admin.route("/cars", methods=("GET", "POST"))
 @login_required
-def users():
+def car_view():
+    """Admin view car"""
+    if (g.type != "Admin"):
+        return "Access Denied"
+    form = AdminCarSearchForm()
+    if request.method == "POST":
+        return search_car(form)
+    if request.method == "GET":
+        return display_all_cars(form)
+
+def search_car(form):
+    """Search car by filter"""
+    brand = request.form['brand']
+    car_type = request.form['car_type']
+    color = request.form['color']
+    seat = request.form['seat']
+    cost = request.form['cost']
+    mac_address = request.form['mac_address']
+    if not Booking.validate_cost(cost):
+        return display_all_cars(form)
+    cars = requests.get(
+        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}&mac_address={}"
+        .format(brand, car_type, color, seat, cost, mac_address)
+    ).json()
+    return render_template("admin/car_view.html", cars=cars["car"], form=form)
+
+def display_all_cars(form):
+    """Show all the cars"""
+    cars = requests.get(
+        "http://127.0.0.1:8080/cars/read?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end="
+    ).json()
+    return render_template("admin/car_view.html", cars=cars["car"], form=form)
+
+@admin.route("/users", methods=("GET", "POST"))
+@login_required
+def user_view():
     if (g.type != "Admin"):
         return "Access Denied"
     form = AdminUserSearchForm()
@@ -40,45 +76,11 @@ def users():
         users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
         .format(str(username), str(first), str(last), str(email), str(phone))).json()
         # all in the search box will return all the tuples
-        return render_template("admin/adminusers.html", users=users["user"], form=form)
+        return render_template("admin/user_view.html", users=users["user"], form=form)
     if request.method == "GET":
         users = requests.get("http://127.0.0.1:8080/customers/get/all/users").json()
-        return render_template("admin/adminusers.html", users=users["user"], form=form)
+        return render_template("admin/user_view.html", users=users["user"], form=form)
         
-@admin.route("/admincars", methods=("GET", "POST"))
-@login_required
-def cars():
-    if (g.type != "Admin"):
-        return "Access Denied"
-    form = AdminCarSearchForm()
-    if request.method == "POST":
-        error = None
-        cars=[]
-        brand = '%' + request.form['brand'] + '%'
-        car_type = '%' + request.form['car_type'] + '%'
-        color = '%' + request.form['color'] + '%'
-        seat = '%' + request.form['seat'].strip() + '%'
-        cost =request.form['cost'].strip()
-        if not cost:
-            cost = ""
-        if cost:
-            try:
-                cost=float(cost)
-            except: 
-                error = "Cost must be a number"
-                flash(error)
-                cars = []
-                return render_template("admin/admincars.html", form=form, cars=cars)
-        cars = requests.get("http://127.0.0.1:8080/cars/get/available/car?brand={}&car_type={}&color={}&seat={}&cost={}"
-        .format(str(brand), str(car_type), str(color), str(seat), str(cost))).json()
-        return render_template("admin/admincars.html", cars=cars["car"], form=form)
-    """Show all the cars, most recent first."""
-    if request.method == "GET":
-        cars = requests.get("http://127.0.0.1:8080/cars/get/available/car?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end=").json()
-        #do I need these next 2 lines?
-        #if form.validate_on_submit():
-        #    return redirect(url_for('success'))
-        return render_template("admin/admincars.html", cars=cars["car"], form=form)
 
 @admin.route("/<int:id>/carbookings", methods=("GET", "POST"))
 @login_required

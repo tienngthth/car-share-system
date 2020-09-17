@@ -28,19 +28,21 @@ customer = Blueprint("customer", __name__)
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
 def car_view():
-    """Search car by filter"""
-    if request.method == "POST":
-        return search_car()
-    """Display no car"""
-    if request.method == "GET":
-        return display_no_car()
-        
-def display_no_car():
+    """Customer view car"""
+    if (g.type != "Customer"):
+        return "Access Denied"
     form = UserCarSearchForm()
+    if request.method == "POST":
+        return search_car(form)
+    if request.method == "GET":
+        return display_no_car(form)
+        
+def display_no_car(form):
+    """Display no car"""
     return render_template("/customer/car_view.html", cars=[], form=form, start_date="", end_date="")
 
-def search_car():
-    form = UserCarSearchForm()
+def search_car(form):
+    """Search available car by filter"""
     brand = request.form['brand']
     car_type = request.form['car_type']
     color = request.form['color']
@@ -48,13 +50,12 @@ def search_car():
     cost = request.form['cost']
     start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
-    validate_result = Booking.validate_booking_input(cost, start_date, end_date)
-    if validate_result != "Valid":
-        flash(validate_result)
-        return display_no_car()
+    if not Booking.validate_booking_input(cost, start_date, end_date):
+        return display_no_car(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/get/available/car?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
-        .format(brand, car_type, color, seat, cost, start_date, end_date)).json()["car"]
+        "http://127.0.0.1:8080/cars/status/available?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        .format(brand, car_type, color, seat, cost, start_date, end_date)
+    ).json()["car"]
     return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
 
 @customer.route("/book/car", methods=("GET", "POST"))

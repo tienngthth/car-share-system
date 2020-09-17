@@ -1,5 +1,6 @@
 import re, requests
 from passlib import hash
+from flask import flash
 
 class Account():
     def __init__(self, username, password, email, firstname, lastname, phone):
@@ -12,23 +13,28 @@ class Account():
 
     def validate_new_account(self):
         if not Account.validate_username_input(self.username):
-            return "Incorrectly formatted username or already existed username"
+            flash("Incorrectly formatted username.")
+        elif not Account.validate_username_uniqueness(self.username):
+            flash("Already existed username.")
         elif not Account.validate_password_input(self.password):
-            return "Invalid formatted password"
+            flash("Invalid formatted password.")
         elif not Account.validate_email_input(self.email):
-            return "Invalid formatted email"
+            flash("Invalid formatted email.")
         elif not Account.validate_phone_input(self.phone):
-            return "Invalid formatted phone"
-        requests.post(
-            "http://127.0.0.1:8081/customers/create?" +
-            "username=" + self.username +
-            "&password=" + self.hash_salt_password(self.password) +
-            "&first_name=" + self.firstname +
-            "&last_name=" + self.lastname +
-            "&email=" + self.email +
-            "&phone=" + self.phone
-        )
-        return "Valid"
+            flash("Invalid formatted phone.")
+        else:
+            flash("Account registered! Please log in.")
+            requests.post(
+                "http://127.0.0.1:8080/customers/create?" +
+                "username=" + self.username +
+                "&password=" + self.hash_salt_password(self.password) +
+                "&first_name=" + self.firstname +
+                "&last_name=" + self.lastname +
+                "&email=" + self.email +
+                "&phone=" + self.phone
+            )
+            return True
+        return False
 
     @staticmethod
     def hash_salt_password(raw_input):
@@ -36,26 +42,30 @@ class Account():
 
     @staticmethod
     def verify_password(username, input_password):
-        try:
-            user = requests.get(
-                "http://127.0.0.1:8080/get/user/info?username=" +
-                username
-            ).json()
-            if hash.sha256_crypt.verify(input_password, user["Password"]):
-                return user
-            else: 
-                return "invalid"
-        except:
-            return "invalid"
+        if not Account.validate_username_input(username):
+            flash("Incorrectly formatted username.")
+        elif not Account.validate_password_input(input_password):
+            flash("Invalid formatted password")
+        else:
+            try:
+                user = requests.get("http://127.0.0.1:8080/get/user/info?username="+username).json()
+                if hash.sha256_crypt.verify(input_password, user["Password"]):
+                    return user
+            except:
+                pass
+            flash("Invalid password or username.")
+        return False
 
     @staticmethod
     def validate_username_input(username):
-        # Valid username is unique and contains 6-15 alphanumerical characters 
-        existed_username = requests.get(
+        return re.search("^[A-Za-z0-9_]{6,15}$", username) and username != "invalid"
+
+    @staticmethod
+    def validate_username_uniqueness(username):
+        return requests.get(
             "http://127.0.0.1:8080/customers/check/existed/username?username=" 
             + username
         ).text == "0"
-        return existed_username and re.search("^[A-Za-z0-9]{6,15}$", username) and username != "invalid"
 
     @staticmethod
     def validate_password_input(password):
