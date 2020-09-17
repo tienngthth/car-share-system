@@ -151,6 +151,7 @@ def createuser():
         firstname = request.form["firstname"].strip()
         lastname = request.form["lastname"].strip()
         email = request.form["email"].strip()
+        phone = request.form["phone"].strip()
         password = request.form["password"]
         valid_email = re.findall(r"[^@]+@[^@]+\.[^@]+",email)
         error = None
@@ -166,22 +167,17 @@ def createuser():
             error = "Email is required."
         elif len(valid_email) < 1:
             error = "Incorrectly formatted email address"
-        
         elif (
-            db.execute("SELECT id FROM User WHERE UserName = ?", (username,)).fetchone()
-            is not None
+            requests.get("http://127.0.0.1:8080/customers/get/id?username={}".format(str(username))) != "invalid"
         ):
             error = "User {0} is already registered.".format(username)
 
         if error is None:
             # the name is available, store it in the database and go to
             # the login page
-            db.execute(
-                "INSERT INTO User (UserName, UserType, Password, FirstName, LastName, Email) VALUES (?, ?, ?, ?, ?, ?)",
-                (username, usertype, generate_password_hash(password), firstname, lastname, email),
-            )
-            db.commit()
-            return redirect(url_for("admin.adminusers"))
+            requests.get("http://127.0.0.1:8080/customers/create?username={}&first_name={}&last_name={}&email={}&phone={}&password={}"
+            .format(str(username), str(firstname), str(lastname), str(email), str(phone), str(password)))
+            return redirect(url_for("admin.users"))
 
         flash(error)
 
@@ -193,10 +189,10 @@ def updateuser(id):
     if (g.type != "Admin"):
         return "Access Denied"
     """Update a user."""
-    user = get_user(id)
-    form = AdminUserForm()
+    user = requests.get("http://127.0.0.1:8080/customers/get/user/by/id?id={}".format(str(id))).json()
+    form = UpdateUserForm()
     if request.method == "GET":
-        return render_template("blog/updateuser.html", user=user, form=form)
+        return render_template("admin/updateuser.html", user=user["user"][0], form=form)
     if request.method == "POST":
         username = request.form["username"].strip()
         usertype = request.form["usertype"].strip()

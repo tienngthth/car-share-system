@@ -192,5 +192,6 @@ class CreateUserForm(FlaskForm):
     firstname = StringField('First Name', [DataRequired()])
     lastname = StringField('Last Name', [DataRequired()])
     email = StringField('Email', [DataRequired()])
+    phone = StringField('Phone', [DataRequired()])
     password = StringField('Password', [DataRequired()])
     submit = SubmitField('Register')

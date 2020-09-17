@@ -5,20 +5,20 @@
 
 {% block content %}
 <div class="loginbox">
-  <form method="POST" action="{{ url_for('blog.updateuser', id=user['id']) }}">
+  <form method="POST" action="{{ url_for('admin.updateuser', id=user['ID']) }}">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
     <div class="form-field" style="float:left; margin-left: 40px;"> {{ form.username.label }} &nbsp;{{ form.username }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;"> {{ form.usertype.label }} &nbsp;{{ form.usertype }}</div>
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.email.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.email }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.firstname.label }} {{ form.firstname }}</div>
-    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.lastname.label }} &nbsp;{{ form.lastname }}</div>
+    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.first.label }} {{ form.first }}</div>
+    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.last.label }} &nbsp;{{ form.last }}</div>
+    <div class="form-field" style="float:left; margin-left: 40px;">{{ form.phone.label }} &nbsp;{{ form.phone }}</div>
     </div>
  <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">   
     <div class="form-field" style="float:left; margin-left: 40px;">{{ form.password.label }}&nbsp;&nbsp; {{ form.password }}</div>
     </div>
     <div class="form-submit" style="margin-left: 40px;"> {{ form.submit }} </div>
   </form>
-  <form style="float:right; margin-top:-65px; padding-right:30px;" action="{{ url_for('blog.deleteuser', id=user['id']) }}" method="post">
+  <form style="float:right; margin-top:-65px; padding-right:30px;" action="{{ url_for('admin.deleteuser', id=user['ID']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
     </form>
  </div>
