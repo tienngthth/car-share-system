@@ -47,7 +47,7 @@ def create_sample_staffs_data():
     #Staffs
     global staffs 
     staffs = []
-    staffs.append(("cuong_nguyen", Account.hash_salt_password("1!aA2222"), "Cuong", "Nguyen", "cuong@gmail.com","123456", "Engineer", "DC:F7:56:2D:C1:97"))
+    staffs.append(("cuong_nguyen", Account.hash_salt_password("1!aA2222"), "Cuong", "Nguyen", "quoccuong242000@gmail.com","123456", "Engineer", "DC:F7:56:2D:C1:97"))
     staffs.append(("minh_nguyen", Account.hash_salt_password("2@aA3333"), "Minh", "Nguyen", "minh456@gmail.com", "123456789", "Admin", ""))
     staffs.append(("tam_nguyen", Account.hash_salt_password("3#aA4444"), "Tam", "Nguyen", "tom@gmail.com", "12345678970", "Manager", ""))
 

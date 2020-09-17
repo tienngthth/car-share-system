@@ -1,33 +1,22 @@
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
-from werkzeug.exceptions import abort
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, flash, g, redirect
+from flask import render_template, request, url_for
 from .auth import login_required
-from .forms import *
-from wtforms.fields.html5 import DateField
-from wtforms.widgets.html5 import DateTimeLocalInput
+from .forms import UserCarSearchForm, UserBookingSearchForm
 from flaskr.script.model.car import Car
 from flaskr.script.model.googleCalendar import GoogleCalendar
 from flaskr.script.model.booking import Booking
-from datetime import *
 from datetime import datetime
 import requests
-import webbrowser
 import math
-import re
 import json
-import os
 
 customer = Blueprint("customer", __name__)
 
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
 def car_view():
+    if g.type != "Customer":
+        return "Access Denied"
     """Customer view car"""
     if (g.type != "Customer"):
         return "Access Denied"
@@ -55,7 +44,7 @@ def search_car(form):
     cars = requests.get(
         "http://127.0.0.1:8080/cars/status/available?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
         .format(brand, car_type, color, seat, cost, start_date, end_date)
-    ).json()["car"]
+    ).json()["cars"]
     return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
 
 @customer.route("/book/car", methods=("GET", "POST"))
@@ -79,13 +68,10 @@ def book_car():
 def confirm_booking():
     if g.type != "Customer":
         return "Access Denied"
-    try:
-        car_id = request.args['car_id']
-        start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
-        end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
-        total_cost = request.args['total_cost']
-    except: 
-        return "Missing start_date, end_date, car or total cost arguments"
+    car_id = request.args['car_id']
+    start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
+    end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
+    total_cost = request.args['total_cost']
     requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
     flash("Booking confirmed!")
@@ -114,9 +100,7 @@ def booking_view():
 def filter_booking(form):
     start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
-    date_validation = Booking.validate_date(start_date, end_date)
-    if date_validation != "Valid":
-        flash(date_validation)
+    if not Booking.validate_date(start_date, end_date):
         return display_all_bookings(form)
     else:
         return display_match_bookings(start_date, end_date, form)
@@ -139,12 +123,14 @@ def display_all_bookings(form):
 @customer.route("/bookings/details", methods=("GET", "POST"))
 @login_required
 def view_booking_detail():
+    if g.type != "Customer":
+        return "Access Denied"
     action = "view"
     booking = json.loads(request.args['booking'].replace("'", "\""))
     start_date = booking["RentTime"]
     end_date = booking["ReturnTime"]
     total_cost = booking["TotalCost"]
-    car = requests.get("http://127.0.0.1:8080/cars/get?id=" + str(booking['CarID'])).json()["car"][0]
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(booking['CarID'])).json()["cars"][0]
     status = booking["Status"]
     booking_id=booking["BookingID"]
     return render_template(

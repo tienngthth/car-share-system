@@ -1,26 +1,12 @@
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
-from werkzeug.exceptions import abort
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, g, redirect, render_template
+from flask import request, url_for
 from .auth import login_required
-from .forms import *
-from wtforms.fields.html5 import DateField
-from wtforms.widgets.html5 import DateTimeLocalInput
-from datetime import *
-import math
-import re
-import os
-from flask import Blueprint, Flask, Markup, render_template
 import requests
 
 manager = Blueprint("manager", __name__)
 
 @manager.route("/dashboard", methods=("GET",))
+@login_required
 def manager_dashboard():
     if g.type != "Manager":
         return redirect(url_for("home.index"))
@@ -28,19 +14,28 @@ def manager_dashboard():
         return render_template("manager/manager_dashboard.html")
 
 @manager.route("/bar_chart", methods=("GET",))
+@login_required
 def bar_chart():
+    if g.type != "Manager":
+        return redirect(url_for("home.index"))
     data = requests.get("http://127.0.0.1:8080/bookings/get/data").json()
     max_value = requests.get("http://127.0.0.1:8080/bookings/get/longest/duration").json()["Total"]
     return render_template('manager/bar_chart.html', title='Most booked cars in minutes', max=max_value, data=data["results"])
 
 @manager.route("/line_chart", methods=("GET", "POST"))
+@login_required
 def line_chart():
+    if g.type != "Manager":
+        return redirect(url_for("home.index"))
     data = requests.get("http://127.0.0.1:8080/bookings/get/profit/data").json()
     max_value = requests.get("http://127.0.0.1:8080/bookings/get/most/profit").json()["Total"]
     return render_template('manager/line_chart.html', title='Profit by date', max=max_value, data=data["results"])
 
 @manager.route("/pie_chart", methods=("GET",))
+@login_required
 def pie_chart():
+    if g.type != "Manager":
+        return redirect(url_for("home.index"))
     pie_colors = [
     "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",

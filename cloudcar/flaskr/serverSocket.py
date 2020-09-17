@@ -33,9 +33,14 @@ def handle_request(message):
 def validate_crendential(message):
     user = Account.verify_password(message["username"], message["password"])
     if user != "invalid":
-        server.send_message(user["Password"])
-    else:
-        server.send_message("invalid")
+        booking = requests.get(
+            "http://127.0.0.1:8080/bookings/read?car_id=" + message["car_id"] + 
+            "customer_id" + message["customer_id"]
+        ).json()["bookings"]
+        if len(booking) != 0:
+            server.send_message(user["Password"])
+            return
+    server.send_message("invalid")
 
 # Check for car maintainance
 def check_for_car_maintainance(message):

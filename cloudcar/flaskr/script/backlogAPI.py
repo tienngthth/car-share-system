@@ -5,7 +5,7 @@ backlog_api = Blueprint("backlog_api", __name__)
 
 @backlog_api.route("/create", methods=['GET', 'POST'])
 def create_backlog():
-    # try:
+    try:
         Database.insert_record_parameterized(
             "Backlogs(AssignedEngineerID, CarID, CreatedDate, Status, Description) ",
             "(%s, %s, CURDATE(), %s, %s)",
@@ -17,11 +17,11 @@ def create_backlog():
             )
         )
         return "Success"
-    # except:
+    except:
         return "Fail"
 
 @backlog_api.route("/close", methods=['GET', 'PUT'])
-def update():
+def close_backlog():
     try:
         Database.update_record_parameterized(
             " Backlogs ", 
@@ -65,3 +65,42 @@ def get_engineer_id():
         return "No engineer found"
     else:
         return results[0]
+
+@backlog_api.route("remove/assigned/engineer")
+def remove_assigned_engineer_from_backlogs():
+    try:
+        Database.update_record_parameterized(
+            " Backlogs ", 
+            " AssignedEngineerID = NULL",
+            " WHERE AssignedEngineerID = (%s)",
+            (request.args.get("id"),)
+        ) 
+        return "Success"
+    except:
+        return "Fail"
+
+@backlog_api.route("remove/signed/engineer", methods=['GET', 'PUT'])
+def remove_signed_engineer_from_backlogs():
+    try:
+        Database.update_record_parameterized(
+            " Backlogs ", 
+            " SignedEngineer = NULL",
+            " WHERE SignedEngineer = (%s)",
+            (request.args.get("id"),)
+        ) 
+        return "Success"
+    except:
+        return "Fail"
+
+@backlog_api.route("remove/car", methods=['GET', 'PUT'])
+def remove_car_from_backlogs():
+    try:
+        Database.update_record_parameterized(
+            " Backlogs ", 
+            " CarID = NULL",
+            " WHERE CarID = (%s)",
+            (request.args.get("car_id"),)
+        ) 
+        return "Success"
+    except:
+        return "Fail"

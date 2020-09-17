@@ -20,7 +20,7 @@
         <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="{{url_for('admin.user_view')}}">Search Users</a>
       {% endif %}
       {% if g.type == "Customer" %}
-        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="{{url_for('customer.bookings')}}">My Bookings</a>
+        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="{{url_for('customer.booking_view')}}">My Bookings</a>
       {% endif %}
       {% if g.type == "Engineer" %}
         <a style = "margin-right:55px;" href="/">Repair Requests</a>

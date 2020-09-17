@@ -1,28 +1,102 @@
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
+from flask import Blueprint, flash, g, redirect
+from flask import render_template, request, url_for
+from .auth import login_required
+from .forms import AdminCarSearchForm, AdminUserSearchForm, RegisterForm, AdminUpdateUserForm, AdminCreateCarForm, AdminUpdateCarForm
+from flaskr.script.model.car import Car
+from flaskr.script.model.account import Account
+from flaskr.script.model.booking import Booking
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-# from flaskr.script.emailscripts.sendmail import send_mail
-from werkzeug.exceptions import abort
-from werkzeug.security import generate_password_hash
 from .auth import login_required
-from .forms import *
-from wtforms.fields.html5 import DateField
-from wtforms.widgets.html5 import DateTimeLocalInput
-from datetime import *
-import smtplib
 import requests
-import math
-import re
-import os
-from flaskr.script.model.booking import Booking
+import json
+import smtplib
 
 admin = Blueprint("admin", __name__)
+
+@admin.route("/users", methods=("GET", "POST"))
+@login_required
+def user_view():
+    if (g.type != "Admin"):
+        return "Access Denied"
+    form = AdminUserSearchForm()
+    if request.method == "POST":
+        return search_user(form)
+    if request.method == "GET":
+        return display_all_users(form)
+
+def search_user(form):
+    """Search user by filter"""
+    username = request.form['username'].strip()
+    firstname = request.form['firstname'].strip()
+    lastname = request.form['lastname'].strip()
+    phone = request.form['phone'].strip()
+    email = request.form['email'].strip()
+    user_type = request.form['user_type'].strip().lower()
+    users = []
+    if validate_search_input(username, phone, email):
+        if user_type == "":
+            users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
+                .format(username, firstname, lastname, email, phone)).json()["customers"]
+            staffs = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
+                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
+            users.extend(staffs)
+        elif user_type == "customer":
+            users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
+                .format(username, firstname, lastname, email, phone)).json()["customers"]
+        elif user_type == "admin" or user_type == "manager" or user_type == "engineer":
+            users = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
+                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
+        # all in the search box will return all the tuples
+        return render_template("admin/user_view.html", users=users, form=form)
+    return display_all_users(form)
+
+def validate_search_input(username, phone, email):
+    if username != "" and not Account.validate_username_input(username):
+        return False
+    if phone != "" and not Account.validate_phone_input(phone):
+        return False
+    return True
+
+def display_all_users(form):
+    """Show all users"""
+    users = requests.get("http://127.0.0.1:8080/customers/read?").json()["customers"]
+    staffs = requests.get("http://127.0.0.1:8080/staffs/read?").json()["staffs"]
+    users.extend(staffs)
+    return render_template("admin/user_view.html", users=users, form=form)
+
+@admin.route("/update/user", methods=("GET", "POST"))
+@login_required
+def update_user():
+    """Update a user."""
+    if (g.type != "Admin"):
+        return "Access Denied"
+    form = AdminUpdateUserForm()
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        password = request.form["password"]
+        firstname = request.form["firstname"].strip()
+        lastname = request.form["lastname"].strip()
+        email = request.form["email"].strip()
+        phone = request.form["phone"].strip()
+        account = Account(username, password, email, firstname, lastname, phone, request.args["user_id"])
+        if account.validate_update_account():
+            account.update_account()
+            return redirect(url_for("admin.user_view"))
+    return render_template("admin/update_user.html", id=request.args["user_id"], user_type=request.args["user_type"], form=form)
+        
+@admin.route("/delete/user", methods=("GET", "POST"))
+@login_required
+def delete_user():
+    if (g.type != "Admin"):
+        return "Access Denied"    
+    if request.args["user_type"] == None:
+        requests.put("http://127.0.0.1:8080/bookings/remove/customer?customer_id=" + request.args["car_id"])
+    elif request.args["user_type"] == "Engineer":
+        requests.put("http://127.0.0.1:8080/backlogs/remove/signed/engineer?id=" + request.args["user_id"])
+        requests.put("http://127.0.0.1:8080/backlogs/remove/assigned/engineer?id=" + request.args["user_id"])
+    flash("User deleted!")
+    return redirect(url_for("admin.user_view"))
 
 @admin.route("/cars", methods=("GET", "POST"))
 @login_required
@@ -33,74 +107,46 @@ def car_view():
     form = AdminCarSearchForm()
     if request.method == "POST":
         return search_car(form)
-    if request.method == "GET":
-        return display_all_cars(form)
+    return display_all_cars(form)
 
 def search_car(form):
     """Search car by filter"""
-    brand = request.form['brand']
-    car_type = request.form['car_type']
-    color = request.form['color']
-    seat = request.form['seat']
-    cost = request.form['cost']
-    mac_address = request.form['mac_address']
+    brand = request.form['brand'].strip()
+    car_type = request.form['car_type'].strip()
+    color = request.form['color'].strip()
+    seat = request.form['seat'].strip()
+    cost = request.form['cost'].strip()
+    mac_address = request.form['mac_address'].strip()
     if not Booking.validate_cost(cost):
         return display_all_cars(form)
     cars = requests.get(
         "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}&mac_address={}"
         .format(brand, car_type, color, seat, cost, mac_address)
     ).json()
-    return render_template("admin/car_view.html", cars=cars["car"], form=form)
+    return render_template("admin/car_view.html", cars=cars["cars"], form=form)
 
 def display_all_cars(form):
-    """Show all the cars"""
+    """Show all cars"""
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/read?mac_address=&brand=&car_type=&status&color=&seat=&cost=&start=&end="
-    ).json()
-    return render_template("admin/car_view.html", cars=cars["car"], form=form)
+        "http://127.0.0.1:8080/cars/read?"
+    ).json()["cars"]
+    return render_template("admin/car_view.html", cars=cars, form=form)
 
-@admin.route("/users", methods=("GET", "POST"))
+@admin.route("/car/bookings", methods=("GET", "POST"))
 @login_required
-def user_view():
+def car_bookings():
     if (g.type != "Admin"):
         return "Access Denied"
-    form = AdminUserSearchForm()
-    if request.method == "POST":
-        username = '%' + request.form['username'].strip() + '%'
-        first = '%' + request.form['first'].strip() + '%'
-        last = '%' + request.form['last'].strip() + '%'
-        phone = '%' + request.form['phone'].strip() + '%'
-        email = '%' + request.form['email'].strip() + '%'
-        error = None
-        users = []
-        users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
-        .format(str(username), str(first), str(last), str(email), str(phone))).json()
-        # all in the search box will return all the tuples
-        return render_template("admin/user_view.html", users=users["user"], form=form)
-    if request.method == "GET":
-        users = requests.get("http://127.0.0.1:8080/customers/get/all/users").json()
-        return render_template("admin/user_view.html", users=users["user"], form=form)
-        
+    bookings = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(request.args["car_id"])).json()
+    return render_template("admin/car_bookings.html", bookings=bookings["history"], id=request.args["car_id"])
 
-@admin.route("/<int:id>/carbookings", methods=("GET", "POST"))
+@admin.route("/create/car", methods=("GET", "POST"))
 @login_required
-def carbookings(id):
-    if (g.type != "Admin"):
-        return "Access Denied"
-    bookings = []
-    error = None
-    bookings = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(id)).json()
-
-    return render_template("customer/carbookings.html", bookings=bookings["history"], id=id)
-
-
-@admin.route("/create", methods=("GET", "POST"))
-@login_required
-def create():
-    if (g.type != "Admin"):
-        return "Access Denied"
-    form=NewCarForm()
+def create_car():
     """Create a new car for the current user."""
+    if (g.type != "Admin"):
+        return "Access Denied"
+    form = AdminCreateCarForm()
     if request.method == "POST":
         mac_address = request.form["mac_address"].strip()
         brand = request.form["brand"].strip()
@@ -109,139 +155,19 @@ def create():
         seat = request.form["seat"].strip()
         location_id = request.form["location_id"].strip()
         cost = request.form["cost"].strip()
-        error = None
-        #input validation
-        try:
-            cost=float(cost)
-        except: 
-            error = "Cost must be a number"
-            flash(error)
-            return render_template("admin/create.html", form=form)
-        if not mac_address:
-            error = "Mac Address is required."
-        elif not brand:
-            error = "Brand is required."
-        elif not car_type:
-            error = "Car type is required."    
-        elif not color:
-            error = "Color is required."
-        elif not seat:
-            error = "Seat is required."
-        elif not location_id:
-            error = "Location is required."
-        elif not cost:
-            error = "Cost is required."
-        elif cost < 1 or cost > 1000:
-            error = "Cost must be a number between 1 and 1000."
-        if error is not None:
-            flash(error)
-        else:
-            requests.get("http://127.0.0.1:8080/cars/create?mac_address={}&brand={}&type={}&location_id={}&status=Available&color={}&seat={}&cost={}"
-            .format(str(mac_address), str(brand), str(car_type), str(location_id), str(color), str(seat), str(cost)))
-            return redirect(url_for("admin.cars"))
-        return render_template("admin/create.html", form=form)
+        car = Car(brand, car_type, color, seat, cost, location_id, mac_address)
+        if car.validate_new_car():
+            car.create_car()
+            return redirect(url_for("admin.car_view"))
+    return render_template("admin/car_detail.html", form=form)
 
-    return render_template("admin/create.html", form=form)
-
-@admin.route("/createuser", methods=("GET", "POST"))
+@admin.route("/update/car", methods=("GET", "POST"))
 @login_required
-def createuser():
-    if (g.type != "Admin"):
-        return "Access Denied"
-    form = CreateUserForm()
-    if request.method == "GET":
-        render_template("admin/createuser.html", form=form)
-    """Create a new car for the current user."""
-    if request.method == "POST":
-        username = request.form["username"].strip()
-        firstname = request.form["firstname"].strip()
-        lastname = request.form["lastname"].strip()
-        email = request.form["email"].strip()
-        phone = request.form["phone"].strip()
-        password = request.form["password"]
-        valid_email = re.findall(r"[^@]+@[^@]+\.[^@]+",email)
-        error = None
-        if not username:
-            error = "Username is required."
-        elif not password:
-            error = "Password is required."
-        elif not firstname:
-            error = "First name is required."
-        elif not lastname:
-            error = "Last name is required."
-        elif not email:
-            error = "Email is required."
-        elif len(valid_email) < 1:
-            error = "Incorrectly formatted email address"
-        elif (
-            requests.get("http://127.0.0.1:8080/customers/get/id?username={}".format(str(username))) != "invalid"
-        ):
-            error = "User {0} is already registered.".format(username)
-
-        if error is None:
-            # the name is available, store it in the database and go to
-            # the login page
-            requests.get("http://127.0.0.1:8080/customers/create?username={}&first_name={}&last_name={}&email={}&phone={}&password={}"
-            .format(str(username), str(firstname), str(lastname), str(email), str(phone), str(password)))
-            return redirect(url_for("admin.users"))
-
-        flash(error)
-
-    return render_template("admin/createuser.html", form=form)
-
-@admin.route("/<int:id>/updateuser", methods=("GET", "POST"))
-@login_required
-def updateuser(id):
-    if (g.type != "Admin"):
-        return "Access Denied"
-    """Update a user."""
-    user = requests.get("http://127.0.0.1:8080/customers/get/user/by/id?id={}".format(str(id))).json()["user"][0]
-    form = UpdateUserForm()
-    if request.method == "GET":
-        return render_template("admin/updateuser.html", user=user, form=form)
-    if request.method == "POST":
-        username = request.form["username"].strip()
-        phone = request.form["phone"].strip()
-        firstname = request.form["first"].strip()
-        lastname = request.form["last"].strip()
-        email = request.form["email"].strip()
-        error = None
-        if not username:
-            username = user["Username"]
-        if not phone:
-            phone = user["Phone"]
-        if not firstname:
-            firstname = user["FirstName"]
-        if not lastname:
-            lastname = user["LastName"]
-        if not email:
-            email = user["Email"]
-        valid_email = re.findall(r"[^@]+@[^@]+\.[^@]+",email)
-        if len(valid_email) < 1:
-            error = "Incorrectly formatted email address"
-
-        if error is None:
-            requests.get("http://127.0.0.1:8080/customers/update?username={}&first_name={}&last_name={}&email={}&phone={}&id={}"
-            .format(str(username), str(firstname), str(lastname), str(email), str(phone),str(id)))
-            return redirect(url_for("admin.users"))
-        return render_template("admin/updateuser.html", user=user, form=form)
-        
-@admin.route("/<int:id>/deleteuser", methods=("GET", "POST"))
-@login_required
-def deleteuser(id):
-    if (g.type != "Admin"):
-        return "Access Denied"    
-    user = requests.get("http://127.0.0.1:8080/customers/delete?id={}".format(str(id)))
-    return redirect(url_for("admin.users"))
-
-@admin.route("/<int:id>/update", methods=("GET", "POST"))
-@login_required
-def update(id):
-    if (g.type != "Admin"):
-        return "Access Denied"
+def update_car():
     """Update a car."""
-    car = requests.get("http://127.0.0.1:8080/cars/get?id={}".format(str(id))).json()["car"][0]
-    form=UpdateCarForm()
+    if g.type != "Admin":
+        return "Access Denied"
+    form = AdminUpdateCarForm()
     if request.method == "POST":
         mac_address = request.form["mac_address"].strip()
         brand = request.form["brand"].strip()
@@ -250,62 +176,36 @@ def update(id):
         seat = request.form["seat"].strip()
         location_id = request.form["location_id"].strip()
         cost = request.form["cost"].strip()
-        error = None
-        if not mac_address:
-            mac_address = car["MacAddress"]
-        if not brand:
-            brand = car["Brand"]
-        if not car_type:
-            car_type = car["Type"]
-        if not color:
-            color = car["Color"]
-        if not seat:
-            seat = car["Seat"]
-        if not location_id:
-            location_id = car["LocationID"]
-        if not cost:
-            cost = car["Cost"]
-        elif cost < 1 or cost > 1000:
-            error = "Cost must be a number between 1 and 1000."
-        #input validation
-        try:
-            cost=float(cost)
-        except: 
-            error = "Cost must be a number"
-            flash(error)
-            return render_template("admin/update.html", form=form, car=car)
-        
-        if error is not None:
-            flash(error)
-        else:
-            requests.get("http://127.0.0.1:8080/cars/update?id={}&mac_address={}&brand={}&type={}&location_id={}&status=Available&color={}&seat={}&cost={}"
-            .format(str(id), str(mac_address), str(brand), str(car_type), str(location_id), str(color), str(seat), str(cost)))
-            return redirect(url_for("admin.cars"))
-        return render_template("admin/update.html", car=car, form=form)
-    return render_template("admin/update.html", car=car, form=form)
+        status = request.form["status"].strip()
+        car = Car(brand, car_type, color, seat, cost, location_id, mac_address, status)
+        if car.validate_update_car():
+            car.update_car(request.args["car_id"])
+            return redirect(url_for("admin.car_view"))
+    return render_template("admin/car_detail.html", car_id=request.args["car_id"], form=form, action="update")
 
-
-@admin.route("/<int:id>/delete", methods=("POST",))
+@admin.route("/delete/car", methods=("POST","GET"))
 @login_required
-def delete(id):
+def delete_car():
     if (g.type != "Admin"):
         return "Access Denied"
-    car = requests.get("http://127.0.0.1:8080/cars/get/car/by/ID?id={}".format(str(id))).json()
-    return redirect(url_for("blog.admincars"))
+    requests.put("http://127.0.0.1:8080/backlogs/remove/car?car_id=" + request.args["car_id"])
+    requests.put("http://127.0.0.1:8080/bookings/remove/car?car_id=" + request.args["car_id"])
+    requests.delete("http://127.0.0.1:8080/cars/delete?id=" + request.args["car_id"])
+    flash("Car deleted!")
+    return redirect(url_for("admin.car_view"))
 
-
-@admin.route("/<int:id>/repair", methods=("GET",))
+@admin.route("/report/car", methods=("POST","GET"))
 @login_required
-def report(id):
+def report_car():
     if (g.type != "Admin"):
         return "Access Denied"
-    car = requests.get("http://127.0.0.1:8080/cars/get?id={}".format(str(id))).json()
-    engineer = requests.get("http://127.0.0.1:8080/staffs/get/engineer").json()
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(request.args["car_id"])).json()["cars"][0]
+    engineer = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()["staffs"][0]
+    requests.put("http://127.0.0.1:8080/cars/update?status=To be repaired&id=" + str(request.args["car_id"]))
     message = MIMEMultipart("alternative")
     message["Subject"] = "Car Maintenance Request"
     message["From"] = "ahjhj24012000@gmail.com"
-    message["To"] = "quoccuong242000@gmail.com"
-
+    message["To"] = engineer["Email"]
     # Create the plain-text and HTML version of your message
     text = """\
     Hi,
@@ -665,7 +565,7 @@ def report(id):
                         <tr>
                         <td>
                             <p>Hello engineer,</p>
-                            <p>Repairs have been requested for car #""" + str(id) +"""</p>
+                            <p>Repairs have been requested for car #""" + str(request.args["car_id"]) + """</p>
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                             <tbody>
                                 <tr>
@@ -719,7 +619,6 @@ def report(id):
         </body>
     </html>
     """
-
     # Turn these into plain/html MIMEText objects
     part1 = MIMEText(text, "plain")
     part2 = MIMEText(html, "html")
@@ -732,19 +631,9 @@ def report(id):
     server.starttls()
     server.login("ahjhj24012000@gmail.com", "quoc2401@")
     server.sendmail("ahjhj24012000@gmail.com", "quoccuong242000@gmail.com", message.as_string())
-    requests.get("http://127.0.0.1:8080/backlogs/create?assigned_engineer_id={}&car_id={}&status=Not%20done&description="
-            .format(str(engineer["engineer"][0]["ID"]), str(car["car"][0]["ID"])))
-    return redirect(url_for("admin.cars"))
-
-
-@admin.route("/edituser", methods=("GET", "POST"))
-@login_required
-def edituser():
-    return redirect(url_for("blog.adminusers"))
-
-
-
-
+    requests.post("http://127.0.0.1:8080/backlogs/create?assigned_engineer_id={}&car_id={}&status=Not%20done"
+            .format(str(engineer["ID"]), str(car["ID"])))
+    return redirect(url_for("admin.car_view"))
 
     
     

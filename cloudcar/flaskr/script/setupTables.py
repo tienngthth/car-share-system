@@ -100,15 +100,15 @@ def create_backlog_table():
 def create_all_tables():
     # Database.execute_command("DROP TABLE IF EXISTS Bookings")
     # Database.execute_command("DROP TABLE IF EXISTS Backlogs")
-    # Database.execute_command("DROP TABLE IF EXISTS Cars")
+    # Database.execute_command("DROP TABLE IF EXISTS Customers")
 
     #Create tables one by one
-    # create_customer_table()
     # create_location_table()
     # create_car_table()
-    # create_booking_table()
     # create_staff_table()
     # create_backlog_table()
+    # create_customer_table()
+    # create_booking_table()
     print("Tables succesfully created")
 
 create_all_tables()

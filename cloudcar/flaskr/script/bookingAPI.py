@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 from model.database import Database
-from model.util import Util
 
 booking_api = Blueprint("booking_api", __name__)
 
@@ -43,49 +42,50 @@ def read():
         " Bookings ", 
         " WHERE CarID = %(car_id)s " +
         " OR CustomerID = %(customer_id)s " +
-        " AND RentTime >= %(start)s AND ReturnTime <= %(end)s ",
+        " AND RentTime <= NOW() AND NOW() <= ReturnTime ",
         {
             "car_id": request.args.get("car_id"),
-            "customer_id": request.args.get("customer_id"), 
-            "start": request.args.get("start"), 
-            "end": request.args.get("end")
+            "customer_id": request.args.get("customer_id")
         }
     ) 
-    return {"bookings" : Util.paginatedDisplay(results, request.args.get("page"))}
+    return {"bookings" : results}
 
 @booking_api.route("/get/profit/data")
 def get_all_rent_time():
     results = Database.select_record(
-        "DATE_FORMAT(RentTime, '%Y-%m-%d') AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
-        "Bookings", 
+        " DATE_FORMAT(RentTime, '%Y-%m-%d') AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
+        " Bookings ", 
         " WHERE Status = 'Booked' GROUP BY Date"
     ) 
     return {"results": results}
 
 @booking_api.route("/get/most/profit")
 def get_most_profit():
-    results = Database.select_record(
+    results = Database.select_record_parameterized(
         " CONVERT(SUM(TotalCost), SIGNED) AS Total", 
         " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY DATE(RentTime) ORDER BY Total DESC LIMIT 1"
+        " WHERE Status = 'Booked' GROUP BY DATE(RentTime) ORDER BY Total DESC LIMIT 1",
+        ()
     ) 
     return results[0]
 
 @booking_api.route("/get/data")
 def get_all_booked_car_ids():
-    results = Database.select_record(
+    results = Database.select_record_parameterized(
         " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY CarID"
+        " WHERE Status = 'Booked' GROUP BY CarID",
+        ()
     ) 
     return {"results": results}
 
 @booking_api.route("/get/longest/duration")
 def get_longest_duration():
-    results = Database.select_record(
+    results = Database.select_record_parameterized(
         " CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY CarID ORDER BY Total DESC LIMIT 1"
+        " WHERE Status = 'Booked' GROUP BY CarID ORDER BY Total DESC LIMIT 1",
+        ()
     ) 
     return results[0]
 
@@ -124,35 +124,28 @@ def get_customer_bookings_by_time():
     )
     return {"bookings" : results}
 
-@booking_api.route("/get/customer/booking")
-def get_customer_booking_for_admin_booking_page():
-    results = Database.select_record_parameterized(
-        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," +
-        "Bookings.Status, Bookings.ID", 
-        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
-        " WHERE Bookings.RentTime > %s AND Bookings.CustomerID = %s",
-        (request.args.get("start"), request.args.get("id"))
-    )
-    return {"booking" : results}
+@booking_api.route("remove/customer", methods=['GET', 'PUT'])
+def remove_customer_from_bookings():
+    try:
+        Database.update_record_parameterized(
+            " Bookings ", 
+            " CustomerID = NULL",
+            " WHERE CustomerID = (%s)",
+            (request.args.get("customer_id"),)
+        ) 
+        return "Success"
+    except:
+        return "Fail"
 
-@booking_api.route("/get/admin/booking")
-def get_admin_booking_for_admin_booking_page():
-    results = Database.select_record_parameterized(
-        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," + 
-        "Bookings.Status, Bookings.CustomerID, Bookings.ID", 
-        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
-        " WHERE Bookings.RentTime > %s",
-        request.args.get("start")
-    )
-    return {"booking" : results}
-
-#New APIs start here
-@booking_api.route("/get/all/admin/bookings")
-def get_all_admin_bookings_for_booking_page():
-    results = Database.select_record(
-        "Bookings.RentTime, Bookings.CarID, Cars.Brand, Cars.Color, TIMESTAMPDIFF(HOUR,Bookings.RentTime,Bookings.ReturnTime) AS Duration," + 
-        "Bookings.Status, Bookings.CustomerID, Bookings.ID", 
-        "Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID", 
-        ""
-    )
-    return {"booking" : results}
+@booking_api.route("remove/car", methods=['GET', 'PUT'])
+def remove_car_from_bookings():
+    try:
+        Database.update_record_parameterized(
+            " Bookings ", 
+            " CarID = NULL",
+            " WHERE CarID = (%s)",
+            (request.args.get("car_id"),)
+        ) 
+        return "Success"
+    except:
+        return "Fail"

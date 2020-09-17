@@ -30,14 +30,14 @@
     <th>More Detail</th>
   </tr>
   {% for booking in bookings %}
-  <tr>
+  <tr style="font-size: smaller;">
   <td>{{ booking.CarBrand }}</td>
   <td>{{ booking.RentTime }}</td>
   <td>{{ booking.TotalCost }}</td>
   <td>{{ booking.Status }}</td>
   <td>
     <form style="margin:0px;" action="{{ url_for('customer.view_booking_detail', booking=booking) }}" method="post">
-      <input style="margin:0px;" class="greenbutton" type="submit" value="View Booking">
+      <input style="margin:0px; font-size: smaller;" class="greenbutton" type="submit" value="View Booking">
     </form>
   </td>
   </tr>
