@@ -42,3 +42,16 @@ def get_engineer():
         ()
     ) 
     return {"engineer": results}
+
+@staff_api.route("get/engineer/mac/address")
+def get_engineer_mac_address():
+    results = Database.select_record_parameterized(
+        " EngineerMacAddress ", 
+        " Staffs ", 
+        " WHERE ID = %s", 
+        (request.args.get("id"), )
+    ) 
+    if len(results) == 0:
+        return "No mac address found"
+    else:
+        return results[0]

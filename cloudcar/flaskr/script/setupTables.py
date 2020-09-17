@@ -104,11 +104,11 @@ def create_all_tables():
 
     #Create tables one by one
     # create_customer_table()
-    # create_staff_table()
     # create_location_table()
     # create_car_table()
     # create_booking_table()
-    create_backlog_table()
+    # create_staff_table()
+    # create_backlog_table()
     print("Tables succesfully created")
 
 create_all_tables()
