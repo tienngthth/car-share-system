@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
   <div style = "width:100%; font-size:22px;">
-    <a style="padding:0px; width:25%; float:left;" href="{{ url_for('home.index') }}">
+    <a style="padding:0px; width:25%; float:left;" href="{{url_for('home.index')}}">
       <img style="width:80px;padding: 5px 0px 0px 0px;" src="/static/cloudcar_logo.png">
     </a>
     <ul style="float:right; margin-top: 12px;">
@@ -17,10 +17,10 @@
     </ul>
     <div style = "float:left; margin-top: 20px;">
       {% if g.type == "Admin" %}
-        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/admin/adminusers">Search Users</a>
+        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="{{url_for('admin.user_view')}}">Search Users</a>
       {% endif %}
       {% if g.type == "Customer" %}
-        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="/customer/bookings">My Bookings</a>
+        <a style = "margin-right:55px;" href="/">Search Cars</a> <a href="{{url_for('customer.booking_view')}}">My Bookings</a>
       {% endif %}
       {% if g.type == "Engineer" %}
         <a style = "margin-right:55px;" href="/">Repair Requests</a>

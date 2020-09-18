@@ -3,8 +3,8 @@
 {% endblock %}
 {% block content %}
 <div class="formwrapper">
-  <h2 class="title">Search for a Car</h2>
-  <form method="POST" action="/customer/cars">
+  <h2 class="title">Search for a car</h2>
+  <form method="POST" action="{{url_for('customer.car_view')}}">
     <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
         <div class="form-field" style="float:left;">{{ form.brand.label }} {{ form.brand }}</div>
         <div class="form-field" style="float:left;">{{ form.car_type.label }} {{ form.car_type }}</div>
@@ -36,19 +36,19 @@
     <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
   {% for car in cars %}
-  <tr>
-    <td>{{ car['Brand'] }}</td>
-      <td>{{ car['Type'] }}</td>
-      <td>{{ car['Color'] }}</td>
-      <td>{{ car['Seat'] }}</td>
-      <td>{{ car['Address'] }}</td>
-      <td>{{ car['Cost'] }}</td>
-      <td style="max-width:40px;">
-        <a class="greenbutton" style="margin-left: 5px;" 
-            href="{{ url_for('customer.book_car', car=car,start_date=start_date,end_date=end_date)}}">
-          Book now
-        </a>
-      </td>
+  <tr style="font-size: smaller;">
+    <td>{{ car.Brand}}</td>
+    <td>{{ car.Type }}</td>
+    <td>{{ car.Color}}</td>
+    <td>{{ car.Seat}}</td>
+    <td>{{ car.Address}}</td>
+    <td>{{ car.Cost}}</td>
+    <td style="max-width:40px;">
+      <a style="font-size: smaller;" class="greenbutton" 
+          href="{{ url_for('customer.book_car', car=car,start_date=start_date,end_date=end_date)}}">
+        Book now
+      </a>
+    </td>
   </tr>
   {% endfor %}
   </table> 

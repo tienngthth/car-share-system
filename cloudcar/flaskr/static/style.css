@@ -36,8 +36,9 @@ font-size:16px;
 }
 
 th,td{
-min-width: 160px;
+min-width: 100px;
 }
+
 th{
 background: #043F5D;
 color:#FFF;
@@ -49,8 +50,6 @@ padding-bottom:5px;
 tr:nth-child(even) {background: #EEE}
 
 tr:last-child {border-radius:0px 0px 8px 8px;}
-
-
 
 .greenbutton {
 	background-color:#043F5D;

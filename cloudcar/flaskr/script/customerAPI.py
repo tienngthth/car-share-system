@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 from model.database import Database
-from model.util import Util
 
 customer_api = Blueprint("customer_api", __name__)
 
@@ -26,9 +25,11 @@ def create():
 @customer_api.route("/read")
 def read():
     results = Database.select_record_parameterized(
-        "*", 
-        "Customers", 
-        " WHERE Username LIKE CASE WHEN %(username)s = '' OR %(username)s IS NULL " +
+        " * ", 
+        " Customers ", 
+        " WHERE ID LIKE CASE WHEN %(id)s = '' OR %(id)s IS NULL " +
+        " THEN ID ELSE %(id)s END " +
+        " AND Username LIKE CASE WHEN %(username)s = '' OR %(username)s IS NULL " +
         " THEN Username ELSE %(username)s END " +
         " AND FirstName LIKE CASE WHEN %(first_name)s = '' OR %(first_name)s IS NULL " +
         " THEN FirstName ELSE %(first_name)s END " +
@@ -39,6 +40,7 @@ def read():
         " AND Phone LIKE CASE WHEN %(phone)s = '' OR %(phone)s IS NULL " + 
         " THEN Phone ELSE %(phone)s END ",
         {
+            "id": request.args.get("id"), 
             "username": request.args.get("username"), 
             "first_name": request.args.get("first_name"),
             "last_name": request.args.get("last_name"), 
@@ -46,7 +48,7 @@ def read():
             "phone": request.args.get("phone")
         }
     ) 
-    return {"user": Util.paginatedDisplay(results, request.args.get("page"))}
+    return {"customers": results}
 
 @customer_api.route("/update", methods=['GET', 'PUT'])
 def update():
@@ -82,9 +84,9 @@ def update():
 def delete():
     try:
         Database.delete_record_parameterized(
-            "Customers",
+            " Customers ",
             " WHERE ID = %s"
-            , request.args.get("id"),
+            , (request.args.get("id"),)
         )
         return "Success"
     except:
@@ -112,33 +114,3 @@ def check_username():
         (request.args.get("username"),)
     )
     return str(result[0]["SUM"])
-
-@customer_api.route("/get/all/users")
-def get_all_users():
-    results = Database.select_record(
-        "*", 
-        "Customers", 
-        ""
-    ) 
-    return {"user": results}
-
-@customer_api.route("/get/user/by/id")
-def get_user_by_id():
-    results = Database.select_record_parameterized(
-        "*", 
-        "Customers", 
-        " WHERE ID = %s",
-        request.args.get("id")
-    ) 
-    return {"user": results}
-
-@customer_api.route("/get/user/by/username")
-def get_user_by_username():
-    results = Database.select_record_parameterized(
-        "*", 
-        "Customers", 
-        " WHERE Username = %s",
-        request.args.get("username")
-    ) 
-    return {"user": results}
-    

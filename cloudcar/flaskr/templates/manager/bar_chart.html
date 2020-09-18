@@ -37,24 +37,7 @@
                 {{ item["Total"] }},
             {% endfor %}
           ]
-        }],
-        options: {
-          responsive: true,
-            scales: {
-            xAxes: [{
-              type: 'time',
-              display: true,
-              labelString: 'Date'
-            }],
-            yAxes: [{
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: 'value'
-              }
-            }]
-          }
-        }
+        }]
       }
 
       // get bar chart canvas
@@ -72,6 +55,7 @@
         scaleShowVerticalLines: true,
         scaleShowGridLines: true,
         barShowStroke: true,
+        scaleShowLabels: true,
         scaleShowLabels: true
       }
       );
