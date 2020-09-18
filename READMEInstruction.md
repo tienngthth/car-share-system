@@ -1,8 +1,8 @@
 # Car-Share-System
 #Instruction
 
-1. Connect to GCP
-2. Run each of these 3 files seperately in order: run1.sh, run2.sh, run3.sh 
+1. Make sure you have installed CLoud SQL proxy to connect to GCP
+2. Run each of these 3 files seperately in order ( /cloudcar): run1.sh, run2.sh, run3.sh 
 3. Access to Web app at localhost:5000 , please use Google Chrome Browser
 
 ---------------------------------------------------
