@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block header %}
 <meta charset="utf-8" />
-<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
 <title>{{ title }}</title>
 {% endblock %}
 {% block content %}
@@ -16,21 +16,34 @@
   <center>
     <canvas id="chart" width="600" height="400"></canvas>
     <script>
-      var pieData = [
-        {% for data, colors in set %}
-          {
-            value: {{ data['Total'] }},
-            label: "{{ data['CarID'] }}",
-            color: "{{colors}}"
-          },
-        {% endfor %}
-      ];
-      // get bar chart canvas
-      var mychart = document.getElementById("chart").getContext("2d");
-      steps = 10
-      max = {{ max }}
-      // draw pie chart
-      new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+      new Chart(document.getElementById("chart"), {
+      type: 'pie',
+      data: {
+        labels: [
+          {% for item in data %}
+            "{{ item['CarID'] }}",
+          {% endfor %}
+        ],
+        datasets: [{
+          backgroundColor: [
+            {% for item in colors %}
+              "{{ item }}",
+            {% endfor %}
+          ],
+          data: [
+            {% for item in data %}
+              {{ item['Total'] }},
+            {% endfor %}
+          ],
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Most repaired cars'
+        }
+      }
+    });
     </script>
   </center>
 </div> 

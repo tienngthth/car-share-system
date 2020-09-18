@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block header %}
 <meta charset="utf-8" />
-<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
 <title>{{ title }}</title>
 {% endblock %}
 {% block content %}
@@ -20,9 +20,9 @@
   <center>
     <canvas id="chart" width="600" height="400" onload=""></canvas>
     <script>
-
-      // bar chart data
-      var barData = {
+      new Chart(document.getElementById("chart"), {
+      type: 'bar',
+      data: {
         labels: [
           {% for item in data %}
           "{{ item['CarID'] }}",
@@ -32,33 +32,35 @@
           fillColor: "rgba(151,187,205,0.2)",
           strokeColor: "rgba(151,187,205,1)",
           pointColor: "rgba(151,187,205,1)",
+          label: "Time",
           data: [
             {% for item in data %}
                 {{ item["Total"] }},
             {% endfor %}
           ]
         }]
+      },
+      options : {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Profit'
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Time (Minutes)'
+            }
+          }],
+        },
+        title: {
+          display: true,
+          text: 'Cars'
+        }
       }
-
-      // get bar chart canvas
-      var mychart = document.getElementById("chart").getContext("2d");
-
-      steps = 10
-      max = {{ max }}
-
-      // draw bar chart
-      new Chart(mychart).Bar(barData, {
-        scaleOverride: true,
-        scaleSteps: steps,
-        scaleStepWidth: Math.ceil(max / steps),
-        scaleStartValue: 0,
-        scaleShowVerticalLines: true,
-        scaleShowGridLines: true,
-        barShowStroke: true,
-        scaleShowLabels: true,
-        scaleShowLabels: true
-      }
-      );
+    });
     </script>
   </center>
 </div>
