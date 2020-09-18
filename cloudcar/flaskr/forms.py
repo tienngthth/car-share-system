@@ -210,4 +210,4 @@ class NewBacklogForm(FlaskForm):
     engineer_ID = StringField('EngineerID')
     date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     description = StringField('Description')
-    submit = SubmitField('Create')
+    submit = SubmitField('Finish')

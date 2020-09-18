@@ -14,6 +14,7 @@
     <th>Car Brand</th>
     <th>Location</th>
     <th>Request Date</th>
+    <th>Description</th>
     <th>Status</th>
     <th style="border-top-right-radius: 8px;">Action</th>
   </tr>
@@ -28,6 +29,7 @@
       </form>
     </td>
     <td>{{ backlog.CreatedDate }}</td>
+    <td>{{ backlog.Description }}</td>
     <td>{{ backlog.Status }}</td>
     <td style="max-width:40px;">
       {% if backlog.Status == "Not done" %}
