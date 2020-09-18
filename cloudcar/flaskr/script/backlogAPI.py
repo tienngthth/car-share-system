@@ -47,7 +47,7 @@ def get_all_repaired_car_ids():
 def get_all_backlogs():
     results = Database.select_record(
         "Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID," +
-        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status" , 
+        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description" , 
         "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
         ""
     )
