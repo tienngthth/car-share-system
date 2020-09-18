@@ -2,10 +2,28 @@
 #Instruction
 
 1. Connect to GCP
-2. Run api.py (database)
-3. Run flask
+2. Run each of these 3 files seperately in order: run1.sh, run2.sh, run3.sh 
+3. Access to Web app at localhost:5000 , please use Google Chrome Browser
 
-To connect to the GCP database:
+---------------------------------------------------
+Test username & password
+Admin
+
+
+
+Engineer
+
+
+
+Manager
+
+
+
+User
+
+---------------------------------------------------
+
+To set up connection to the GCP database the first time
 * Download the Cloud SQL Proxy (go to https://cloud.google.com/sql/docs/mysql/sql-proxy)
 * Download the clean-wonder-286803-fd26772409c0.json file included in this project (located in source/files)
 * In the command prompt, navigate to the location of the proxy and run this command:
