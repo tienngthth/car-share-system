@@ -11,20 +11,30 @@ from datetime import datetime, timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import os
 
 class GoogleCalendar():
     service = None
+    link = None
 
     def  __init__(self, user_name):
+        creds = None
         SCOPES = "https://www.googleapis.com/auth/calendar"
-        store = file.Storage(pathlib.Path(__file__).parent.parent/"files"/ "{}-token.json".format(user_name))
-        creds = store.get()
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
         if(not creds or creds.invalid):
-            flow = client.flow_from_clientsecrets(
-                pathlib.Path(__file__).parent.parent/"files"/"credentials.json", 
-                SCOPES
-            )
-            creds = tools.run_flow(flow, store)
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'flaskr\script\model\client_secret.json', SCOPES)
+                creds = flow.run_local_server(port=5000)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
         self.service = build("calendar", "v3", http=creds.authorize(Http()))
 
     def insert_event(self, rent_date, rent_time):
@@ -51,4 +61,4 @@ class GoogleCalendar():
         event = self.service.events().insert(calendarId = "primary", body = event).execute()
         print("Event created: {}".format(event.get("htmlLink")))
 
-calendar = GoogleCalendar("tiennguyen")
+# calendar = GoogleCalendar("tiennguyen")
