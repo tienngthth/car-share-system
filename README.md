@@ -24,7 +24,9 @@ Student Name - ID:
     2. Nguyen Thanh Tam - s3747274
     3. Nguyen Quoc Cuong - s3748840
     4. Nguyen Thi Thuy Tien - s3757934
-https://github.com/tienngthth/car-share-system
+
+
+[Git repo](https://github.com/tienngthth/car-share-system)
 ```
 ## Getting Started
 
@@ -33,20 +35,20 @@ This project has been built as an Python automation Car Share System to work wit
 This document describes:
 
 1. [Activities](#activities) 
-  _[Git Usage](#git) 
-  _[Trello Usage](#trello) 
+    _ [Git Usage](#git) 
+    _ [Trello Usage](#trello) 
 2. [Architecture](#architecture)
-   _[Master Pi](#master-pi)
-    _[Web application API endpoints](#####-web-application-api-endpoints)
-   _[Cloud database](###-Cloud-database)
-    _[Clould database API end points](#####-clould-database-AapiPI-endpoints)
-   _[Agent Pi](###-agent-pi)
-   _[Local database](###-local-database)
-   _[Object recognition](###-object-recognition)
-   _[Socket communication](###-socket-communication)
+   _ [Master Pi](#master-pi)
+    _ [Web application API endpoints](#####-web-application-api-endpoints)
+   _ [Cloud database](###-Cloud-database)
+    _ [Clould database API end points](#####-clould-database-AapiPI-endpoints)
+   _ [Agent Pi](###-agent-pi)
+   _ [Local database](###-local-database)
+   _ [Object recognition](###-object-recognition)
+   _ [Socket communication](###-socket-communication)
 3. [Instruction](##-instruction)
-   _[Master Pi](###-master-Pi)
-   _[Agent Pi](###-agent-Pi)
+   _ [Master Pi](###-master-Pi)
+   _ [Agent Pi](###-agent-Pi)
 4. [Acknowledgments]
 
 ## Activities
