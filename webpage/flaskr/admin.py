@@ -120,7 +120,7 @@ def search_car(form):
     if not Booking.validate_cost(cost):
         return display_all_cars(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}&mac_address={}"
+        "http://127.0.0.1:8080/cars/read?brand={}&type={}&color={}&seat={}&cost={}&mac_address={}"
         .format(brand, car_type, color, seat, cost, mac_address)
     ).json()
     return render_template("admin/car_view.html", cars=cars["cars"], form=form)
@@ -214,8 +214,7 @@ def report_car():
                 .format(str(engineer["ID"]), str(car["ID"]), str(description)))
         return redirect(url_for("admin.car_view"))
     return render_template("admin/confirm_report.html", form=form, car=car, engineer=engineer)
-    
-    
+     
 def send_email(receiver, car_id, description):
     message = MIMEMultipart("alternative")
     message["Subject"] = "Car Maintenance Request"

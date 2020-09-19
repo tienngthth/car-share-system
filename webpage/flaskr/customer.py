@@ -54,7 +54,7 @@ def search_car(form):
     if not Booking.validate_booking_input(cost, start_date, end_date):
         return display_no_car(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/status/available?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        "http://127.0.0.1:8080/cars/status/available?brand={}&type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
         .format(brand, car_type, color, seat, cost, start_date, end_date)
     ).json()["cars"]
     return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
@@ -94,7 +94,10 @@ def confirm_booking():
     return redirect(url_for("customer.send_calendar"))
     
 @customer.route('/send/calendar')
+@login_required
 def send_calendar():
+    if g.type != "Customer":
+        return "Access Denied"
     if 'credentials' not in flask.session:
         return redirect(url_for("customer.authorize"))
     # Load credentials from the session.
@@ -136,42 +139,48 @@ def insert_event(service):
     return "send"
 
 @customer.route('/authorize')
+@login_required
 def authorize():
-  # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES)
-  # The URI created here must exactly match one of the authorized redirect URIs
-  # for the OAuth 2.0 client, which you configured in the API Console. If this
-  # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
-  # error.
-  flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-  authorization_url, state = flow.authorization_url(
-      # Enable offline access so that you can refresh an access token without
-      # re-prompting the user for permission. Recommended for web server apps.
-      access_type='offline',
-      # Enable incremental authorization. Recommended as a best practice.
-      include_granted_scopes='true')
-  # Store the state so the callback can verify the auth server response.
-  flask.session['state'] = state
-  return flask.redirect(authorization_url)
+    if g.type != "Customer":
+        return "Access Denied"
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES)
+    # The URI created here must exactly match one of the authorized redirect URIs
+    # for the OAuth 2.0 client, which you configured in the API Console. If this
+    # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+    # error.
+    flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
+    authorization_url, state = flow.authorization_url(
+        # Enable offline access so that you can refresh an access token without
+        # re-prompting the user for permission. Recommended for web server apps.
+        access_type='offline',
+        # Enable incremental authorization. Recommended as a best practice.
+        include_granted_scopes='true')
+    # Store the state so the callback can verify the auth server response.
+    flask.session['state'] = state
+    return flask.redirect(authorization_url)
 
 @customer.route('/oauth2callback')
+@login_required
 def oauth2callback():
-  # Specify the state when creating the flow in the callback so that it can
-  # verified in the authorization server response.
-  state = flask.session['state']
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-  # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-  authorization_response = flask.request.url
-  flow.fetch_token(authorization_response=authorization_response)
-  # Store credentials in the session.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #              credentials in a persistent database instead.
-  credentials = flow.credentials
-  flask.session['credentials'] = credentials_to_dict(credentials)
-  return flask.redirect(flask.url_for('customer.send_calendar'))
+    if g.type != "Customer":
+        return "Access Denied"
+    # Specify the state when creating the flow in the callback so that it can
+    # verified in the authorization server response.
+    state = flask.session['state']
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = flask.request.url
+    flow.fetch_token(authorization_response=authorization_response)
+    # Store credentials in the session.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    credentials = flow.credentials
+    flask.session['credentials'] = credentials_to_dict(credentials)
+    return flask.redirect(flask.url_for('customer.send_calendar'))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,

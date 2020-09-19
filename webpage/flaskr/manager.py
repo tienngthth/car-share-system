@@ -40,5 +40,5 @@ def pie_chart():
     "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
-    data = requests.get("http://127.0.0.1:8080/backlogs/get/backlogs/data").json()
+    data = requests.get("http://127.0.0.1:8080/backlogs/get/data").json()
     return render_template('manager/pie_chart.html', title='Most repaired cars', max=20, data=data["results"], colors=pie_colors)

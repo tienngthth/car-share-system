@@ -1,4 +1,5 @@
 from flask import flash
+from datetime import datetime, timedelta
 
 class Booking():
     def __init__(self, car_id, customer_id, rent_time, return_time, totalCost):
@@ -13,6 +14,12 @@ class Booking():
     def validate_date(start_date, end_date):
         if (end_date - start_date).days < 0:
             flash("End date must be later than start date.")
+            return False
+        if start_date < datetime.now():
+            flash("Start date can not been sooner than today")
+            return False
+        if (end_date - start_date) < timedelta(days = 1):
+            flash("Duration must be at least 1 day")
             return False
         return True
 

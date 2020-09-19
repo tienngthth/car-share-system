@@ -34,7 +34,7 @@ def close_backlog():
     except:
         return "Fail"
 
-@backlog_api.route("/get/backlogs/data")
+@backlog_api.route("/get/data")
 def get_all_repaired_car_ids():
     results = Database.select_record(
         " CarID, CONVERT(COUNT(CarID), SIGNED) as Total", 
