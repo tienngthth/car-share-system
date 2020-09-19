@@ -27,7 +27,7 @@
         {{ form.cost.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.cost }}
       </div>
       <div autocomplete="off" class="form-field" style="float:left; margin-left: 40px;">
-        {{ form.mac_address.label }}{{ form.mac_address }}
+        {{ form.mac_address.label }}&nbsp;{{ form.mac_address }}
       </div>
       <div autocomplete="off" type="password" class="form-field" style="float:left; margin-left: 40px;">
         {{ form.brand.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.brand }}
@@ -54,8 +54,7 @@
         onclick="return confirm('Are you sure you want to delete this car?');">
     </form>
     <a class="greenbutton" style="float:right; margin-top:-65px; margin-right: 50px;"
-      href="{{ url_for('admin.report_car', car_id=car_id)}}"
-      onclick="return confirm('Are you sure you want to report this car?');">
+      href="{{ url_for('admin.report_car', car_id=car_id)}}">
       Report
     </a>
     {%endif%}
