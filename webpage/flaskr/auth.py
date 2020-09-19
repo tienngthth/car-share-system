@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, session, url_for
 from flaskr.script.model.account import Account

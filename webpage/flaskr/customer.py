@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from flask import Blueprint, flash, g, redirect
 import flask
 from flask import render_template, request, url_for, session

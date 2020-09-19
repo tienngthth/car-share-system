@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, g, redirect, render_template
 from flask import request, url_for
 from .auth import login_required
