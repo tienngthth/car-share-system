@@ -96,11 +96,11 @@ Brief discussion
 
 0. Auth endpoints
 
-    localhost:5000/login
+    [localhost:5000/login](http:localhost:5000/login)
     
-    localhost:5000/logout
+    [localhost:5000/login](http:localhost:5000/logout)
     
-    localhost:5000/register
+    [localhost:5000/login](http:localhost:5000/register)
 
 1. Admin endpoints (admin login required)
 
