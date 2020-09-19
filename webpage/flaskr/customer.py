@@ -109,7 +109,7 @@ def send_calendar():
     session['startdate'] = None
     session['renttime'] = None
     session['endrenttime'] = None
-    return redirect(url_for("customer.car_view"))
+    return redirect(url_for("customer.booking_view"))
 
 def insert_event(service):
     event = {
@@ -121,7 +121,7 @@ def insert_event(service):
             "timeZone": "Asia/Ho_Chi_Minh",
         },
         "end": {
-            "dateTime": "{}T{}:30:00+07:00".format(flask.session['startdate'], flask.session['endrenttime']),
+            "dateTime": "{}T{}+07:00".format(flask.session['startdate'], flask.session['endrenttime']),
             "timeZone": "Asia/Ho_Chi_Minh",
         },
         "reminders": {
@@ -155,7 +155,6 @@ def authorize():
   flask.session['state'] = state
   return flask.redirect(authorization_url)
 
-
 @customer.route('/oauth2callback')
 def oauth2callback():
   # Specify the state when creating the flow in the callback so that it can
@@ -172,7 +171,7 @@ def oauth2callback():
   #              credentials in a persistent database instead.
   credentials = flow.credentials
   flask.session['credentials'] = credentials_to_dict(credentials)
-  return flask.redirect(flask.url_for('customer.test_api_request'))
+  return flask.redirect(flask.url_for('customer.send_calendar'))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
