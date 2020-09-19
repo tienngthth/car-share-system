@@ -6,9 +6,9 @@ import json
 
 engineer = Blueprint("engineer", __name__)
 
-@engineer.route("/cars", methods=("GET", "POST"))
+@engineer.route("/backlogs", methods=("GET", "POST"))
 @login_required
-def car_view():
+def backlog_view():
     if g.type != "Engineer":
         return "Access Denied"
     if request.method == "GET":
@@ -37,4 +37,4 @@ def close_backlog():
         "http://127.0.0.1:8080/cars/update?id={}&status=Available"
         .format(request.args['car_id'])
     )
-    return redirect(url_for("engineer.car_view"))
+    return redirect(url_for("engineer.backlog_view"))
