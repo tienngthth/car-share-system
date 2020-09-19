@@ -33,20 +33,20 @@ This project has been built as an Python automation Car Share System to work wit
 This document describes:
 
 1. [Activities](#activities) 
-*[Git Usage](#git) 
-*[Trello Usage](#trello) 
+  _[Git Usage](#git) 
+  _[Trello Usage](#trello) 
 2. [Architecture](#architecture)
-    [Master Pi](#master-pi)
-        [Web application API endpoints](#####-Web-application-API-endpoints)
-    [Cloud database](###-Cloud-database)
-        [Clould database API end points](#####-Clould-database-API-endpoints)
-    [Agent Pi](###-Agent-Pi)
-    [Local database](###-Local-database)
-    [Object recognition](###-Object-recognition)
-    [Socket communication](###-Socket-communication)
-3. [Instruction](##-Instruction)
-    [Master Pi](###-Master-Pi)
-    [Agent Pi](###-Agent-Pi)
+   _[Master Pi](#master-pi)
+    _[Web application API endpoints](#####-web-application-api-endpoints)
+   _[Cloud database](###-Cloud-database)
+    _[Clould database API end points](#####-clould-database-AapiPI-endpoints)
+   _[Agent Pi](###-agent-pi)
+   _[Local database](###-local-database)
+   _[Object recognition](###-object-recognition)
+   _[Socket communication](###-socket-communication)
+3. [Instruction](##-instruction)
+   _[Master Pi](###-master-Pi)
+   _[Agent Pi](###-agent-Pi)
 4. [Acknowledgments]
 
 ## Activities
