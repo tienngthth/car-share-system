@@ -1,5 +1,6 @@
 from flask import Blueprint, request, Flask, Markup, render_template
 from database import Database
+from flask.json import jsonify
 
 backlog_api = Blueprint("backlog_api", __name__)
 
@@ -40,7 +41,7 @@ def get_all_repaired_car_ids():
         " Backlogs ", 
         " GROUP BY CarID "
     ) 
-    return {"results": results}
+    return jsonify(results)
 
 #New API starts here
 @backlog_api.route("/get/all")
