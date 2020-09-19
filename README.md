@@ -262,7 +262,7 @@ User can log out.
 
 #### Customer use cases
 ```
-Customer is required to input intended booked duration in order or to view all **available** cars at the time range. 
+Customer is required to input intended booked duration in order or to view all __available__ cars at the time range. 
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day.
 *Cost must be a valid float number.
 
