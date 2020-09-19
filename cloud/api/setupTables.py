@@ -73,6 +73,7 @@ def create_booking_table():
             ReturnTime DATETIME, 
             TotalCost INT,
             Status VARCHAR(20),
+            EventID VARCHAR(50),
             PRIMARY KEY(ID),
             FOREIGN KEY (CustomerID) REFERENCES Customers(ID),
             FOREIGN KEY (CarID) REFERENCES Cars(ID)
@@ -98,17 +99,18 @@ def create_backlog_table():
     )
 
 def create_all_tables():
-    # Database.execute_command("DROP TABLE IF EXISTS Bookings")
-    # Database.execute_command("DROP TABLE IF EXISTS Backlogs")
-    # Database.execute_command("DROP TABLE IF EXISTS Customers")
+    Database.execute_command("DROP TABLE IF EXISTS Bookings")
+    Database.execute_command("DROP TABLE IF EXISTS Backlogs")
+    Database.execute_command("DROP TABLE IF EXISTS Customers")
+    Database.execute_command("DROP TABLE IF EXISTS Cars")
 
     #Create tables one by one
-    # create_location_table()
-    # create_car_table()
-    # create_staff_table()
-    # create_backlog_table()
-    # create_customer_table()
-    # create_booking_table()
+    create_location_table()
+    create_car_table()
+    create_staff_table()
+    create_backlog_table()
+    create_customer_table()
+    create_booking_table()
     print("Tables succesfully created")
 
 create_all_tables()
