@@ -50,8 +50,10 @@ This document describes:
   * [Socket communication](#-socket-communication)
   
 3. [Instruction](##-instruction)
-   _ [Master Pi](#-master-pi-1)
-   _ [Agent Pi](#-agent-pi-1)
+
+  * [Master Pi](#-master-pi-1)
+  * [Agent Pi](#-agent-pi-1)
+  
 4. [Acknowledgments](#acknowledgement)
 
 ## Activities
@@ -78,7 +80,6 @@ For the second half of the cycle, contributors merged the repaired components to
 
 * Images go here
 
-Following is the instruction to run the applications.
 
 ### Trello
 
@@ -96,7 +97,9 @@ Brief discussion
 0. Auth endpoints
 
     localhost:5000/login
+    
     localhost:5000/logout
+    
     localhost:5000/register
 
 1. Admin endpoints (admin login required)
