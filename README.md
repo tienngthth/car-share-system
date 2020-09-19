@@ -32,10 +32,10 @@ This project has been built as an Python automation Car Share System to work wit
 
 This document describes:
 
-1. [Activities](##-Activities)
-    [Git Usage](###-Git)
-    [Trello Usage](###-Trello)
-2. [Architecture]
+1. [Activities](#activities) >
+    [Git Usage](#git) >
+    [Trello Usage](###-Trello) >
+2. [Architecture]()
     [Master Pi](###-Master-Pi)
         [Web application API endpoints](#####-Web-application-API-endpoints)
     [Cloud database](###-Cloud-database)
