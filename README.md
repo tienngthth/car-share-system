@@ -27,7 +27,7 @@ Student Name - ID:
 ```
 ## Getting Started
 
-This project has been built as an Python automation Car Share System to work with Raspberry Pi. The whole process includes a Master Pi and an Agent Pi serving four types of different users, which are customers, admin, manger and engineer. The final product includes a web application working with cloud database, a console based application and project documentation.
+This project has been built as an Python automation Car Share System to work with Raspberry Pi. The whole process includes a Master Pi (MP) and an Agent Pi (AP) serving four types of different users, which are customers, admin, manger and engineer. The final product includes a web application working with cloud database, a console based application and project documentation.
 
 This document describes:
 
@@ -89,7 +89,14 @@ For the second half of the cycle, contributors merged the repaired components to
 
 ### Master Pi
 
-Brief discussion
+Master Pi is a raspberry pi with a web application. 
+* Allowing users to login and logout.
+* Allowing customers to register new account, search and book availbe cars, review and cancel booking.
+* Allowing admin to view, search, update, delete, create cars and customers as well as report backlog for broken cars.r. 
+* Allowing engineer to view backlog map and detail as well as repair backlogs.
+* Allowing manager to view 3 types of graphs.
+* Talk to AP via socket communication for credential validation and car status update updation
+* Store and retrieve all data from the cloud database via cloud database api end points.
 
 #### Web application API endpoints
 
@@ -140,7 +147,7 @@ Below is the full list of web application end points.
 
 ### Cloud database
 
-Brief discussion
+Store and retrieve all data that can be retrieved via the designated api end points
 
 #### Clould database API end points
 
@@ -202,19 +209,23 @@ Below is the full list of clould database end points.
 
 ### Agent Pi
 
-Brief discussion
+Agent Pi is a raspberry pi with a console-based application. 
+* Allowing customer to login (credential or facial login), logout and return the car. Customer credential is stored temporarily in the local database while the customer is using the car. 
+* Checking for car maintainance and scanning for engineer device mac address. Allowing engineer to repair and return the car.
+* Talk to MP via socket communication for credential validation and car status update updation.
+
 
 ### Local database
 
-Store what?
+The local database is used to store the customer credential after successfully validated by the MP.
 
 ### Object recognition
 
-Code and facial
+Facial recognition and code detection techniques have been utilized for login function and close backlog function. The system can recognise all the trained user faces as well as retrieving a qr code content.
 
 ### Socket communication
 
-brief discussion
+MP and AP talk to each other via socket communication with MP as a server and AP as a client. The communication is using TCP protocal which requires connection establishment.
 
 ## Instruction
 
@@ -223,12 +234,10 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
 ### Master Pi
 
 1. Download the mp-test branch.
-2. Run ./run.sh in your console to initiate the web application and the cloud APIs.
-3. Run ./cloud.sh to initiate the cloud database connection.
-
+2. Run ./run.sh in your console to initiate the web application, the cloud APIs and the server socket.
+3. Run ./cloud.sh to initiate the cloud database connection.</br>
     Password:
-4. Access to web application at localhost:5000, please use Google Chrome Browser.
-    
+4. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
     The admin credential: minh_nguyen | 2@aA3333</br>
     The manager credential: tam_nguyen | 3#aA4444</br>
@@ -278,7 +287,10 @@ Admin can view any car booking history.
 ```
 Admin can create a new car with all fields filled including brand, type, cost, color, seat, mac address, and car park no, or update any car detail.
 *Cost must be a valid float number.
-Admin can report a car with a form to enter description. An emai is sent to engineer to for new backlog announcement. Car status is set to *To be repaired*.
+```
+
+```
+Admin can report a car with a form to input description. An emai is sent to engineer to for new backlog announcement. Car status is set to *To be repaired*.
 
 Admin can delete a car. The system set the car id field of all backlogs and bookings with deleted car to none.
 ```
