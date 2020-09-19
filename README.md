@@ -13,12 +13,12 @@
              C@@@00@@@@                                   @@@@00@@@
               ~@@@@@@@                                      @@@@@8
 
-# Car-Share-System IoT Programming
+# Car-Share-System IoT Application
 ``` 
 RMIT University Vietnam
 Course: COSC2790 Programming Internet of Things
 Semester: 2020A
-Assessment: Assessment 1: Python & Sense HAT programming
+Assessment: Assessment 2: Car Share IoT application
 Student Name - ID: 
     1. Nguyen Thi Nguyet Minh  s3651351
     2. Nguyen Thanh Tam - s3747274
@@ -339,6 +339,8 @@ Manager can view three type of graphs.
 1. Download the ap branch.
 2. Run ./mainMenu.py in your console to start the console based application.
 
+
+#### Authentication flow
 ```
 First, the application asks if the user is a customer or an engineer in the Main menu.
 The customer is directed to the Customer Menu.
