@@ -189,8 +189,8 @@ Brief discussion
 6. Staff endpoints
 
     localhost:8080/staffs/read?id=&username=&first_name=&last_name=&email=&phone=&user_type=
-    localhost:8080/staffs/check/existed/username?username=
-    [localhost:8080/staffs/get/engineer/mac/address?id=](localhost:8080/staffs/get/engineer/mac/address?id=)
+[localhost:8080/staffs/check/existed/username?username=](http:localhost:8080/staffs/check/existed/username?username=)
+[localhost:8080/staffs/get/engineer/mac/address?id=](localhost:8080/staffs/get/engineer/mac/address?id=)
 
 
 ### Agent Pi
