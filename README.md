@@ -37,14 +37,18 @@ This document describes:
   * [Trello Usage](#trello) 
 
 2. [Architecture](#architecture)
-   _ [Master Pi](#master-pi)
-    _ [Web application API endpoints](#-web-application-api-endpoints)
-   _ [Cloud database](#-cloud-database)
-    _ [Clould database API end points](#-clould-database-api-endpoints)
-   _ [Agent Pi](#-agent-pi)
-   _ [Local database](#-local-database)
-   _ [Object recognition](#-object-recognition)
-   _ [Socket communication](#-socket-communication)
+
+  * [Master Pi](#master-pi)
+  * [Web application API endpoints](#-web-application-api-endpoints)
+    
+      * [Cloud database](#-cloud-database)
+      * [Clould database API end points](#-clould-database-api-endpoints)
+      
+  * [Agent Pi](#-agent-pi)
+  * [Local database](#-local-database)
+  * [Object recognition](#-object-recognition)
+  * [Socket communication](#-socket-communication)
+  
 3. [Instruction](##-instruction)
    _ [Master Pi](#-master-pi-1)
    _ [Agent Pi](#-agent-pi-1)
