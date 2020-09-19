@@ -235,7 +235,7 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
 
 1. Download the mp-test branch.
 2. Run ./run.sh in your console to initiate the web application, the cloud APIs and the server socket.
-3. Run ./cloud.sh to initiate the cloud database connection.</br>
+3. Run ./cloud.sh to initiate the cloud database connection.
     Password:
 4. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
@@ -281,7 +281,7 @@ Customer can view the detail of any booking and can cancel any **Booked** bookin
 
 #### Admin use cases
 ```
-Admin can view all cars or search for cars by brand, type, cost, color, seat, status, mac address and car park no filter.
+Admin can view all cars or search for cars by brand, type, cost, color, seat, status, and mac address.
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day. 
 *Cost must be a valid float number.
 
@@ -377,11 +377,25 @@ If no maintainance needed or no engineer device found, car won't be unlocked.
 ```
 
 ```
-Engineer now has options to scan for qr code or lock the car.
+Engineer now has options to scan for qr code to close all backlogs of the car or lock the car.
 The engineer is directed back to the main menu after selecting lock car option.
 If the engineer select to scan for QR code, camera is opened and starts detecting code.
-If the code has required information, AP will send a message to MP to update backlog and car information.
+If the code has required information, AP will send a message to MP to close all backlog of the car and update car status to 'Available'.
 ```
+
+## Unit test
+
+We have around 100 test cases covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
+
+1. Download the mp-test branch.
+2. Run ./run.sh in your console to initiate the cloud APIs.
+3. Run ./cloud.sh to initiate the cloud database connection.
+    Password:
+4. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
+    A customer credential: tiennguyen | 2@aA2222</br>
+    The admin credential: minh_nguyen | 2@aA3333</br>
+    The manager credential: tam_nguyen | 3#aA4444</br>
+    The engineer credential: cuong_nguyen | 1!aA2222</br>
 
 ## Acknowledgments
 

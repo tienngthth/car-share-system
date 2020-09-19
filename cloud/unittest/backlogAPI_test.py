@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import unittest
 import requests
 
@@ -5,14 +7,14 @@ import requests
 
 class Test_Backlog_API(unittest.TestCase):
     def test_get_backlogs_data(self):
-        resp = requests.get("http://127.0.0.1:8080/backlogs/get/backlogs/data").json()
+        resp = requests.get("http://127.0.0.1:8080/backlogs/get/data").json()
         test_data = resp[0]
         self.assertEqual(test_data["CarID"], 1)
         self.assertEqual(test_data["Total"], 1)
 
     def test_get_all(self):
         resp = requests.get("http://127.0.0.1:8080/backlogs/get/all").json()
-        test_data = resp["backlogs"][0]         #Change this later by removing "backlogs"
+        test_data = resp[0]         #Change this later by removing "backlogs"
         self.assertEqual(test_data["CarBrand"], "Audi")
         self.assertEqual(test_data["CarID"], 3)
         self.assertEqual(test_data["CarType"], "Sedan")
@@ -21,8 +23,8 @@ class Test_Backlog_API(unittest.TestCase):
         self.assertEqual(test_data["Status"], "Done")
 
     def test_get_engineer_id(self):
-        resp = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=7").json()
-        self.assertEqual(resp["AssignedEngineerID"], 1)
+        resp = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=7").text
+        self.assertEqual(resp, 1)
 
     def test_create(self):
         resp = requests.get("http://127.0.0.1:8080/backlogs/create?assigned_engineer_id=1&car_id=1&status=Not%20done&description=Change%20the%20tires")

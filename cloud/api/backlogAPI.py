@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request, Flask, Markup, render_template
 from database import Database
 from flask.json import jsonify
@@ -23,18 +25,15 @@ def create_backlog():
 
 @backlog_api.route("/close", methods=['GET', 'PUT'])
 def close_backlog():
-    try:
-        Database.update_record_parameterized(
-            " Backlogs ", 
-            " Status = 'Done', SignedEngineerID = (%s)",
-            " WHERE CarID = (%s) AND Status = 'Not done' ",
-            (request.args.get("signed_engineer_id"), request.args.get("car_id"))
-        ) 
-        return "Success"
-    except:
-        return "Fail"
+    Database.update_record_parameterized(
+        " Backlogs ", 
+        " Status = 'Done', SignedEngineerID = (%s)",
+        " WHERE CarID = (%s) OR ID = (%s) AND Status = 'Not done' ",
+        (request.args.get("signed_engineer_id"), request.args.get("car_id"), request.args.get("backlog_id"))
+    ) 
+    return "Success"
 
-@backlog_api.route("/get/backlogs/data")
+@backlog_api.route("/get/data")
 def get_backlogs_data():
     results = Database.select_record(
         " CarID, CONVERT(COUNT(CarID), SIGNED) as Total", 
@@ -48,11 +47,11 @@ def get_backlogs_data():
 def get_all_backlogs():
     results = Database.select_record(
         "Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID," +
-        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description" , 
+        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description, Backlogs.ID AS BacklogID" , 
         "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
         ""
     )
-    return {"backlogs": results}
+    return jsonify(results)
 
 @backlog_api.route("/get/engineer/id")
 def get_engineer_id():
@@ -65,7 +64,7 @@ def get_engineer_id():
     if len(results) == 0:
         return "No engineer found"
     else:
-        return results[0]
+        return str(results[0]["AssignedEngineerID"])
 
 @backlog_api.route("remove/assigned/engineer")
 def remove_assigned_engineer_from_backlogs():

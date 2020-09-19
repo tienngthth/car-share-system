@@ -1,7 +1,7 @@
-# Only use this to check the cloud database
-
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import pymysql
-from model.database import Database
+from database import Database
 
 def select_from_customers(cursor):
     print("Customers table:")
@@ -137,8 +137,8 @@ def execute_queries():
     # select_from_customers(cursor)
     # select_from_staffs(cursor)
     # select_from_cars(cursor)
-    select_from_bookings(cursor)    
-    # select_from_backlogs(cursor)
+    # select_from_bookings(cursor)    
+    select_from_backlogs(cursor)
     # #Additional queries (for drawing graphs)
     # select_number_of_bookings_per_day(cursor)
     # select_number_of_returns_per_day(cursor)

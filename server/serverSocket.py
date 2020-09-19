@@ -1,9 +1,8 @@
 """#!/usr/bin/env python3
 # -*- coding: utf-8 -*-"""
-
-import requests, json
 from server import Server
 from passlib import hash
+import requests, json
 
 def listen_to_client():
     # Constantly handle request from client until receiving end signal
@@ -36,7 +35,7 @@ def validate_crendential(message):
         booking = requests.get(
             "http://127.0.0.1:8080/bookings/read?car_id=" + message["car_id"] + 
             "customer_id" + message["customer_id"]
-        ).json()["bookings"]
+        ).json()
         if len(booking) != 0:
             server.send_message(user["Password"])
             return
@@ -54,9 +53,9 @@ def verify_password(username, input_password):
 
 # Check for car maintainance
 def check_for_car_maintainance(message):
-    engineer_id = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=" + str(message["car_id"])).json()["AssignedEngineerID"]
+    engineer_id = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=" + str(message["car_id"])).json()
     if engineer_id != "No engineer found":
-        engineer_mac_address = requests.get("http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=" + str(engineer_id)).json()["EngineerMacAddress"]
+        engineer_mac_address = requests.get("http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=" + str(engineer_id)).text
         if engineer_mac_address != "No mac address found":
             server.send_message(engineer_mac_address)
             return
@@ -78,7 +77,7 @@ def update_car_status(message):
     
 # Get car id by ap mac address
 def get_car_id_by_ap_addr(message):
-    car_id = requests.get("http://127.0.0.1:8080/cars/get/id?mac_address=" + message["ap_addr"]).json()["ID"]
+    car_id = requests.get("http://127.0.0.1:8080/cars/get/id?mac_address=" + message["ap_addr"]).text
     if car_id == "No car found":
         server.send_message("invalid")
     else:

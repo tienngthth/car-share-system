@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import unittest
 import requests
 
@@ -6,7 +8,7 @@ import requests
 class Test_Booking_API(unittest.TestCase):
     def test_read(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/read?car_id=1&customer_id=1").json()
-        test_data = resp["bookings"][0]     #Change this later by removing "bookings"
+        test_data = resp[0]    
         self.assertEqual(test_data["CarID"], 1)
         self.assertEqual(test_data["CustomerID"], 1)
         self.assertEqual(test_data["EventID"], "")
@@ -18,27 +20,27 @@ class Test_Booking_API(unittest.TestCase):
 
     def test_get_profit_data(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/profit/data").json()
-        test_data = resp["results"][1]      #Change this later by removing "results"
+        test_data = resp[1]      
         self.assertEqual(test_data["Date"], "2020-08-21")
         self.assertEqual(test_data["Total"], 144)
 
     def test_get_most_profit(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/most/profit").json()
-        self.assertEqual(resp["Total"], 7400)
+        self.assertEqual(resp, 7400)
         
     def test_get_bookings_data(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/data").json()
-        test_data = resp["results"][0]      #Change this later by removing "results"
+        test_data = resp[0]   
         self.assertEqual(test_data["CarID"], 1)
         self.assertEqual(test_data["Total"], 5760)
 
     def test_get_longest_duration(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/longest/duration").json()
-        self.assertEqual(resp["Total"], 15840)
+        self.assertEqual(resp, 15840)
 
     def test_get_all_customer_bookings(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/all?car_id=1&customer_id=1").json()
-        test_data = resp["bookings"][1]     #Change this later by removing "bookings"
+        test_data = resp[1]     
         self.assertEqual(test_data["BookingID"], 5)
         self.assertEqual(test_data["CarBrand"], "BMW")
         self.assertEqual(test_data["CarID"], 10)
@@ -49,7 +51,7 @@ class Test_Booking_API(unittest.TestCase):
 
     def test_get_customer_bookings_by_time(self):
         resp = requests.get("http://127.0.0.1:8080/bookings/get/by/time?car_id=1&customer_id=1").json()
-        test_data = resp["bookings"][1]     #Change this later by removing "bookings"
+        test_data = resp[1]     
         self.assertEqual(test_data["BookingID"], 8)
         self.assertEqual(test_data["CarBrand"], "Ford")
         self.assertEqual(test_data["CarID"], 1)

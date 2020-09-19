@@ -1,11 +1,11 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, flash, g, redirect
-import flask
 from flask import render_template, request, url_for, session
 from .auth import login_required
 from .forms import UserCarSearchForm, UserBookingSearchForm
 from googleapiclient.discovery import build
 from flaskr.script.model.car import Car
-# from flaskr.script.model.googleCalendar import GoogleCalendar
 from flaskr.script.model.booking import Booking
 from datetime import datetime, timedelta
 import requests
@@ -14,6 +14,7 @@ import json
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+import flask
 
 customer = Blueprint("customer", __name__)
 
@@ -56,7 +57,7 @@ def search_car(form):
     cars = requests.get(
         "http://127.0.0.1:8080/cars/status/available?brand={}&type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
         .format(brand, car_type, color, seat, cost, start_date, end_date)
-    ).json()["cars"]
+    ).json()
     return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
 
 @customer.route("/book/car", methods=("GET", "POST"))
@@ -204,24 +205,21 @@ def booking_view():
 def filter_booking(form):
     start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
-    if not Booking.validate_date(start_date, end_date):
-        return display_all_bookings(form)
-    else:
-        return display_match_bookings(start_date, end_date, form)
+    return display_match_bookings(start_date, end_date, form)
         
 def display_match_bookings(start_date, end_date, form):
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/by/time?customer_id={}&start={}&end={}"
         .format(user_id, start_date, end_date)
-    ).json()["bookings"]
+    ).json()
     return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
 def display_all_bookings(form):
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/all?customer_id=" + str(user_id)
-    ).json()["bookings"]
+    ).json()
     return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
 @customer.route("/bookings/details", methods=("GET", "POST"))
@@ -234,7 +232,7 @@ def view_booking_detail():
     start_date = booking["RentTime"]
     end_date = booking["ReturnTime"]
     total_cost = booking["TotalCost"]
-    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(booking['CarID'])).json()["cars"][0]
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(booking['CarID'])).json()[0]
     status = booking["Status"]
     booking_id=booking["BookingID"]
     return render_template(

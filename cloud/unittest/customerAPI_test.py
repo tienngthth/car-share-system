@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import unittest
 import requests
 
@@ -6,7 +8,7 @@ import requests
 class TestCustomerAPI(unittest.TestCase):
     def test_read(self):
         resp = requests.get("http://127.0.0.1:8080/customers/read").json()
-        test_data = resp["customers"][0]        #Change this later by removing "customers"
+        test_data = resp[0]       
         self.assertEqual(test_data["ID"], 1)
         self.assertEqual(test_data["Email"], "tam@gmail.com")
         self.assertEqual(test_data["FirstName"], "Tam")

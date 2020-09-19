@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import unittest
 import requests
 
@@ -7,7 +9,7 @@ class TestStaffAPI(unittest.TestCase):
     def test_read(self):
         # We do not test password because it is hashed differently every test
         resp = requests.get("http://127.0.0.1:8080/staffs/read").json()
-        test_data = resp["staffs"][0]           #Change this later by removing "staffs"
+        test_data = resp[0]        
         self.assertEqual(test_data["ID"], 1)
         self.assertEqual(test_data["Email"], "quoccuong242000@gmail.com")
         self.assertEqual(test_data["FirstName"], "Cuong")
@@ -22,8 +24,8 @@ class TestStaffAPI(unittest.TestCase):
         self.assertEqual(resp, 1)
 
     def test_get_enginner_mac_address(self):
-        resp = requests.get("http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=1").json()
-        self.assertEqual(resp["EngineerMacAddress"], "DC:F7:56:2D:C1:97")
+        resp = requests.get("http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=1").text
+        self.assertEqual(resp, "DC:F7:56:2D:C1:97")
 
 if __name__ == "__main__":
     unittest.main()
