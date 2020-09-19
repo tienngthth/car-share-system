@@ -243,20 +243,24 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
     The manager credential: tam_nguyen | 3#aA4444</br>
     The engineer credential: cuong_nguyen | 1!aA2222</br>
 
-#### Authentication
+#### Authentication use cases
 ```
 User is asked to input username and password to login.
+```
 
+```
 Customer can register for new account given all fields are filled with the correct format.
 * Username must contain at least 6 characters, all are letters.
 * Password must contain at least 8 chracters with at least 1 upper case letter, 1 lower case letter, 1 number, 1 special character. Password is encrypted with salting and hashing technique before being saved.
 * Standard email format regex is applied.
 * Phone must contain all number with the length equal to or greater than 5.
+```
 
+```
 User can log out.
 ```
 
-#### Customer
+#### Customer use cases
 ```
 Customer is required to input intended booked duration in order or to view all **available** cars at the time range. 
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day.
@@ -275,7 +279,7 @@ Customer can view all booking history and can filter the bookings by date.
 Customer can view the detail of any booking and can cancel any **Booked** booking.
 ```
 
-#### Admin
+#### Admin use cases
 ```
 Admin can view all cars or search for cars by brand, type, cost, color, seat, status, mac address and car park no filter.
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day. 
@@ -291,13 +295,14 @@ Admin can create a new car with all fields filled including brand, type, cost, c
 
 ```
 Admin can report a car with a form to input description. An emai is sent to engineer to for new backlog announcement. Car status is set to *To be repaired*.
+```
 
+```
 Admin can delete a car. The system set the car id field of all backlogs and bookings with deleted car to none.
 ```
 
 ```
 Admin can view all users or search for users by username, email, phone, user type filter.
-
 ```
 
 ```
@@ -308,20 +313,20 @@ Admin can create a new user with all fields filled or update any user detail.
 * Phone must contain all number with the length equal to or greater than 5.
 ```
 
-```
+``` 
 Admin can delete a user. 
 * The system set the customer id field of all bookings with deleted customer to none.
 * The system set the engineer id field of all backlogs with deleted engineer to none.
 ```
 
-#### Engineer
+#### Engineer use cases
 ```
 Engineer can view all backlogs.
 Engineer can view a backlog detail including the location map.
 Engineer can repair a car and update the backlog status to 'Done' and update the car status back to 'Availabe' if no backlog left for this car.
 ```
 
-#### Manager
+#### Manager use cases
 ```
 Manager can view three type of graphs.
 1. Profit by date (Line chart)
