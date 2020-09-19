@@ -1,0 +1,1 @@
+export FLASK_APP=webpage/flaskr && export FLASK_ENV=development  && flask run 

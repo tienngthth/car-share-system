@@ -1,0 +1,1 @@
+./cloud/run.sh & ./webpage/run.sh & python server/serverSocket.py
