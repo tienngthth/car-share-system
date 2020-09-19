@@ -82,6 +82,7 @@ def load_logged_in_user():
         if user_type is None:
             g.user = requests.get("http://127.0.0.1:8080/customers/read?id={}".format(str(user_id))).json()[0]
             g.type = "Customer"
+            requests.put("http://127.0.0.1:8080/bookings/cancel/passed/return/time?customer_id={}".format(str(user_id)))
         elif user_type == "Admin":
             g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=admin").json()[0]
             g.type = user_type

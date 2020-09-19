@@ -38,6 +38,19 @@ def update():
     except:
         return "Fail"
 
+@booking_api.route("/cancel/passed/return/time", methods=['GET', 'PUT'])
+def update_passed_bookings():
+    try:
+        Database.update_record_parameterized(
+            " Bookings ", 
+            " Status = 'Cancelled'",
+            " WHERE Status = 'Booked' AND CustomerID = (%s) AND ReturnTime <= NOW()",
+            (request.args.get("customer_id"))
+        ) 
+        return "Success"
+    except:
+        return "Fail"
+
 @booking_api.route("/read")
 def read():
     results = Database.select_record_parameterized(

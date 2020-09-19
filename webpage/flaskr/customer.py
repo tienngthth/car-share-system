@@ -92,9 +92,13 @@ def confirm_booking():
     endrenttime = start_date + timedelta(minutes = 30)
     session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
     flash("Booking confirmed!") 
+    if request.args["google_calendar"]:
+        return "Yes"
+        return redirect(url_for("customer.booking_view"))
+    return "No"
     return redirect(url_for("customer.send_calendar"))
     
-@customer.route('/send/calendar')
+@customer.route('/send/calendar', methods=("GET", "POST"))
 @login_required
 def send_calendar():
     if g.type != "Customer":
@@ -181,7 +185,7 @@ def oauth2callback():
     #              credentials in a persistent database instead.
     credentials = flow.credentials
     flask.session['credentials'] = credentials_to_dict(credentials)
-    return flask.redirect(flask.url_for('customer.send_calendar'))
+    return flask.redirect(url_for('customer.send_calendar'))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
