@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from model.database import Database
+from database import Database
 
 location_api = Blueprint("location_api", __name__)
 

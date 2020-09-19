@@ -204,7 +204,11 @@ def report_car():
     form = NewBacklogForm()
     if request.method == "POST":
         description = request.form["description"].strip()
-        requests.put("http://127.0.0.1:8080/cars/update?status=To be repaired&id=" + str(request.args["car_id"]))
+        requests.put(
+            "http://127.0.0.1:8080/cars/update?status=To be repaired" +
+            "&discription=" + description +
+            "&id=" + str(request.args["car_id"])
+        )
         message = MIMEMultipart("alternative")
         message["Subject"] = "Car Maintenance Request"
         message["From"] = "ahjhj24012000@gmail.com"

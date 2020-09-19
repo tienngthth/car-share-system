@@ -1,5 +1,5 @@
-from model.database import Database
-from model.account import Account
+from database import Database
+from account import Account
 
 def add_sample_location(location):
     Database.insert_record_parameterized(

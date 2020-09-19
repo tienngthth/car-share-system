@@ -7,7 +7,7 @@ from carAPI import car_api
 from bookingAPI import booking_api
 from backlogAPI import backlog_api
 from locationAPI import location_api
-from model.database import Database
+from database import Database
 
 app = Flask(__name__)
 

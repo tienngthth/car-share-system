@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from model.database import Database
+from database import Database
 
 car_api = Blueprint("car_api", __name__)
 

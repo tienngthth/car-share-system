@@ -1,4 +1,4 @@
-from model.database import Database
+from database import Database
 
 def create_customer_table():
     Database.create_table(

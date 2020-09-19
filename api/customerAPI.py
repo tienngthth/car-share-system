@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from model.database import Database
+from database import Database
 
 customer_api = Blueprint("customer_api", __name__)
 

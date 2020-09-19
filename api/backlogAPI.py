@@ -1,5 +1,5 @@
 from flask import Blueprint, request, Flask, Markup, render_template
-from model.database import Database
+from database import Database
 
 backlog_api = Blueprint("backlog_api", __name__)
 

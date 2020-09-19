@@ -7,7 +7,7 @@ from flaskr.manager import manager
 from flaskr.home import home
 from flaskr.auth import auth
 
-def create_app():
+def create_app(test_config=None):
     initate_flask_app()
     register_blueprint()
     update_test_config()
