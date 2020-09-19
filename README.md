@@ -98,7 +98,6 @@ Brief discussion
 
     [localhost:5000/login](http:localhost:5000/login)</br>
     [localhost:5000/logout](http:localhost:5000/logout)
-    
     [localhost:5000/register](http:localhost:5000/register)
 
 1. Admin endpoints (admin login required)
