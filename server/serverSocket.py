@@ -85,7 +85,6 @@ def get_car_id_by_ap_addr(message):
         server.send_message(str(car_id))
 
 if __name__ == "__main__":
-    print("Aaa")
     global server
     server = Server()
     listen_to_client()

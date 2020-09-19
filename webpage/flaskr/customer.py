@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from flaskr.script.model.car import Car
 # from flaskr.script.model.googleCalendar import GoogleCalendar
 from flaskr.script.model.booking import Booking
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import math
 import json
@@ -17,13 +17,12 @@ import googleapiclient.discovery
 
 customer = Blueprint("customer", __name__)
 
-CLIENT_SECRETS_FILE = "flaskr/script/model/client_secret.json"
-
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
 SCOPES = "https://www.googleapis.com/auth/calendar"
 API_SERVICE_NAME = 'drive'
 API_VERSION = 'v2'
+CLIENT_SECRETS_FILE = "webpage/flaskr/script/files/client_secret.json"
 
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
@@ -88,74 +87,72 @@ def confirm_booking():
     requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
     session["startdate"] = str(start_date.strftime('%Y-%m-%d'))
-    flash("Booking confirmed!")
-    return redirect(url_for("customer.test_api_request"))
+    session["renttime"] = str(start_date.strftime('%H:%M:%S'))
+    endrenttime = start_date + timedelta(minutes = 30)
+    session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
+    flash("Booking confirmed!") 
+    return redirect(url_for("customer.send_calendar"))
     
-@customer.route('/test')
-def test_api_request():
+@customer.route('/send/calendar')
+def send_calendar():
     if 'credentials' not in flask.session:
-        return redirect('authorize')
-
+        return redirect(url_for("customer.authorize"))
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
         **flask.session['credentials'])
-
     service = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
-
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
-    insert_event(session['startdate'], "10", service)
+    insert_event(service)
     session['startdate'] = None
+    session['renttime'] = None
+    session['endrenttime'] = None
     return redirect(url_for("customer.car_view"))
 
-def insert_event( rent_date, rent_time, service):
-        event = {
-            "summary": "Your car is ready - Car Share",
-            "location": "Car Share Office",
-            "description": "Please visit Car Share Office to pick up your car",
-            "start": {
-                "dateTime": "{}T{}:00:00+07:00".format(rent_date, rent_time),
-                "timeZone": "Asia/Ho_Chi_Minh",
-            },
-            "end": {
-                "dateTime": "{}T{}:30:00+07:00".format(rent_date, rent_time),
-                "timeZone": "Asia/Ho_Chi_Minh",
-            },
-            "reminders": {
-                "useDefault": False,
-                "overrides": [
-                    { "method": "email", "minutes": 5 },
-                    { "method": "popup", "minutes": 10 },
-                ],
-            }
+def insert_event(service):
+    event = {
+        "summary": "Your car is ready - Car Share",
+        "location": "Car Share Office",
+        "description": "Please visit Car Share Office to pick up your car",
+        "start": {
+            "dateTime": "{}T{}+07:00".format(flask.session['startdate'], flask.session['renttime']),
+            "timeZone": "Asia/Ho_Chi_Minh",
+        },
+        "end": {
+            "dateTime": "{}T{}:30:00+07:00".format(flask.session['startdate'], flask.session['endrenttime']),
+            "timeZone": "Asia/Ho_Chi_Minh",
+        },
+        "reminders": {
+            "useDefault": False,
+            "overrides": [
+                { "method": "email", "minutes": 5 },
+                { "method": "popup", "minutes": 10 },
+            ],
         }
-        event = service.events().insert(calendarId = "primary", body = event).execute()
-        return "send"
+    }
+    event = service.events().insert(calendarId = "primary", body = event).execute()
+    return "send"
 
 @customer.route('/authorize')
 def authorize():
   # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       CLIENT_SECRETS_FILE, scopes=SCOPES)
-
   # The URI created here must exactly match one of the authorized redirect URIs
   # for the OAuth 2.0 client, which you configured in the API Console. If this
   # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
   # error.
   flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-
   authorization_url, state = flow.authorization_url(
       # Enable offline access so that you can refresh an access token without
       # re-prompting the user for permission. Recommended for web server apps.
       access_type='offline',
       # Enable incremental authorization. Recommended as a best practice.
       include_granted_scopes='true')
-
   # Store the state so the callback can verify the auth server response.
   flask.session['state'] = state
-
   return flask.redirect(authorization_url)
 
 
@@ -164,21 +161,17 @@ def oauth2callback():
   # Specify the state when creating the flow in the callback so that it can
   # verified in the authorization server response.
   state = flask.session['state']
-
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
   flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-
   # Use the authorization server's response to fetch the OAuth 2.0 tokens.
   authorization_response = flask.request.url
   flow.fetch_token(authorization_response=authorization_response)
-
   # Store credentials in the session.
   # ACTION ITEM: In a production app, you likely want to save these
   #              credentials in a persistent database instead.
   credentials = flow.credentials
   flask.session['credentials'] = credentials_to_dict(credentials)
-
   return flask.redirect(flask.url_for('customer.test_api_request'))
 
 def credentials_to_dict(credentials):
