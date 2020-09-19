@@ -92,10 +92,10 @@ def confirm_booking():
     endrenttime = start_date + timedelta(minutes = 30)
     session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
     flash("Booking confirmed!") 
-    if request.args["google_calendar"]:
-        return "Yes"
-        return redirect(url_for("customer.booking_view"))
-    return "No"
+    # if request.args["google_calendar"]:
+    #     return "Yes"
+    #     return redirect(url_for("customer.booking_view"))
+    # return "No"
     return redirect(url_for("customer.send_calendar"))
     
 @customer.route('/send/calendar', methods=("GET", "POST"))
