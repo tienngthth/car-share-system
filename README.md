@@ -24,9 +24,6 @@ Student Name - ID:
     2. Nguyen Thanh Tam - s3747274
     3. Nguyen Quoc Cuong - s3748840
     4. Nguyen Thi Thuy Tien - s3757934
-
-
-[Git repo](https://github.com/tienngthth/car-share-system)
 ```
 ## Getting Started
 
@@ -110,15 +107,15 @@ Brief discussion
 
 2. Customer endpoints (customer login required)
 
-   localhost:5000/customer/cars
-   localhost:5000/customer/book/car
-   localhost:5000/customer/confirm/booking
-   localhost:5000/customer/send/calendar
-   localhost:5000/customer/authorize
-   localhost:5000/customer/oauth2callback
-   localhost:5000/customer/bookings
-   localhost:5000/customer/bookings/details
-   localhost:5000/customer/bookings/cancel
+   [](localhost:5000/customer/cars)
+   [](localhost:5000/customer/book/car)
+   [](localhost:5000/customer/confirm/booking)
+   [](localhost:5000/customer/send/calendar)
+   [](localhost:5000/customer/authorize)
+   [](localhost:5000/customer/oauth2callback)
+   [](localhost:5000/customer/bookings)
+   [](localhost:5000/customer/bookings/details)
+   [](localhost:5000/customer/bookings/cancel)
 
 3. Engineer endpoints (engineer login required)
 
