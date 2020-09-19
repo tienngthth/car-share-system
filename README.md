@@ -204,7 +204,7 @@ Below is the full list of clould database end points.
 
     [localhost:5000/staffs/read?id=&username=&first_name=&last_name=&email=&phone=&user_type=](http://localhost:8080/staffs/read?id=&username=&first_name=&last_name=&email=&phone=&user_type=)</br>
     [localhost:8080/staffs/check/existed/username?username=](http://localhost:8080/staffs/check/existed/username?username=)</br>
-    [localhost:8080/staffs/get/engineer/mac/address?id=](http://localhost:8080/staffs/get/engineer/mac/address?id=)</br>
+    (http://localhost:8080/staffs/get/engineer/mac/address?id=)</br>
 
 
 ### Agent Pi
