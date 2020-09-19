@@ -102,40 +102,40 @@ Brief discussion
 
 1. Admin endpoints (admin login required)
 
-   [localhost:5000/login](http:localhost:5000/admin/users)</br>
-   [localhost:5000/login](http:localhost:5000/admin/update/user)</br>
-   [localhost:5000/login](http:localhost:5000/admin/delete/user)</br>
-   [localhost:5000/login](http:localhost:5000/admin/cars)</br>
-   [localhost:5000/login](http:localhost:5000/admin/car/bookings)</br>
-   [localhost:5000/login](http:localhost:5000/admin/create/car)</br>
-   [localhost:5000/login](http:localhost:5000/admin/update/car)</br>
-   [localhost:5000/login](http:localhost:5000/admin/delete/car)</br>
-   [localhost:5000/login](http:localhost:5000/admin/report/car)</br>
+   [localhost:5000/admin/users](http:localhost:5000/admin/users)</br>
+   [localhost:5000/admin/update/user](http:localhost:5000/admin/update/user)</br>
+   [localhost:5000/admin/delete/user](http:localhost:5000/admin/delete/user)</br>
+   [localhost:5000/admin/cars](http:localhost:5000/admin/cars)</br>
+   [localhost:5000/admin/car/bookings](http:localhost:5000/admin/car/bookings)</br>
+   [localhost:5000/admin/create/car](http:localhost:5000/admin/create/car)</br>
+   [localhost:5000/admin/update/car](http:localhost:5000/admin/update/car)</br>
+   [localhost:5000/admin/delete/car](http:localhost:5000/admin/delete/car)</br>
+   [localhost:5000/admin/report/car](http:localhost:5000/admin/report/car)</br>
 
 2. Customer endpoints (customer login required)
 
-   [localhost:5000/login](http:localhost:5000/customer/cars)</br>
-   [localhost:5000/login](http:localhost:5000/customer/book/car)</br>
-   [localhost:5000/login](http:localhost:5000/customer/confirm/booking)</br>
-   [localhost:5000/login](http:localhost:5000/customer/send/calendar)</br>
-   [localhost:5000/login](http:localhost:5000/customer/authorize)</br>
-   [localhost:5000/login](http:localhost:5000/customer/oauth2callback)</br>
-   [localhost:5000/login](http:localhost:5000/customer/bookings)</br>
-   [localhost:5000/login](http:localhost:5000/customer/bookings/details)</br>
-   [localhost:5000/login](http:localhost:5000/customer/bookings/cancel)</br>
+   [localhost:5000/customer/cars](http:localhost:5000/customer/cars)</br>
+   [localhost:5000/customer/book/car](http:localhost:5000/customer/book/car)</br>
+   [localhost:5000/customer/confirm/booking](http:localhost:5000/customer/confirm/booking)</br>
+   [localhost:5000/customer/send/calendar](http:localhost:5000/customer/send/calendar)</br>
+   [localhost:5000/customer/authorize](http:localhost:5000/customer/authorize)</br>
+   [localhost:5000/customer/oauth2callbac](http:localhost:5000/customer/oauth2callback)</br>
+   [localhost:5000/customer/bookings](http:localhost:5000/customer/bookings)</br>
+   [localhost:5000/customer/bookings/details](http:localhost:5000/customer/bookings/details)</br>
+   [localhost:5000/customer/bookings/cancel](http:localhost:5000/customer/bookings/cancel)</br>
 
 3. Engineer endpoints (engineer login required)
 
-   [localhost:5000/login](http:localhost:5000/engineer/backlogs)</br>
-   [localhost:5000/login](http:localhost:5000/engineer/location)</br>
-   [localhost:5000/login](http:localhost:5000/engineer/close/backlog)</br>
+   [localhost:5000/engineer/backlogs](http:localhost:5000/engineer/backlogs)</br>
+   [localhost:5000/engineer/location](http:localhost:5000/engineer/location)</br>
+   [localhost:5000/engineer/close/backlog](http:localhost:5000/engineer/close/backlog)</br>
 
 4. Manager endpoints (manager login required)
 
-   [localhost:5000/login](http:localhost:5000/manager/dashboard)</br>
-   [localhost:5000/login](http:localhost:5000/manager/bar_chart)</br>
-   [localhost:5000/login](http:localhost:5000/manager/line_chart)</br>
-   [localhost:5000/login](http:localhost:5000/manager/pie_chart)</br>
+   [localhost:5000/manager/dashboard](http:localhost:5000/manager/dashboard)</br>
+   [localhost:5000/manager/bar_chart](http:localhost:5000/manager/bar_chart)</br>
+   [localhost:5000/line_chart](http:localhost:5000/manager/line_chart)</br>
+   [localhost:5000/manager/pie_chart](http:localhost:5000/manager/pie_chart)</br>
 
 ### Cloud database
 
@@ -145,14 +145,14 @@ Brief discussion
 
 1. Backlog endpoints
 
-    [localhost:5000/login](localhost:8080/backlogs/create?assigned_engineer_id=&car_id&=status=&description=&)</br>
-    [localhost:5000/login](localhost:8080/backlogs/close?signed_engineer_id=&car_id=&)</br>
-    [localhost:5000/login](localhost:8080/backlogs/get/data)</br>
-    [localhost:5000/login](localhost:8080/backlogs/get/all)</br>
-    [localhost:5000/login](localhost:8080/backlogs/get/engineer/id?car_id=)</br>
-    [localhost:5000/login](localhost:8080/backlogs/remove/assigned/engineer?id=)</br>
-    [localhost:5000/login](localhost:8080/backlogs/remove/signed/engineer?id=)</br>
-    [localhost:5000/login](localhost:8080/backlogs/remove/car?car_id=)</br>
+    [localhost:5000/backlogs/create?assigned_engineer_id=&car_id&=status=&description=&](http:localhost:8080/backlogs/create?assigned_engineer_id=&car_id&=status=&description=&)</br>
+    [localhost:5000/backlogs/close?signed_engineer_id=&car_id=&](http:localhost:8080/backlogs/close?signed_engineer_id=&car_id=&)</br>
+    [localhost:5000/backlogs/get/data](http:localhost:8080/backlogs/get/data)</br>
+    [localhost:5000/backlogs/get/all](http:localhost:8080/backlogs/get/all)</br>
+    [localhost:5000/backlogs/get/engineer/id?car_id=](http:localhost:8080/backlogs/get/engineer/id?car_id=)</br>
+    [localhost:5000/backlogs/remove/assigned/engineer?id=](http:localhost:8080/backlogs/remove/assigned/engineer?id=)</br>
+    [localhost:5000/backlogs/remove/signed/engineer?id=](http:localhost:8080/backlogs/remove/signed/engineer?id=)</br>
+    [localhost:5000/backlogs/remove/car?car_id=](http:localhost:8080/backlogs/remove/car?car_id=)</br>
 
 2. Booking endpoints
 
