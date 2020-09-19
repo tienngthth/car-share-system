@@ -93,6 +93,8 @@ Brief discussion
 
 #### Web application API endpoints
 
+Below is the full list of web application end points.
+
 0. Auth endpoints
 
     [localhost:5000/login](http://localhost:5000/login)</br>
@@ -141,6 +143,8 @@ Brief discussion
 Brief discussion
 
 #### Clould database API end points
+
+Below is the full list of clould database end points.
 
 1. Backlog endpoints
 
