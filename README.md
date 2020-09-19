@@ -33,8 +33,8 @@ This document describes:
 
 1. [Activities](#activities)
 
-  [Git Usage](#git) 
-  [Trello Usage](#trello) 
+  * [Git Usage](#git) 
+  * [Trello Usage](#trello) 
 
 2. [Architecture](#architecture)
    _ [Master Pi](#master-pi)
