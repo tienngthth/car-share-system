@@ -97,48 +97,45 @@ Brief discussion
 0. Auth endpoints
 
     [localhost:5000/login](http:localhost:5000/login)</br>
-    [localhost:5000/logout](http:localhost:5000/logout)
-    [localhost:5000/register](http:localhost:5000/register)
+    [localhost:5000/logout](http:localhost:5000/logout)</br>
+    [localhost:5000/register](http:localhost:5000/register)</br>
 
 1. Admin endpoints (admin login required)
 
-   localhost:5000/admin/users
-   localhost:5000/admin/update/user
-   localhost:5000/admin/delete/user
-   localhost:5000/admin/cars
-   localhost:5000/admin/car/bookings
-   localhost:5000/admin/create/car
-   localhost:5000/admin/update/car
-   localhost:5000/admin/delete/car
-   localhost:5000/admin/report/car
+   [localhost:5000/login](http:localhost:5000/admin/users)</br>
+   [localhost:5000/login](http:localhost:5000/admin/update/user)</br>
+   [localhost:5000/login](http:localhost:5000/admin/delete/user)</br>
+   [localhost:5000/login](http:localhost:5000/admin/cars)</br>
+   [localhost:5000/login](http:localhost:5000/admin/car/bookings)</br>
+   [localhost:5000/login](http:localhost:5000/admin/create/car)</br>
+   [localhost:5000/login](http:localhost:5000/admin/update/car)</br>
+   [localhost:5000/login](http:localhost:5000/admin/delete/car)</br>
+   [localhost:5000/login](http:localhost:5000/admin/report/car)</br>
 
 2. Customer endpoints (customer login required)
 
-   [](localhost:5000/customer/cars)
-   [](localhost:5000/customer/book/car)
-   [](localhost:5000/customer/confirm/booking)
-   [](localhost:5000/customer/send/calendar)
-   [](localhost:5000/customer/authorize)
-   [](localhost:5000/customer/oauth2callback)
-   [](localhost:5000/customer/bookings)
-   [](localhost:5000/customer/bookings/details)
-   [](localhost:5000/customer/bookings/cancel)
+   [localhost:5000/login](http:localhost:5000/customer/cars)</br>
+   [localhost:5000/login](http:localhost:5000/customer/book/car)</br>
+   [localhost:5000/login](http:localhost:5000/customer/confirm/booking)</br>
+   [localhost:5000/login](http:localhost:5000/customer/send/calendar)</br>
+   [localhost:5000/login](http:localhost:5000/customer/authorize)</br>
+   [localhost:5000/login](http:localhost:5000/customer/oauth2callback)</br>
+   [localhost:5000/login](http:localhost:5000/customer/bookings)</br>
+   [localhost:5000/login](http:localhost:5000/customer/bookings/details)</br>
+   [localhost:5000/login](http:localhost:5000/customer/bookings/cancel)</br>
 
 3. Engineer endpoints (engineer login required)
 
-   localhost:5000/engineer/backlogs
-   localhost:5000/engineer/location
-   localhost:5000/engineer/close/backlog
+   [localhost:5000/login](http:localhost:5000/engineer/backlogs)</br>
+   [localhost:5000/login](http:localhost:5000/engineer/location)</br>
+   [localhost:5000/login](http:localhost:5000/engineer/close/backlog)</br>
 
 4. Manager endpoints (manager login required)
 
-   localhost:5000/manager/dashboard
-   localhost:5000/manager/bar_chart
-   localhost:5000/manager/line_chart
-   localhost:5000/manager/pie_chart
-
-
-
+   [localhost:5000/login](http:localhost:5000/manager/dashboard)</br>
+   [localhost:5000/login](http:localhost:5000/manager/bar_chart)</br>
+   [localhost:5000/login](http:localhost:5000/manager/line_chart)</br>
+   [localhost:5000/login](http:localhost:5000/manager/pie_chart)</br>
 
 ### Cloud database
 
@@ -148,56 +145,56 @@ Brief discussion
 
 1. Backlog endpoints
 
-    localhost:8080/backlogs/create?assigned_engineer_id=&car_id&=status=&description=&
-    localhost:8080/backlogs/close?signed_engineer_id=&car_id=&
-    localhost:8080/backlogs/get/data
-    localhost:8080/backlogs/get/all
-    localhost:8080/backlogs/get/engineer/id?car_id=
-    localhost:8080/backlogs/remove/assigned/engineer?id=
-    localhost:8080/backlogs/remove/signed/engineer?id=
-    localhost:8080/backlogs/remove/car?car_id=
+    [localhost:5000/login](localhost:8080/backlogs/create?assigned_engineer_id=&car_id&=status=&description=&)</br>
+    [localhost:5000/login](localhost:8080/backlogs/close?signed_engineer_id=&car_id=&)</br>
+    [localhost:5000/login](localhost:8080/backlogs/get/data)</br>
+    [localhost:5000/login](localhost:8080/backlogs/get/all)</br>
+    [localhost:5000/login](localhost:8080/backlogs/get/engineer/id?car_id=)</br>
+    [localhost:5000/login](localhost:8080/backlogs/remove/assigned/engineer?id=)</br>
+    [localhost:5000/login](localhost:8080/backlogs/remove/signed/engineer?id=)</br>
+    [localhost:5000/login](localhost:8080/backlogs/remove/car?car_id=)</br>
 
 2. Booking endpoints
 
-    localhost:8080/bookings/create?customer_id=&car_id=&rent_time=&return_time=&total_cost=
-    localhost:8080/bookings/update?status=&id=
-    localhost:8080/bookings/read?car_id=&customer_id=
-    localhost:8080/bookings/get/profit/data
-    localhost:8080/bookings/get/most/profit
-    localhost:8080/bookings/get/data
-    localhost:8080/bookings/get/longest/duration
-    localhost:8080/bookings/get/all?car_id=&customer_id=
-    localhost:8080/bookings/get/by/time?car_id=&customer_id=&start=&end=
-    localhost:8080/bookings/remove/customer?customer_id=
-    localhost:8080/bookings/remove/car?car_id=
+    [localhost:5000/login](localhost:8080/bookings/create?customer_id=&car_id=&rent_time=&return_time=&total_cost=)</br>
+    [localhost:5000/login](localhost:8080/bookings/update?status=&id=)</br>
+    [localhost:5000/login](localhost:8080/bookings/read?car_id=&customer_id=)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/profit/data)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/most/profit)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/data)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/longest/duration)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/all?car_id=&customer_id=)</br>
+    [localhost:5000/login](localhost:8080/bookings/get/by/time?car_id=&customer_id=&start=&end=)</br>
+    [localhost:5000/login](localhost:8080/bookings/remove/customer?customer_id=)</br>
+    [localhost:5000/login](localhost:8080/bookings/remove/car?car_id=)</br>
 
 3. Car endpoints
 
-    localhost:8080/cars/create?mac_address=&brand=&type=&location_id=&status=&color=&seat=&cost=
-    localhost:8080/cars/update?mac_address=&brand=&type=&location_id=&status=&color=&seat=&cost=&id=
-    localhost:8080/cars/read?mac_address=&brand=&type=&status=&color=&seat=&cost=&id=
-    localhost:8080/cars/status/available?mac_address=&brand=&type=&status=&color=&seat=&cost=&id=
-    localhost:8080/cars/get/id?mac_address=
-    localhost:8080/cars/history?id=
+    [localhost:5000/login](localhost:8080/cars/create?mac_address=&brand=&type=&location_id=&status=&color=&seat=&cost=)</br>
+    [localhost:5000/login](localhost:8080/cars/update?mac_address=&brand=&type=&location_id=&status=&color=&seat=&cost=&id=)</br>
+    [localhost:5000/login](localhost:8080/cars/read?mac_address=&brand=&type=&status=&color=&seat=&cost=&id=)</br>
+    [localhost:5000/login](localhost:8080/cars/status/available?mac_address=&brand=&type=&status=&color=&seat=&cost=&id=)</br>
+    [localhost:5000/login]([localhost:5000/login](localhost:8080/cars/get/id?mac_address=)</br>
+    [localhost:5000/login](localhost:8080/cars/history?id=)</br>
 
 4. Customer endpoints
 
-    localhost:8080/customers/create?username=&password=&first_name=&last_name=&email=&phone=
-    localhost:8080/customers/read?username=&password=&first_name=&last_name=&email=&phone=&id=
-    localhost:8080/customers/update?username=&password=&first_name=&last_name=&email=&phone=&id=
-    localhost:8080/customers/delete?id=
-    localhost:8080/customers/get/id?username=
-    localhost:8080/customers/check/existed/username?username=
+    [localhost:5000/login](localhost:8080/customers/create?username=&password=&first_name=&last_name=&email=&phone=)</br>
+    [localhost:5000/login](localhost:8080/customers/read?username=&password=&first_name=&last_name=&email=&phone=&id=)</br>
+    [localhost:5000/login](localhost:8080/customers/update?username=&password=&first_name=&last_name=&email=&phone=&id=)</br>
+    [localhost:5000/login](localhost:8080/customers/delete?id=)</br>
+    [localhost:5000/login](localhost:8080/customers/get/id?username=)</br>
+    [localhost:5000/login](localhost:8080/customers/check/existed/username?username=)</br>
 
 5. Location endpoints
 
-    localhost:8080/customers/location/get?id=
+    [localhost:5000/login](localhost:8080/customers/location/get?id=
 
 6. Staff endpoints
 
-    localhost:8080/staffs/read?id=&username=&first_name=&last_name=&email=&phone=&user_type=
-[localhost:8080/staffs/check/existed/username?username=](http:localhost:8080/staffs/check/existed/username?username=)
-[localhost:8080/staffs/get/engineer/mac/address?id=](localhost:8080/staffs/get/engineer/mac/address?id=)
+    [localhost:5000/login](http:localhost:8080/staffs/read?id=&username=&first_name=&last_name=&email=&phone=&user_type=)</br>
+    [localhost:8080/staffs/check/existed/username?username=](http:localhost:8080/staffs/check/existed/username?username=)</br>
+    [localhost:8080/staffs/get/engineer/mac/address?id=](http:localhost:8080/staffs/get/engineer/mac/address?id=)</br>
 
 
 ### Agent Pi
