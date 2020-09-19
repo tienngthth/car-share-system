@@ -51,7 +51,7 @@ def read():
     return {"bookings" : results}
 
 @booking_api.route("/get/profit/data")
-def get_all_rent_time():
+def get_profit_data():
     results = Database.select_record(
         " DATE_FORMAT(RentTime, '%Y-%m-%d') AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total", 
         " Bookings ", 
@@ -70,7 +70,7 @@ def get_most_profit():
     return results[0]
 
 @booking_api.route("/get/data")
-def get_all_booked_car_ids():
+def get_bookings_data():
     results = Database.select_record_parameterized(
         " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 

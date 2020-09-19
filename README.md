@@ -1,17 +1,17 @@
-                  g0@@@@@@@@@@@@@@@@@@@@@8
-              $@@@@@@@@@@@@@@@8888888@@@@@@>
-           %@@@@X       @@@@@            @@@@%
-          @@@^         @@@@@@              @@@g
-       0@@@@          @@@@@@@`               @@@8 
-     g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^
-@@@@@@@@@@@@@@@@@@@@@@@@@CLOUDCAR@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8
-   0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8
-           @@@@00@@@@@8@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@00@@@@
-           C@@@00@@@@                                   @@@@00@@@
-            ~@@@@@@@                                      @@@@@8
+                    g0@@@@@@@@@@@@@@@@@@@@@8
+                $@@@@@@@@@@@@@@@8888888@@@@@@>
+             %@@@@X       @@@@@            @@@@%
+            @@@^         @@@@@@              @@@g
+         0@@@@          @@@@@@@`               @@@8 
+       g@@@@@@@@@@@@@@@@@@@@@@@@@@@CLOUDCA@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@CLOUDCAR@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+             @@@@00@@@@@8@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@00@@@@
+             C@@@00@@@@                                   @@@@00@@@
+              ~@@@@@@@                                      @@@@@8
 
 # Car-Share-System IoT Programming
 ``` 
@@ -39,20 +39,20 @@ This document describes:
 2. [Architecture](#architecture)
 
   * [Master Pi](#master-pi)
-  * [Web application API endpoints](#-web-application-api-endpoints)
+  * [Web application API endpoints](#web-application-api-endpoints)
     
       * [Cloud database](#-cloud-database)
-      * [Clould database API end points](#-clould-database-api-endpoints)
+      * [Clould database API end points](#clould-database-api-endpoints)
       
-  * [Agent Pi](#-agent-pi)
-  * [Local database](#-local-database)
-  * [Object recognition](#-object-recognition)
-  * [Socket communication](#-socket-communication)
+  * [Agent Pi](#agent-pi)
+  * [Local database](#local-database)
+  * [Object recognition](#object-recognition)
+  * [Socket communication](#socket-communication)
   
-3. [Instruction](##-instruction)
+3. [Instruction](#instruction)
 
-  * [Master Pi](#-master-pi-1)
-  * [Agent Pi](#-agent-pi-1)
+  * [Master Pi](#master-pi-1)
+  * [Agent Pi](#agent-pi-1)
   
 4. [Acknowledgments](#acknowledgement)
 
@@ -78,14 +78,14 @@ For the first half of the cycle, contributors worked on small, seperate componen
 
 For the second half of the cycle, contributors merged the repaired components to the main branches (mp-test and ap) and work on the work flow.
 
-![Architecture](architecture.png)
-
 ### Trello
 
 * Images go here
 
 ## Architecture
-* images go here
+
+![Architecture](architecture.png)
+
 
 ### Master Pi
 
@@ -225,13 +225,16 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
 1. Download the mp-test branch.
 2. Run ./run.sh in your console to initiate the web application and the cloud APIs.
 3. Run ./cloud.sh to initiate the cloud database connection.
-    Password:
-4. Access to web application at localhost:5000 , please use Google Chrome Browser.
-    A customer credential: tiennguyen | 2@aA2222
-    The admin credential: minh_nguyen | 2@aA3333
-    The manager credential: tam_nguyen | 3#aA4444
-    The engineer credential: cuong_nguyen | 1!aA2222
 
+    Password:
+4. Access to web application at localhost:5000, please use Google Chrome Browser.
+    
+    A customer credential: tiennguyen | 2@aA2222</br>
+    The admin credential: minh_nguyen | 2@aA3333</br>
+    The manager credential: tam_nguyen | 3#aA4444</br>
+    The engineer credential: cuong_nguyen | 1!aA2222</br>
+
+#### Authentication
 ```
 User is asked to input username and password to login.
 
@@ -244,6 +247,7 @@ Customer can register for new account given all fields are filled with the corre
 User can log out.
 ```
 
+#### Customer
 ```
 Customer is required to input intended booked duration in order or to view all **available** cars at the time range. 
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day.
@@ -262,10 +266,12 @@ Customer can view all booking history and can filter the bookings by date.
 Customer can view the detail of any booking and can cancel any **Booked** booking.
 ```
 
+#### Admin
 ```
 Admin can view all cars or search for cars by brand, type, cost, color, seat, status, mac address and car park no filter.
 *Start date must be after today and smaller than end date. Duration must be greater than 1 day. 
 *Cost must be a valid float number.
+
 Admin can view any car booking history.
 ```
 
@@ -296,12 +302,14 @@ Admin can delete a user.
 * The system set the engineer id field of all backlogs with deleted engineer to none.
 ```
 
+#### Engineer
 ```
 Engineer can view all backlogs.
 Engineer can view a backlog detail including the location map.
 Engineer can repair a car and update the backlog status to 'Done' and update the car status back to 'Availabe' if no backlog left for this car.
 ```
 
+#### Manager
 ```
 Manager can view three type of graphs.
 1. Profit by date (Line chart)
