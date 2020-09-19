@@ -1,3 +1,18 @@
+                  g0@@@@@@@@@@@@@@@@@@@@@8
+              $@@@@@@@@@@@@@@@8888888@@@@@@>
+           %@@@@X       @@@@@            @@@@%
+          @@@^         @@@@@@              @@@g
+       0@@@@          @@@@@@@`               @@@8 
+     g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@>
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^
+@@@@@@@@@@@@@@@@@@@@@@@@@CLOUDCAR@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8
+   0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8
+           @@@@00@@@@@8@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@00@@@@
+           C@@@00@@@@                                   @@@@00@@@
+            ~@@@@@@@                                      @@@@@8
+
 # Car-Share-System IoT Programming
 ``` 
 RMIT University Vietnam
@@ -15,11 +30,30 @@ https://github.com/tienngthth/car-share-system
 
 This project has been built as an Python automation Car Share System to work with Raspberry Pi. The whole process includes a Master Pi and an Agent Pi serving four types of different users, which are customers, admin, manger and engineer. The final product includes a web application working with cloud database, a console based application and project documentation.
 
+This document describes:
+
+1. [Activities](##-Activities)
+    [Git Usage](###-Git)
+    [Trello Usage](###-Trello)
+2. [Architecture]
+    [Master Pi](###-Master-Pi)
+        [Web application API endpoints](#####-Web-application-API-endpoints)
+    [Cloud database](###-Cloud-database)
+        [Clould database API end points](#####-Clould-database-API-endpoints)
+    [Agent Pi](###-Agent-Pi)
+    [Local database](###-Local-database)
+    [Object recognition](###-Object-recognition)
+    [Socket communication](###-Socket-communication)
+3. [Instruction](##-Instruction)
+    [Master Pi](###-Master-Pi)
+    [Agent Pi](###-Agent-Pi)
+4. [Acknowledgments]
+
 ## Activities
 
 This project has been developed for around 6 weeks. Git, git hub, Trello, Google Drive have been used from the beginning of the project to manage the work and help contributors to collaborate with each other. 
 
-### Activities - Git
+### Git
 
 #### Repository
 
@@ -41,29 +75,18 @@ For the second half of the cycle, contributors merged the repaired components to
 
 Following is the instruction to run the applications.
 
-### Activities - Trello
+### Trello
 
 * Images go here
 
-## Instruction
+## Architecture
+* images go here
 
-Review [requirements.txt](https://github.com/tienngthth/car-share-system/requirements.txt) and make sure all packages have been installed.
+### Master Pi
 
-### Instruction - Master Pi
+Brief discussion
 
-1. Download the mp-test branch.
-2. Run ./run.sh in your console to initiate the web application and the cloud APIs.
-3. Run ./cloud.sh to initiate the cloud database connection.
-    Password:
-4. Access to web application at localhost:5000 , please use Google Chrome Browser.
-    A customer credential: tiennguyen | 2@aA2222
-    The admin credential: minh_nguyen | 2@aA3333
-    The manager credential: tam_nguyen | 3#aA4444
-    The engineer credential: cuong_nguyen | 1!aA2222
-
-#### API endpoints
-
-##### Web application API endpoints
+#### Web application API endpoints
 
 0. Auth endpoints
 
@@ -108,7 +131,14 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
    localhost:5000/manager/line_chart
    localhost:5000/manager/pie_chart
 
-##### Clould database API end points
+
+
+
+### Cloud database
+
+Brief discussion
+
+#### Clould database API end points
 
 1. Backlog endpoints
 
@@ -163,11 +193,48 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
     localhost:8080/staffs/check/existed/username?username=
     localhost:8080/staffs/get/engineer/mac/address?id=
 
-### Instruction - Agent Pi
+
+### Agent Pi
+
+Brief discussion
+
+### Local database
+
+Store what?
+
+### Object recognition
+
+Code and facial
+
+### Socket communication
+
+brief discussion
+
+## Instruction
+
+Review [requirements.txt](https://github.com/tienngthth/car-share-system/requirements.txt) and make sure all packages have been installed.
+
+### Master Pi
+
+1. Download the mp-test branch.
+2. Run ./run.sh in your console to initiate the web application and the cloud APIs.
+3. Run ./cloud.sh to initiate the cloud database connection.
+    Password:
+4. Access to web application at localhost:5000 , please use Google Chrome Browser.
+    A customer credential: tiennguyen | 2@aA2222
+    The admin credential: minh_nguyen | 2@aA3333
+    The manager credential: tam_nguyen | 3#aA4444
+    The engineer credential: cuong_nguyen | 1!aA2222
+
+detail stories
+
+### Agent Pi
 
 1. Download the ap branch.
 2. Run ./mainMenu.py in your console to start the console based application.
- 
+
+detail stories
+
 ## Acknowledgments
 
 * please include acknoledgements for all the technologies: google calendar, cloud, facial, ...
