@@ -31,7 +31,7 @@ This project has been built as an Python automation Car Share System to work wit
 
 This document describes:
 
-1. [Activities](#activities) 
+1. [Activities](#activities)\ 
    _ [Git Usage](#git) 
    _ [Trello Usage](#trello) 
 2. [Architecture](#architecture)
