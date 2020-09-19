@@ -566,7 +566,7 @@ def report_car():
                             <tr>
                             <td>
                                 <p>Hello engineer,</p>
-                                <p>Repairs have been requested for car #""" + str(request.args["car_id"]) + """</p>
+                                <p>Repairs have been requested for car #""" + str(request.args["car_id"]) + ":" + description + """</p>
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                                 <tbody>
                                     <tr>
