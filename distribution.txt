@@ -15,10 +15,10 @@ Tien: Bluetooth, socket communication, QR code, API for cloud database, validati
 
 II. Set up the main applications with all prepared components.
 A. Master Pi
-Minh: Web UI, all routing and user cases for customemr, admin, manager, engineer.
+Minh: Web UI, all routing and user cases for customer, admin, manager, engineer.
 Tam: Integrate web app with cloud database API, work on graphs for manager, map and backlog description form for engineer, set up google cloud connection in pi.
 Cuong: Integrate web app with cloud database API, work on email to engineer, calendar event for customer, set up google cloud connection in pi.
-Tien: Integrate web app with cloud database API, work on customer booking detail UI, user input validation.
+Tien: Integrate web app with cloud database API, work on user input validation, suport with repairing backlog, deleting user and car, customer booking detail.
 
 B. Agent Pi
 Tien: Customer, engineer menu and work flow, work on QR detection, bluetooth scanning, local database.
