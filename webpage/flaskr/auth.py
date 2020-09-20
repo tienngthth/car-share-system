@@ -28,7 +28,7 @@ def login():
             session["user_type"] = validated_user["UserType"]
         except:
             session["user_type"] = None
-            requests.put("http://127.0.0.1:8080/bookings/cancel/passed/return/time?customer_id={}".format(str(user_id)))
+            requests.put("http://127.0.0.1:8080/bookings/cancel/passed/return/time?customer_id={}".format(str(session["user_id"] )))
         return redirect(url_for("home.index"))
 
 @auth.route("/logout")
