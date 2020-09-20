@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from database import Database
 
 booking_api = Blueprint("booking_api", __name__)
@@ -35,20 +35,38 @@ def update():
     except:
         return "Fail"
 
-@booking_api.route("/read")
+@booking_api.route("/add/calendar", methods=['GET', 'PUT'])
+def add_calendar_booking():
+    try:
+        Database.update_record_parameterized(
+            " Bookings ",
+            " EventID = %s ",
+            " WHERE ID = (%s)",
+            (request.args.get("event_id"), request.args.get("id"))
+        )
+        return "Success"
+    except:
+        return "Fail"
+
+@booking_api.route("/read/lastest/record")
 def read():
     results = Database.select_record_parameterized(
         " * ", 
         " Bookings ", 
         " WHERE CarID = %(car_id)s " +
-        " OR CustomerID = %(customer_id)s " +
-        " AND RentTime <= NOW() AND NOW() <= ReturnTime ",
+        " AND CustomerID = %(customer_id)s " +
+        " AND RentTime = %(rent_time)s " + 
+        " AND Status LIKE 'Booked' " +
+        " LIMIT 1 ",
         {
             "car_id": request.args.get("car_id"),
-            "customer_id": request.args.get("customer_id")
-        }
+            "customer_id": request.args.get("customer_id"),
+            "rent_time": request.args.get("rent_time")
+        },
     ) 
-    return {"bookings" : results}
+    return jsonify(results)
+
+
 
 @booking_api.route("/get/profit/data")
 def get_all_rent_time():
