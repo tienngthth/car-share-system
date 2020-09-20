@@ -67,13 +67,16 @@ def display_all_users(form):
     users.extend(staffs)
     return render_template("admin/user_view.html", users=users, form=form)
 
-@admin.route("/update/user", methods=("GET", "POST"), defaults={'user_type': ""})
 @admin.route("/update/user", methods=("GET", "POST"))
 @login_required
-def update_user(user_type):
+def update_user():
     """Update a user."""
     if (g.type != "Admin"):
         return "Access Denied"
+    try:
+        user_type = request.args["user_type"]
+    except:
+        user_type = "customers"
     form = AdminUpdateUserForm()
     if request.method == "POST":
         username = request.form["username"].strip()

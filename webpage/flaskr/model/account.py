@@ -51,9 +51,7 @@ class Account():
         return True
 
     def update_account(self, user_type):
-        if user_type == "":
-            user_type = "customers"
-        else:
+        if user_type != "customers":
             user_type = "staffs"
         requests.put(
             "http://127.0.0.1:8080/" + user_type + "/update?" +
