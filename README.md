@@ -229,7 +229,7 @@ MP and AP talk to each other via socket communication with MP as a server and AP
 
 ## Instruction
 
-Review [requirements.txt](https://github.com/tienngthth/car-share-system/requirements.txt) and make sure all packages have been installed.
+Review [requirements.txt](https://github.com/tienngthth/car-share-system/requirements.txt) to make sure all packages have been installed. 
 
 ### Master Pi
 

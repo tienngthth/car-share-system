@@ -30,5 +30,4 @@ Tien: server andn client socket
 III. Unit test and documentation.
 Minh: Sphinx documentation
 Tam: Unit test 
-Tien: README, distribution.txt
-? requirement.txt
+Tien: README, distribution.txt, requirement.txt
