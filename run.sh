@@ -1,1 +1,1 @@
-./cloud/run.sh & ./webpage/run.sh & python server/serverSocket.py
+./cloud/run.sh & ./webpage/run.sh & python3 server/serverSocket.py

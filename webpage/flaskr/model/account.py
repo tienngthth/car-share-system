@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import re, requests
 from passlib import hash
 from flask import flash
@@ -50,9 +50,13 @@ class Account():
         flash("Account updated!")
         return True
 
-    def update_account(self):
+    def update_account(self, user_type):
+        if user_type == "":
+            user_type = "customers"
+        else:
+            user_type = "staffs"
         requests.put(
-            "http://127.0.0.1:8080/customers/update?" +
+            "http://127.0.0.1:8080/" + user_type + "/update?" +
             "username=" + self.username +
             "&password=" + self.hash_salt_password(self.password) +
             "&first_name=" + self.firstname +

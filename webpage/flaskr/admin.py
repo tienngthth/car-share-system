@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from flask import Blueprint, flash, g, redirect
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, session
 from .auth import login_required
 from .forms import AdminCarSearchForm, AdminUserSearchForm, RegisterForm, AdminUpdateUserForm, AdminCreateCarForm, AdminUpdateCarForm, NewBacklogForm
-from flaskr.script.model.car import Car
-from flaskr.script.model.account import Account
-from flaskr.script.model.booking import Booking
+from flaskr.model.car import Car
+from flaskr.model.account import Account
+from flaskr.model.booking import Booking
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from .auth import login_required
@@ -67,9 +67,10 @@ def display_all_users(form):
     users.extend(staffs)
     return render_template("admin/user_view.html", users=users, form=form)
 
+@admin.route("/update/user", methods=("GET", "POST"), defaults={'user_type': ""})
 @admin.route("/update/user", methods=("GET", "POST"))
 @login_required
-def update_user():
+def update_user(user_type):
     """Update a user."""
     if (g.type != "Admin"):
         return "Access Denied"
@@ -81,11 +82,11 @@ def update_user():
         lastname = request.form["lastname"].strip()
         email = request.form["email"].strip()
         phone = request.form["phone"].strip()
-        account = Account(username, password, email, firstname, lastname, phone, request.args["user_id"])
+        account = Account(username, password, email, firstname, lastname, phone, user_type)
         if account.validate_update_account():
-            account.update_account()
+            account.update_account(user_type)
             return redirect(url_for("admin.user_view"))
-    return render_template("admin/update_user.html", id=request.args["user_id"], user_type=request.args["user_type"], form=form)
+    return render_template("admin/update_user.html", user_id=request.args["user_id"], user_type=user_type, form=form)
         
 @admin.route("/delete/user", methods=("GET", "POST"))
 @login_required
@@ -98,6 +99,8 @@ def delete_user():
     elif request.args["user_type"] == "Engineer":
         requests.put("http://127.0.0.1:8080/backlogs/remove/signed/engineer?id=" + request.args["user_id"])
         requests.put("http://127.0.0.1:8080/backlogs/remove/assigned/engineer?id=" + request.args["user_id"])
+        requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
+    else:
         requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
     flash("User deleted!")
     return redirect(url_for("admin.user_view"))

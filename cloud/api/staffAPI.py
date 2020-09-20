@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from database import Database
 from flask.json import jsonify
@@ -67,6 +67,36 @@ def delete():
             " Staffs ",
             " WHERE ID = %s"
             , (request.args.get("id"),)
+        )
+        return "Success"
+    except:
+        return "Fail"
+
+@staff_api.route("/update", methods=['GET', 'PUT'])
+def update():
+    try:
+        Database.update_record_parameterized(
+            " Staffs ",
+            " Username = CASE WHEN %(username)s = '' OR %(username)s IS NULL " +
+            " THEN Username ELSE %(username)s END, " +
+            " FirstName = CASE WHEN %(first_name)s = '' OR %(first_name)s IS NULL " + 
+            " THEN FirstName ELSE %(first_name)s END, " +
+            " LastName = CASE WHEN %(last_name)s = '' OR %(last_name)s IS NULL " + 
+            " THEN LastName ELSE %(last_name)s END, " +
+            " Email = CASE WHEN %(email)s = '' OR %(email)s IS NULL " + 
+            " THEN Email ELSE %(email)s END, " +
+            " Phone = CASE WHEN %(phone)s = '' OR %(phone)s IS NULL " + 
+            " THEN Phone ELSE %(phone)s END ",
+            " WHERE ID = %(id)s", 
+            {
+                "id": request.args.get("id"),
+                "username": request.args.get("username"), 
+                "password": request.args.get("password"), 
+                "first_name": request.args.get("first_name"),
+                "last_name": request.args.get("last_name"), 
+                "email": request.args.get("email"),
+                "phone": request.args.get("phone")
+            }
         )
         return "Success"
     except:

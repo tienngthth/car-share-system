@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from database import Database
 from passlib import hash
 
@@ -65,8 +65,8 @@ def create_sample_locations_data():
     #Customers
     global locations
     locations = []
-    locations.append(("10.729792", "106.692107", "RMIT Vietnam, 702 Nguyễn Văn Linh, Tân Hưng, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
-    locations.append(("10.728943" , "106.718845", "Crescent Mall, 101 Tôn Dật Tiên, Tân Phong, Quận 7, Thành phố Hồ Chí Minh, Vietnam"))
+    locations.append(("10.729792", "106.692107", "RMIT Vietnam, 702 Nguyen Van Linh, Tan Hung, Quan 7, Thanh pho Ho Chi Minh, Vietnam"))
+    locations.append(("10.728943" , "106.718845", "Crescent Mall, 101 Ton Dat Tien, Tan Phong, Quan 7, Thanh pho Ho Chi Minh, Vietnam"))
 
 def create_sample_cars_data():
     #Cars

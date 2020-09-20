@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from database import Database
 from flask.json import jsonify
@@ -68,9 +68,9 @@ def update():
             " THEN Email ELSE %(email)s END, " +
             " Phone = CASE WHEN %(phone)s = '' OR %(phone)s IS NULL " + 
             " THEN Phone ELSE %(phone)s END ",
-            " WHERE ID = %(customer_id)s", 
+            " WHERE ID = %(id)s", 
             {
-                "customer_id": request.args.get("id"),
+                "id": request.args.get("id"),
                 "username": request.args.get("username"), 
                 "password": request.args.get("password"), 
                 "first_name": request.args.get("first_name"),
