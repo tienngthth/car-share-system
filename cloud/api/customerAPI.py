@@ -1,5 +1,8 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request
 from database import Database
+from flask.json import jsonify
 
 customer_api = Blueprint("customer_api", __name__)
 
@@ -48,7 +51,7 @@ def read():
             "phone": request.args.get("phone")
         }
     ) 
-    return {"customers": results}
+    return jsonify(results)
 
 @customer_api.route("/update", methods=['GET', 'PUT'])
 def update():

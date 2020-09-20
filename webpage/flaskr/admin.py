@@ -39,16 +39,16 @@ def search_user(form):
     if validate_search_input(username, phone, email):
         if user_type == "":
             users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
-                .format(username, firstname, lastname, email, phone)).json()["customers"]
+                .format(username, firstname, lastname, email, phone)).json()
             staffs = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
-                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
+                .format(username, firstname, lastname, email, phone, user_type)).json()
             users.extend(staffs)
         elif user_type == "customer":
             users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
-                .format(username, firstname, lastname, email, phone)).json()["customers"]
+                .format(username, firstname, lastname, email, phone)).json()
         elif user_type == "admin" or user_type == "manager" or user_type == "engineer":
             users = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
-                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
+                .format(username, firstname, lastname, email, phone, user_type)).json()
         # all in the search box will return all the tuples
         return render_template("admin/user_view.html", users=users, form=form)
     return display_all_users(form)
@@ -62,8 +62,8 @@ def validate_search_input(username, phone, email):
 
 def display_all_users(form):
     """Show all users"""
-    users = requests.get("http://127.0.0.1:8080/customers/read?").json()["customers"]
-    staffs = requests.get("http://127.0.0.1:8080/staffs/read?").json()["staffs"]
+    users = requests.get("http://127.0.0.1:8080/customers/read?").json()
+    staffs = requests.get("http://127.0.0.1:8080/staffs/read?").json()
     users.extend(staffs)
     return render_template("admin/user_view.html", users=users, form=form)
 
@@ -92,11 +92,13 @@ def update_user():
 def delete_user():
     if (g.type != "Admin"):
         return "Access Denied"    
-    if request.args["user_type"] == None:
-        requests.put("http://127.0.0.1:8080/bookings/remove/customer?customer_id=" + request.args["car_id"])
+    if request.args["user_type"] == "":
+        requests.put("http://127.0.0.1:8080/bookings/remove/customer?customer_id=" + request.args["user_id"])
+        requests.delete("http://127.0.0.1:8080/customers/delete?id=" + request.args["user_id"])
     elif request.args["user_type"] == "Engineer":
         requests.put("http://127.0.0.1:8080/backlogs/remove/signed/engineer?id=" + request.args["user_id"])
         requests.put("http://127.0.0.1:8080/backlogs/remove/assigned/engineer?id=" + request.args["user_id"])
+        requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
     flash("User deleted!")
     return redirect(url_for("admin.user_view"))
 
@@ -122,16 +124,16 @@ def search_car(form):
     if not Booking.validate_cost(cost):
         return display_all_cars(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}&mac_address={}"
+        "http://127.0.0.1:8080/cars/read?brand={}&type={}&color={}&seat={}&cost={}&mac_address={}"
         .format(brand, car_type, color, seat, cost, mac_address)
     ).json()
-    return render_template("admin/car_view.html", cars=cars["cars"], form=form)
+    return render_template("admin/car_view.html", cars=cars, form=form)
 
 def display_all_cars(form):
     """Show all cars"""
     cars = requests.get(
         "http://127.0.0.1:8080/cars/read?"
-    ).json()["cars"]
+    ).json()
     return render_template("admin/car_view.html", cars=cars, form=form)
 
 @admin.route("/car/bookings", methods=("GET", "POST"))
@@ -140,7 +142,7 @@ def car_bookings():
     if (g.type != "Admin"):
         return "Access Denied"
     bookings = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(request.args["car_id"])).json()
-    return render_template("admin/car_bookings.html", bookings=bookings["history"], id=request.args["car_id"])
+    return render_template("admin/car_bookings.html", bookings=bookings, id=request.args["car_id"])
 
 @admin.route("/create/car", methods=("GET", "POST"))
 @login_required
@@ -201,8 +203,8 @@ def delete_car():
 def report_car():
     if (g.type != "Admin"):
         return "Access Denied"
-    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(request.args["car_id"])).json()["cars"][0]
-    engineer = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()["staffs"][0]
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(request.args["car_id"])).json()[0]
+    engineer = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()[0]
     form = NewBacklogForm()
     if request.method == "POST":
         description = request.form["description"].strip()
@@ -216,8 +218,7 @@ def report_car():
                 .format(str(engineer["ID"]), str(car["ID"]), str(description)))
         return redirect(url_for("admin.car_view"))
     return render_template("admin/confirm_report.html", form=form, car=car, engineer=engineer)
-    
-    
+     
 def send_email(receiver, car_id, description):
     message = MIMEMultipart("alternative")
     message["Subject"] = "Car Maintenance Request"

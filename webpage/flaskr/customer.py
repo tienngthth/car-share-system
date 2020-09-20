@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from flask import Blueprint, flash, g, redirect
-import flask
 from flask import render_template, request, url_for, session
 from .auth import login_required
 from .forms import UserCarSearchForm, UserBookingSearchForm
 from googleapiclient.discovery import build
 from flaskr.script.model.car import Car
-# from flaskr.script.model.googleCalendar import GoogleCalendar
 from flaskr.script.model.booking import Booking
 from datetime import datetime, timedelta
 import requests
@@ -17,6 +14,7 @@ import json
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+import flask
 
 customer = Blueprint("customer", __name__)
 
@@ -57,9 +55,9 @@ def search_car(form):
     if not Booking.validate_booking_input(cost, start_date, end_date):
         return display_no_car(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/status/available?brand={}&car_type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
+        "http://127.0.0.1:8080/cars/status/available?brand={}&type={}&status=Available&color={}&seat={}&cost={}&start={}&end={}"
         .format(brand, car_type, color, seat, cost, start_date, end_date)
-    ).json()["cars"]
+    ).json()
     return render_template("customer/car_view.html", cars=cars, form=form, start_date=start_date, end_date=end_date)
 
 @customer.route("/book/car", methods=("GET", "POST"))
@@ -87,17 +85,29 @@ def confirm_booking():
     start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
     end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
     total_cost = request.args['total_cost']
-    requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
+    response = requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
+    session["starttime"] = start_date
+    session["car_id"] = car_id
+    session["customer_id"] = g.user['ID']
+    
     session["startdate"] = str(start_date.strftime('%Y-%m-%d'))
     session["renttime"] = str(start_date.strftime('%H:%M:%S'))
     endrenttime = start_date + timedelta(minutes = 30)
     session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
     flash("Booking confirmed!") 
+    return request.args["google_calendar"]
+    # if request.args["google_calendar"]:
+    #     return "Yes"
+    #     return redirect(url_for("customer.booking_view"))
+    # return "No"
     return redirect(url_for("customer.send_calendar"))
     
-@customer.route('/send/calendar')
+@customer.route('/send/calendar', methods=("GET", "POST"))
+@login_required
 def send_calendar():
+    if g.type != "Customer":
+        return "Access Denied"
     if 'credentials' not in flask.session:
         return redirect(url_for("customer.authorize"))
     # Load credentials from the session.
@@ -135,46 +145,56 @@ def insert_event(service):
             ],
         }
     }
+    calendar = requests.get("http://127.0.0.1:8080/bookings/read/lastest/record?car_id={}&customer_id={}&rent_time={}"
+    .format( session["car_id"], session["customer_id"], session["starttime"])).json()[0]['ID']
     event = service.events().insert(calendarId = "primary", body = event).execute()
+    requests.put("http://127.0.0.1:8080/bookings/add/eventId?id={}&event_id={}"
+    .format( calendar, event["id"]))
     return "send"
 
 @customer.route('/authorize')
+@login_required
 def authorize():
-  # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES)
-  # The URI created here must exactly match one of the authorized redirect URIs
-  # for the OAuth 2.0 client, which you configured in the API Console. If this
-  # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
-  # error.
-  flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-  authorization_url, state = flow.authorization_url(
-      # Enable offline access so that you can refresh an access token without
-      # re-prompting the user for permission. Recommended for web server apps.
-      access_type='offline',
-      # Enable incremental authorization. Recommended as a best practice.
-      include_granted_scopes='true')
-  # Store the state so the callback can verify the auth server response.
-  flask.session['state'] = state
-  return flask.redirect(authorization_url)
+    if g.type != "Customer":
+        return "Access Denied"
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES)
+    # The URI created here must exactly match one of the authorized redirect URIs
+    # for the OAuth 2.0 client, which you configured in the API Console. If this
+    # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+    # error.
+    flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
+    authorization_url, state = flow.authorization_url(
+        # Enable offline access so that you can refresh an access token without
+        # re-prompting the user for permission. Recommended for web server apps.
+        access_type='offline',
+        # Enable incremental authorization. Recommended as a best practice.
+        include_granted_scopes='true')
+    # Store the state so the callback can verify the auth server response.
+    flask.session['state'] = state
+    return flask.redirect(authorization_url)
 
 @customer.route('/oauth2callback')
+@login_required
 def oauth2callback():
-  # Specify the state when creating the flow in the callback so that it can
-  # verified in the authorization server response.
-  state = flask.session['state']
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
-  # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-  authorization_response = flask.request.url
-  flow.fetch_token(authorization_response=authorization_response)
-  # Store credentials in the session.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #              credentials in a persistent database instead.
-  credentials = flow.credentials
-  flask.session['credentials'] = credentials_to_dict(credentials)
-  return flask.redirect(flask.url_for('customer.send_calendar'))
+    if g.type != "Customer":
+        return "Access Denied"
+    # Specify the state when creating the flow in the callback so that it can
+    # verified in the authorization server response.
+    state = flask.session['state']
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow.redirect_uri = flask.url_for('customer.oauth2callback', _external=True)
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = flask.request.url
+    flow.fetch_token(authorization_response=authorization_response)
+    # Store credentials in the session.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    credentials = flow.credentials
+    flask.session['credentials'] = credentials_to_dict(credentials)
+    return flask.redirect(url_for('customer.send_calendar'))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
@@ -198,24 +218,21 @@ def booking_view():
 def filter_booking(form):
     start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
-    if not Booking.validate_date(start_date, end_date):
-        return display_all_bookings(form)
-    else:
-        return display_match_bookings(start_date, end_date, form)
+    return display_match_bookings(start_date, end_date, form)
         
 def display_match_bookings(start_date, end_date, form):
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/by/time?customer_id={}&start={}&end={}"
         .format(user_id, start_date, end_date)
-    ).json()["bookings"]
+    ).json()
     return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
 def display_all_bookings(form):
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/all?customer_id=" + str(user_id)
-    ).json()["bookings"]
+    ).json()
     return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
 @customer.route("/bookings/details", methods=("GET", "POST"))
@@ -228,7 +245,7 @@ def view_booking_detail():
     start_date = booking["RentTime"]
     end_date = booking["ReturnTime"]
     total_cost = booking["TotalCost"]
-    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(booking['CarID'])).json()["cars"][0]
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(booking['CarID'])).json()[0]
     status = booking["Status"]
     booking_id=booking["BookingID"]
     return render_template(
@@ -244,7 +261,39 @@ def view_booking_detail():
 def cancel_booking():
     if g.type != "Customer":
         return "Access Denied"
-    booking_id = request.args["booking_id"]
-    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(booking_id))
+    session["booking_id"] = request.args["booking_id"]
     flash("Booking cancelled!")
+    return redirect(url_for("customer.delete_calendar"))
+
+@customer.route('/delete/calendar')
+@login_required
+def delete_calendar():
+    if g.type != "Customer":
+        return "Access Denied"
+    if 'credentials' not in flask.session:
+        return redirect(url_for("customer.authorize"))
+    # Load credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+        **flask.session['credentials'])
+    service = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    flask.session['credentials'] = credentials_to_dict(credentials)
+    response = delete_event(service)
+    if response != "Success":
+        flash("Access denied or there is no calendar event")
+    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(session['booking_id']))
+    session["booking_id"] = None
     return redirect(url_for("customer.booking_view"))
+
+def delete_event(service):
+    eventId =  requests.get("http://127.0.0.1:8080/bookings/read/record?id=" + str(session['booking_id'])).json()[0]["EventID"]
+    if eventId == None:
+        return "There no calendar event"
+    else:
+        try: 
+            event = service.events().delete(calendarId = "primary", eventId = eventId).execute()
+        except:
+            return "Access Denied"
+    return "Success"

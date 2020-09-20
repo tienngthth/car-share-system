@@ -1,25 +1,31 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request
 from database import Database
+from flask.json import jsonify
 
 car_api = Blueprint("car_api", __name__)
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create():
-    Database.insert_record_parameterized(
-        "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
-        "(%s, %s, %s, %s, %s, %s, %s, %s)",
-        (
-            request.args.get("mac_address"),
-            request.args.get("brand"),
-            request.args.get("type"),
-            request.args.get("location_id"),
-            request.args.get("status"),
-            request.args.get("color"),
-            request.args.get("seat"),
-            request.args.get("cost"),
+    try:
+        Database.insert_record_parameterized(
+            "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
+            "(%s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                request.args.get("mac_address"),
+                request.args.get("brand"),
+                request.args.get("type"),
+                request.args.get("location_id"),
+                request.args.get("status"),
+                request.args.get("color"),
+                request.args.get("seat"),
+                request.args.get("cost"),
+            )
         )
-    )
-    return "Done"
+        return "Success"
+    except:
+        return "Fail"
 
 @car_api.route("/update", methods=['GET', 'PUT'])
 def update():
@@ -32,8 +38,8 @@ def update():
             " THEN Brand ELSE %(brand)s END, " +
             " Type = CASE WHEN %(type)s = '' OR %(type)s IS NULL " + 
             " THEN Type ELSE %(type)s END, " +
-            " LocationID = CASE WHEN %(locationID)s = '' OR %(locationID)s IS NULL " + 
-            " THEN LocationID ELSE %(locationID)s END, " +
+            " LocationID = CASE WHEN %(location_id)s = '' OR %(location_id)s IS NULL " + 
+            " THEN LocationID ELSE %(location_id)s END, " +
             " Status = CASE WHEN %(status)s = '' OR %(status)s IS NULL " + 
             " THEN Status ELSE %(status)s END, " +
             " Color = CASE WHEN %(color)s = '' OR %(color)s IS NULL " + 
@@ -48,7 +54,7 @@ def update():
                 "mac_address": request.args.get("mac_address"), 
                 "brand": request.args.get("brand"), 
                 "type": request.args.get("type"),
-                "locationID": request.args.get("locationID"), 
+                "location_id": request.args.get("location_id"), 
                 "status": request.args.get("status"),
                 "color": request.args.get("color"),
                 "seat": request.args.get("seat"),
@@ -83,8 +89,8 @@ def read():
         " THEN MacAddress ELSE %(mac_address)s END " +
         " AND Brand LIKE CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
         " THEN Brand ELSE %(brand)s END " +
-        " AND Type LIKE CASE WHEN %(car_type)s = '' OR %(car_type)s IS NULL " +
-        " THEN Type ELSE %(car_type)s END " +
+        " AND Type LIKE CASE WHEN %(type)s = '' OR %(type)s IS NULL " +
+        " THEN Type ELSE %(type)s END " +
         " AND Status LIKE CASE WHEN %(status)s = '' OR %(status)s IS NULL " +
         " THEN Status ELSE %(status)s END " +
         " AND Color LIKE CASE WHEN %(color)s = '' OR %(color)s IS NULL " +
@@ -97,14 +103,14 @@ def read():
             "id": request.args.get("id"), 
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
-            "car_type": request.args.get("car_type"), 
+            "type": request.args.get("type"), 
             "status": request.args.get("status"), 
             "color": request.args.get("color"), 
             "seat": request.args.get("seat"), 
             "cost": request.args.get("cost")
         }
     ) 
-    return {"cars": results}
+    return jsonify(results)
 
 @car_api.route("/status/available")
 def get_available_car():
@@ -116,8 +122,8 @@ def get_available_car():
         " THEN MacAddress ELSE %(mac_address)s END " +
         " AND Brand LIKE CASE WHEN %(brand)s = '' OR %(brand)s IS NULL " +
         " THEN Brand ELSE %(brand)s END " +
-        " AND Type LIKE CASE WHEN %(car_type)s = '' OR %(car_type)s IS NULL " +
-        " THEN Type ELSE %(car_type)s END " +
+        " AND Type LIKE CASE WHEN %(type)s = '' OR %(type)s IS NULL " +
+        " THEN Type ELSE %(type)s END " +
         " AND Cars.Status LIKE 'Available' " +
         " AND Color LIKE CASE WHEN %(color)s = '' OR %(color)s IS NULL " +
         " THEN Color ELSE %(color)s END " +
@@ -130,7 +136,7 @@ def get_available_car():
         {
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
-            "car_type": request.args.get("car_type"), 
+            "type": request.args.get("type"), 
             "color": request.args.get("color"), 
             "seat": request.args.get("seat"), 
             "cost": request.args.get("cost"),
@@ -138,7 +144,7 @@ def get_available_car():
             "end": request.args.get("end")
         }
     ) 
-    return {"cars": results}
+    return jsonify(results)
 
 @car_api.route("get/id")
 def get_car_id_by_mac_address():
@@ -151,7 +157,7 @@ def get_car_id_by_mac_address():
     if len(results) == 0:
         return "No car found"
     else:
-        return results[0]
+        return str(results[0]["ID"])
 
 @car_api.route("history")
 def get_car_history():
@@ -162,4 +168,4 @@ def get_car_history():
         " WHERE Cars.ID = %s",
         (request.args.get("id"),)
     )
-    return {"history": results}
+    return jsonify(results)

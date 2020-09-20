@@ -1,5 +1,8 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request
 from database import Database
+from flask.json import jsonify
 
 location_api = Blueprint("location_api", __name__)
 
@@ -11,4 +14,4 @@ def get_location():
         " WHERE Locations.ID = %s",
         (request.args.get("id"),)
     )
-    return {"location": results}
+    return jsonify(results)

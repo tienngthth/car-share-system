@@ -15,7 +15,7 @@ def index():
     if (g.type == "Admin"):
         return redirect(url_for("admin.car_view"))
     if (g.type == "Engineer"):
-        return redirect(url_for("engineer.car_view"))
+        return redirect(url_for("engineer.backlog_view"))
     if (g.type == "Manager"):
         return redirect(url_for("manager.manager_dashboard"))
     return redirect(url_for("customer.car_view"))

@@ -9,7 +9,7 @@
   <div
     style="display:block; width:fit-content; clear:both; float:none;min-height:50px; margin-left:auto; margin-right:auto; margin-top:30px; margin-bottom:30px">
     <div style="float:left;"><a class="greenbutton" style="background-color:steelblue;  margin-left:10px;"
-        href="{{ url_for('manager.bar_chart')}}">Most booked cars</a></div>
+        href="{{ url_for('manager.bar_chart')}}">Top 10 booked cars</a></div>
     <div style="float:left;"><a class="greenbutton" style="margin-left:120px;"
         href="{{ url_for('manager.line_chart')}}">Profit by date</a></div>
     <div style="float:left;"><a class="greenbutton" style="margin-left:120px;"
@@ -18,7 +18,7 @@
 </div>
 <div>
   <center>
-    <canvas id="chart" width="600" height="400" onload=""></canvas>
+    <canvas id="chart" width="600" height="300" onload=""></canvas>
     <script>
       new Chart(document.getElementById("chart"), {
       type: 'bar',
@@ -57,7 +57,7 @@
         },
         title: {
           display: true,
-          text: 'Most booked cars'
+          text: 'Top 10 booked cars'
         }
       }
     });

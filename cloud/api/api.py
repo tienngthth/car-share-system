@@ -8,6 +8,7 @@ from bookingAPI import booking_api
 from backlogAPI import backlog_api
 from locationAPI import location_api
 from database import Database
+from flask.json import jsonify
 
 app = Flask(__name__)
 
@@ -30,14 +31,14 @@ def get_encrypted_password():
         user = get_user("Staffs", username)
         if len(user) == 0:
             return "invalid"
-    return user[0]
+    return jsonify(user[0])
 
 def get_user(user_type, username):
     return Database.select_record_parameterized(
         " * ", 
         user_type,
         " WHERE Username = %s ", 
-        (username,)
+        (username, )
     )  
 
 if __name__ == "__main__":
