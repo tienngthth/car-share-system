@@ -1,0 +1,34 @@
+---- Work distribution ----
+
+In this project, there are three main development phases. 
+1. Investigate in seperate components. 
+2. Set up the main application with all prepared components.
+3. Unit test and documentation.
+
+Following is the work distribution among all team members.
+
+I. Develop seperate components
+Minh:  Web UI, Web routing, sending email.
+Tam: Google cloud database, Google map, Google studio for graphs.
+Cuong: Facial.
+Tien: Bluetooth, socket communication, QR code, API for cloud database, validation input scheme, Google calendar.
+
+II. Set up the main applications with all prepared components.
+A. Master Pi
+Minh: Web UI, all routing and user cases for customemr, admin, manager, engineer.
+Tam: Integrate web app with cloud database API, work on graphs for manager, map and backlog description form for engineer, set up google cloud connection in pi.
+Cuong: Integrate web app with cloud database API, work on email to engineer, calendar event for customer, set up google cloud connection in pi.
+Tien: Integrate web app with cloud database API, work on customer booking detail UI, user input validation.
+
+B. Agent Pi
+Tien: Customer, engineer menu and work flow, work on QR detection, bluetooth scanning, local database.
+Cuong: Customer, engineer menu and work flow, work on facial recognition.
+
+C. Socket communication
+Tien: server andn client socket
+
+III. Unit test and documentation.
+Minh: Sphinx documentation
+Tam: Unit test 
+Tien: README, distribution.txt
+? requirement.txt

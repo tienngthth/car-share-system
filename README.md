@@ -234,10 +234,8 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
 ### Master Pi
 
 1. Download the mp-test branch.
-2. Run ./run.sh in your console to initiate the web application, the cloud APIs and the server socket.
-3. Run ./cloud.sh to initiate the cloud database connection.
-    Password:
-4. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
+2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
+3. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
     The admin credential: minh_nguyen | 2@aA3333</br>
     The manager credential: tam_nguyen | 3#aA4444</br>
