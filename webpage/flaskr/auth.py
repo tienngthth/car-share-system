@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, session, url_for
 from flaskr.script.model.account import Account
@@ -78,14 +80,15 @@ def load_logged_in_user():
         g.user = None
     else:
         if user_type is None:
-            g.user = requests.get("http://127.0.0.1:8080/customers/read?id={}".format(str(user_id))).json()["customers"][0]
+            g.user = requests.get("http://127.0.0.1:8080/customers/read?id={}".format(str(user_id))).json()[0]
             g.type = "Customer"
+            requests.put("http://127.0.0.1:8080/bookings/cancel/passed/return/time?customer_id={}".format(str(user_id)))
         elif user_type == "Admin":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=admin").json()["staffs"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=admin").json()[0]
             g.type = user_type
         elif user_type == "Manager":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=manager").json()["staffs"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=manager").json()[0]
             g.type = user_type
         elif user_type == "Engineer":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()["staffs"][0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()[0]
             g.type = user_type

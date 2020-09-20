@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import (StringField,
                      TextAreaField,
@@ -102,14 +104,13 @@ class AdminCarSearchForm(FlaskForm):
                                  ('8', '8')
                                  ])
     cost = DecimalField('Cost')
-    location_id = StringField('LocationID')
     submit = SubmitField('Search')
 
 class AdminUpdateCarForm(FlaskForm):
     """Update car form for admin"""
     brand = StringField('Brand')
     car_type = StringField('Type')
-    mac_address = StringField('MacAddress')
+    mac_address = StringField('Mac Address')
     color = SelectField(
         'Color',
         choices=[
@@ -170,7 +171,7 @@ class AdminUserSearchForm(FlaskForm):
     
 class AdminUpdateUserForm(FlaskForm):
     """Update user""" 
-    username = StringField('Usernam')
+    username = StringField('Username')
     password = PasswordField('Password')
     firstname = StringField('First Name')
     lastname = StringField('Last Name')

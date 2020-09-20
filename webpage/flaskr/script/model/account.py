@@ -1,3 +1,5 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import re, requests
 from passlib import hash
 from flask import flash

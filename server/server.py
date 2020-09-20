@@ -1,5 +1,5 @@
-"""# !/usr/bin/env python3
-# Documentation: https://docs.python.org/3/library/socket.html"""
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 import socket, sys
 
 """

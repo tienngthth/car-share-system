@@ -1,25 +1,31 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request
 from database import Database
+from flask.json import jsonify
 
 car_api = Blueprint("car_api", __name__)
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create():
-    Database.insert_record_parameterized(
-        "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
-        "(%s, %s, %s, %s, %s, %s, %s, %s)",
-        (
-            request.args.get("mac_address"),
-            request.args.get("brand"),
-            request.args.get("type"),
-            request.args.get("location_id"),
-            request.args.get("status"),
-            request.args.get("color"),
-            request.args.get("seat"),
-            request.args.get("cost"),
+    try:
+        Database.insert_record_parameterized(
+            "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
+            "(%s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                request.args.get("mac_address"),
+                request.args.get("brand"),
+                request.args.get("type"),
+                request.args.get("location_id"),
+                request.args.get("status"),
+                request.args.get("color"),
+                request.args.get("seat"),
+                request.args.get("cost"),
+            )
         )
-    )
-    return "Done"
+        return "Success"
+    except:
+        return "Fail"
 
 @car_api.route("/update", methods=['GET', 'PUT'])
 def update():
@@ -48,7 +54,7 @@ def update():
                 "mac_address": request.args.get("mac_address"), 
                 "brand": request.args.get("brand"), 
                 "type": request.args.get("type"),
-                "locationID": request.args.get("location_id"), 
+                "location_id": request.args.get("location_id"), 
                 "status": request.args.get("status"),
                 "color": request.args.get("color"),
                 "seat": request.args.get("seat"),
@@ -104,7 +110,7 @@ def read():
             "cost": request.args.get("cost")
         }
     ) 
-    return {"cars": results}
+    return jsonify(results)
 
 @car_api.route("/status/available")
 def get_available_car():
@@ -138,7 +144,7 @@ def get_available_car():
             "end": request.args.get("end")
         }
     ) 
-    return {"cars": results}
+    return jsonify(results)
 
 @car_api.route("get/id")
 def get_car_id_by_mac_address():
@@ -151,7 +157,7 @@ def get_car_id_by_mac_address():
     if len(results) == 0:
         return "No car found"
     else:
-        return results[0]
+        return str(results[0]["ID"])
 
 @car_api.route("history")
 def get_car_history():
@@ -162,4 +168,4 @@ def get_car_history():
         " WHERE Cars.ID = %s",
         (request.args.get("id"),)
     )
-    return {"history": results}
+    return jsonify(results)

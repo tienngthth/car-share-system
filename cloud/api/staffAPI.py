@@ -1,5 +1,8 @@
+"""#!/usr/bin/env python3
+# -*- coding: utf-8 -*-"""
 from flask import Blueprint, request
 from database import Database
+from flask.json import jsonify
 
 staff_api = Blueprint("staff_api", __name__)
 
@@ -32,7 +35,7 @@ def read():
             "user_type": request.args.get("user_type")
         }
     )
-    return {"staffs": results}
+    return jsonify(results)
 
 @staff_api.route("/check/existed/username")
 def check_username():
@@ -55,4 +58,16 @@ def get_engineer_mac_address():
     if len(results) == 0:
         return "No mac address found"
     else:
-        return results[0]
+        return str(results[0]["EngineerMacAddress"])
+
+@staff_api.route("/delete", methods=['GET', 'DELETE'])
+def delete():
+    try:
+        Database.delete_record_parameterized(
+            " Staffs ",
+            " WHERE ID = %s"
+            , (request.args.get("id"),)
+        )
+        return "Success"
+    except:
+        return "Fail"
