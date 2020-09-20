@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Flask, request
 from customerAPI import customer_api
 from staffAPI import staff_api
