@@ -1,13 +1,28 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+"""
+staffAPI handles user queries that are only for staff members, e.g. admin users.
+"""
+
 from flask import Blueprint, request
 from database import Database
-from flask.json import jsonify
 
 staff_api = Blueprint("staff_api", __name__)
 
 @staff_api.route("read")
 def read():
+    """
+    Searches for all users that match a set of criteria. Parameters:
+
+    id: The user's id
+    username: The user's username
+    first_name: The user's first name
+    last_name: The user's last name
+    email: The user's email address. Validated elsewhere by regex.
+    phone: The user's phone number
+    user_type: The type of user -- engineer, admin, manager, customer.
+    
+    Returns a dictionary containing all matches.
+    
+    """
     results = Database.select_record_parameterized(
         " * ", 
         " Staffs ", 
@@ -35,10 +50,17 @@ def read():
             "user_type": request.args.get("user_type")
         }
     )
-    return jsonify(results)
+    return {"staffs": results}
 
 @staff_api.route("/check/existed/username")
 def check_username():
+    """
+    Checks if a username exists. Parameters:
+    
+    username: the username of the user
+    
+    Returns 0 if the username does not exist, otherwise returns a count of the number of users with that name. Should never exceed 1.
+    """
     result = Database.select_record_parameterized(
         " COUNT(*) AS SUM ", 
         " Staffs ", 
@@ -49,6 +71,13 @@ def check_username():
 
 @staff_api.route("get/engineer/mac/address")
 def get_engineer_mac_address():
+    """
+    Get the MAC address of an engineer given their ID. Parameters:
+    
+    id: The user ID of the engineer
+    
+    Returns no mac address found if the length of results is zero. Otherwise, returns the user ID of the engineer.
+    """
     results = Database.select_record_parameterized(
         " EngineerMacAddress ", 
         " Staffs ", 
@@ -58,16 +87,4 @@ def get_engineer_mac_address():
     if len(results) == 0:
         return "No mac address found"
     else:
-        return str(results[0]["EngineerMacAddress"])
-
-@staff_api.route("/delete", methods=['GET', 'DELETE'])
-def delete():
-    try:
-        Database.delete_record_parameterized(
-            " Staffs ",
-            " WHERE ID = %s"
-            , (request.args.get("id"),)
-        )
-        return "Success"
-    except:
-        return "Fail"
+        return results[0]

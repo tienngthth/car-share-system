@@ -1,0 +1,35 @@
+These are the rules for documentation with Sphinx. If you follow these rules your documentation will automatically be picked up by the current configuration. 
+
+1. All documentation is surrounded by triple quotes
+"""
+Like This
+"""
+
+2. Files start with a documentation entry with the triple quotes on the first line. This is the first line in the file. All files must start with a short sentence or two about what the file does e.g.:
+"""
+documentation_rules.txt is a short guide for the team to document the project. It does not contain any code.
+"""
+
+3. All functions must be documented. The triple quotes are after the def entry, but before the code. They must be indented at the same level as the code.
+
+def like_this()
+    """
+    This is the documentation for this function
+    """
+    x = 5
+    return x
+
+4. If you create a new file, it must be added to one of the .rst files in docs/source like this:
+
+Section Title
+-------------
+.. automodule:: path.tofile.filename
+    :members:
+    
+Do not include .py in the filename. The line of dashes (--) under Section Title must be exactly as long as the section title. Doing this add the documentation you write into the section defined by the .rst file. 
+
+5. If you create a new folder, you have to sadd it to /docs/config.py. Do not use absolute paths. Only use relative paths or Sphinx will break when anyone else tries to run your code. That means the path must start with ../.. (go up two directories from docs/source to the main directory) and then continue with the path from that point, e.g. ../../webpage
+
+6. If you make any changes, be sure to re-generate the html by going to /docs and running 'make html' in the terminal.
+
+7. If you want to create a new rst file (e.g. for agent Pi), copy one of the existing ones, then enter it and change the title on the first line. Then, go to index.rst and add an entry to the table of contents that exactly matches the new title. The filename of the new .rst file is not so important but make sure it's clear what it's for.

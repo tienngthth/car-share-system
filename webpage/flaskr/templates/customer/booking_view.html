@@ -23,7 +23,7 @@
 </div>
   <table>
   <tr>
-    <th>Car</th>
+    <th style="border-top-left-radius: 8px;">Car</th>
     <th>Rent Time</th>
     <th>Total Cost</th>
     <th>Status</th>
@@ -34,7 +34,7 @@
   <td>{{ booking.CarBrand }}</td>
   <td>{{ booking.RentTime }}</td>
   <td>{{ booking.TotalCost }}</td>
-  <td>{{ booking.Status }}</td>
+  <td style="border-top-right-radius: 8px;">{{ booking.Status }}</td>
   <td>
     <form style="margin:0px;" action="{{ url_for('customer.view_booking_detail', booking=booking) }}" method="post">
       <input style="margin:0px; font-size: smaller;" class="greenbutton" type="submit" value="View Booking">

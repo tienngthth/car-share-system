@@ -1,5 +1,7 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+"""
+auth.py contains all the functions related to user authentication.
+"""
+
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, session, url_for
 from flaskr.script.model.account import Account
@@ -11,6 +13,14 @@ auth = Blueprint("auth", __name__)
 
 @auth.route("/login", methods=("GET", "POST"))
 def login():
+    """
+    This is the login form. The form code is located in forms.py. If you pass it a GET request, it serves you the form. If you pass it a POST request, it treats it as a form submission. Parameters:
+    
+    username: your username
+    password: your password
+    
+    On submission, if your credentials are correct, it will create a session for the logged in user until they log out. The page you are redirected to depends on your user type.
+    """
     form = LoginForm()
     if request.method == "GET":
         return render_template("auth/login.html", form=form)
@@ -32,16 +42,14 @@ def login():
 
 @auth.route("/logout")
 def logout():
-    """Clear the current session, including the stored user id."""
+    """This is to log out. It clears the current session."""
     session.clear()
     return redirect(url_for("home.index"))
 
 @auth.route("/register", methods=("GET", "POST"))
 def register():
     """
-    Register a new user.
-    Validates that the username is not already taken. Hashes the
-    password for security.
+    Register a new user. Validates that the username is not already taken. Hashes the password for security in another function. The form code is is forms.py.
     """
     form = RegisterForm()
     if request.method == "POST":
@@ -60,7 +68,7 @@ def register():
     return render_template("auth/register.html", form=form, user_type=session.get("user_type"))
 
 def login_required(view):
-    """View decorator that redirects anonymous users to the login page."""
+    """This redirects anonymous users to the login page when they try to access a page when not logged in."""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
@@ -80,15 +88,14 @@ def load_logged_in_user():
         g.user = None
     else:
         if user_type is None:
-            g.user = requests.get("http://127.0.0.1:8080/customers/read?id={}".format(str(user_id))).json()[0]
+            g.user = requests.get("http://127.0.0.1:8080/customers/read?id={}".format(str(user_id))).json()["customers"][0]
             g.type = "Customer"
-            requests.put("http://127.0.0.1:8080/bookings/cancel/passed/return/time?customer_id={}".format(str(user_id)))
         elif user_type == "Admin":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=admin").json()[0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=admin").json()["staffs"][0]
             g.type = user_type
         elif user_type == "Manager":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=manager").json()[0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=manager").json()["staffs"][0]
             g.type = user_type
         elif user_type == "Engineer":
-            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()[0]
+            g.user = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()["staffs"][0]
             g.type = user_type

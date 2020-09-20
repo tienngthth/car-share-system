@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="API.html" />
+    <link rel="prev" title="Running Cloudcar" href="Run.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-server">
+<span id="server"></span><h1>Server<a class="headerlink" href="#module-server" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="server-py">
+<h2>server.py<a class="headerlink" href="#server-py" title="Permalink to this headline">¶</a></h2>
+<p>Class Server is to create instances to send context messages and accept connection request
+Base on socket protocal and package, create client using socket programming</p>
+<p>Socket documentation: <a class="reference external" href="https://docs.python.org/3/library/socket.html">https://docs.python.org/3/library/socket.html</a></p>
+<dl class="py class">
+<dt id="server.Server">
+<em class="property">class </em><code class="sig-prename descclassname">server.</code><code class="sig-name descname">Server</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="o">=</span><span class="default_value">'127.0.0.1'</span></em>, <em class="sig-param"><span class="n">port</span><span class="o">=</span><span class="default_value">9967</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#server.Server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the port and interface to listen on, then open the socket.</p>
+<dl class="py method">
+<dt id="server.Server.close_connection">
+<code class="sig-name descname">close_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/server.html#Server.close_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#server.Server.close_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close an open connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Server.receive_message">
+<code class="sig-name descname">receive_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/server.html#Server.receive_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#server.Server.receive_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and decode the latest message (assumes UTF-8).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Server.send_message">
+<code class="sig-name descname">send_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/server.html#Server.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#server.Server.send_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a message to a connected client thath as made a request. Parameters:</p>
+<p>message: The message to return. Will be encoded UTF-8.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-serverSocket"></span><div class="section" id="serversocket-py">
+<h2>serverSocket.py<a class="headerlink" href="#serversocket-py" title="Permalink to this headline">¶</a></h2>
+<p>This contains the functions that listen for client requests. It also handles user validation, and otherwise routes different request types, e.g. check_backlog, to the appropriate function. We use UTF-8 encoding for all requests.</p>
+<dl class="py function">
+<dt id="serverSocket.check_for_car_maintainance">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">check_for_car_maintainance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#check_for_car_maintainance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.check_for_car_maintainance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the engineer assigned to repair a particular car, and the MAC address assigned to them. Parameters:</p>
+<p>message: must contain the car_id. Returns Invalid otherwise, or if no engineer is assigned to that car, or if the engineer assigned does not have a MAC address recorded.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.get_car_id_by_ap_addr">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">get_car_id_by_ap_addr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#get_car_id_by_ap_addr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.get_car_id_by_ap_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a car’s ID using the MAC address of the Agent Pi. Parameters:</p>
+<p>message: Searches for a car id if the message contains ap_addr, which must be a MAC address. If none are found, returns Invalid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.handle_request">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">handle_request</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#handle_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.handle_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route a request to the correct handler. Parameters:</p>
+<p>message: must be credential, check_backlog, update_car_status, close_backlog, or get_car_id. Otherwise will return Invalid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.listen_to_client">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">listen_to_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#listen_to_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.listen_to_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constantly handle request from client until receiving end signal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.update_car_status">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">update_car_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#update_car_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.update_car_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a car’s status, for example to mark it as available, or requiring repairs. Parameters:</p>
+<dl class="simple">
+<dt>message: if the message type is close_backlog, it closes the backlog entry</dt><dd><p>Otherwise, it will look for car_status and car_id, and apply that status to the given car</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.validate_crendential">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">validate_crendential</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#validate_crendential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.validate_crendential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a username+password pair is a valid user, passing the password on to a dedicated password validation function. If valid, returns the user’s bookings for a particular car. Parameters:</p>
+<p>message: must contain a username and password, along with the car ID and customer_id. If the authentication fails, returns Invalid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="serverSocket.verify_password">
+<code class="sig-prename descclassname">serverSocket.</code><code class="sig-name descname">verify_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">input_password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serverSocket.html#verify_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serverSocket.verify_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the password of a user. Passwords are stored as SHA256 hashes of the password plaintext, so we hash the password before comparing to what’s stored in the database. Parameters:</p>
+<p>username: A username must be specified
+input_password: The password must be specified.
+If there are any missing fields or the username+password pair is not recognized, returns Invalid</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Run.html">Running Cloudcar</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#server-py">server.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#serversocket-py">serverSocket.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Misc.html">Misc Functions</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Server.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

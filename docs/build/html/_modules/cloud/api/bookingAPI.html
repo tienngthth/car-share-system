@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cloud.api.bookingAPI &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cloud.api.bookingAPI</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">bookingAPI.py defines the backlog API, whcih handles requests for engineers to repair cars.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Database</span>
+
+<span class="n">booking_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;booking_api&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.create">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">create</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates a new booking. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    customer_id: The ID of the customer making the booking</span>
+<span class="sd">    car_id: the ID of the car being booked</span>
+<span class="sd">    rent_time: The datetime where the user will start renting the car</span>
+<span class="sd">    return_time: The datetime where the user is supposed to return the car</span>
+<span class="sd">    total_cost: The expected total invoice for the rental during this period</span>
+<span class="sd">    </span>
+<span class="sd">    The function returns Success if a new record is created, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">insert_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot;Bookings(CustomerID, CarID, RentTime, ReturnTime, TotalCost, Status)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;customer_id&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rent_time&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;return_time&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_cost&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;Booked&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.update">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/update&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the status of a booking, e.g. to indicate the customer has unlocked the car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    status: The new status for the booking</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if a record was updated, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; Status = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE ID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">),</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.read">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/read&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">read</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns any bookings for a given car and user that should be active presently, e.g. where the customer is presently in the car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question</span>
+<span class="sd">    customer_id: the customer in question</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dictionary of bookings. The results can be empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; * &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE CarID = </span><span class="si">%(car_id)s</span><span class="s2"> &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; OR CustomerID = </span><span class="si">%(customer_id)s</span><span class="s2"> &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND RentTime &lt;= NOW() AND NOW() &lt;= ReturnTime &quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;customer_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;customer_id&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bookings&quot;</span> <span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_all_rent_time"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_all_rent_time">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/profit/data&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all_rent_time</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the gross profit renting cars as a dictionary, organized by Date. No parameters required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record</span><span class="p">(</span>
+        <span class="s2">&quot; DATE_FORMAT(RentTime, &#39;%Y-%m-</span><span class="si">%d</span><span class="s2">&#39;) AS Date, CONVERT(SUM(TotalCost), SIGNED) AS Total&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Status = &#39;Booked&#39; GROUP BY Date&quot;</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_most_profit"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_most_profit">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/most/profit&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_most_profit</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the most profitable car by day as a list. No parameters required. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; CONVERT(SUM(TotalCost), SIGNED) AS Total&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Status = &#39;Booked&#39; GROUP BY DATE(RentTime) ORDER BY Total DESC LIMIT 1&quot;</span><span class="p">,</span>
+        <span class="p">()</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_all_booked_car_ids"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_all_booked_car_ids">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/data&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all_booked_car_ids</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a dictionary of the total booked time of all cars, organized by car. No parameters required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Status = &#39;Booked&#39; GROUP BY CarID&quot;</span><span class="p">,</span>
+        <span class="p">()</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_longest_duration"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_longest_duration">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/longest/duration&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_longest_duration</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of the longest signle booking for each car, organized by car. No parameters required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Status = &#39;Booked&#39; GROUP BY CarID ORDER BY Total DESC LIMIT 1&quot;</span><span class="p">,</span>
+        <span class="p">()</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_all_customer_bookings"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_all_customer_bookings">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/all&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all_customer_bookings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a dictionary of all bookings for a given customer and car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question</span>
+<span class="sd">    customer_id: The customer in question</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; Bookings.RentTime, Bookings.ReturnTime, Bookings.TotalCost, &quot;</span> <span class="o">+</span> 
+        <span class="s2">&quot; Bookings.Status, Bookings.ID AS BookingID, &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; Cars.Brand As CarBrand, Cars.ID AS CarID &quot;</span> <span class="p">,</span> 
+        <span class="s2">&quot; Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE CarID = </span><span class="si">%(car_id)s</span><span class="s2"> &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; OR CustomerID = </span><span class="si">%(customer_id)s</span><span class="s2"> &quot;</span><span class="p">,</span>
+         <span class="p">{</span>
+            <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;customer_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;customer_id&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bookings&quot;</span> <span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_customer_bookings_by_time"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.get_customer_bookings_by_time">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/by/time&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_customer_bookings_by_time</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a dictionary of all bookings for a given customer and car, for a given time period. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question</span>
+<span class="sd">    customer_id: The customer in question</span>
+<span class="sd">    start: The datetime to start the search period</span>
+<span class="sd">    end: the datetime to end the search period</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; Bookings.RentTime, Bookings.ReturnTime, Bookings.TotalCost, &quot;</span> <span class="o">+</span> 
+        <span class="s2">&quot; Bookings.Status, Bookings.ID AS BookingID, &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; Cars.Brand As CarBrand, Cars.ID AS CarID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE CarID = </span><span class="si">%(car_id)s</span><span class="s2"> &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; OR CustomerID = </span><span class="si">%(customer_id)s</span><span class="s2"> &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND RentTime &gt;= </span><span class="si">%(start)s</span><span class="s2"> AND ReturnTime &lt;= </span><span class="si">%(end)s</span><span class="s2"> &quot;</span><span class="p">,</span>
+         <span class="p">{</span>
+            <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;customer_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;customer_id&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bookings&quot;</span> <span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="remove_customer_from_bookings"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.remove_customer_from_bookings">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;remove/customer&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">remove_customer_from_bookings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes a customer from all bookings. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    customer_id: The customer in question</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if any records were changed, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; CustomerID = NULL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE CustomerID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;customer_id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="remove_car_from_bookings"><a class="viewcode-back" href="../../../API.html#cloud.api.bookingAPI.remove_car_from_bookings">[docs]</a><span class="nd">@booking_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;remove/car&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">remove_car_from_bookings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes a car from all bookings. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if any records were changed, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Bookings &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; CarID = NULL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE CarID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

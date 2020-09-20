@@ -1,5 +1,7 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+"""
+admin.py contains the control logic for all pages for user_type=Admin
+"""
+
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, url_for
 from .auth import login_required
@@ -19,6 +21,9 @@ admin = Blueprint("admin", __name__)
 @admin.route("/users", methods=("GET", "POST"))
 @login_required
 def user_view():
+    """
+    This is the user search function for Admin users. If you access it via GET request, we assume you are arriving for the first time and display a search form with no listed users. If you access it via POST request, we assume you've completed the search form and instead return both the search form and a table with results. Only Admin has access.
+    """
     if (g.type != "Admin"):
         return "Access Denied"
     form = AdminUserSearchForm()
@@ -28,7 +33,7 @@ def user_view():
         return display_all_users(form)
 
 def search_user(form):
-    """Search user by filter"""
+    """This is the control logic that receives data from WTForms and returns users."""
     username = request.form['username'].strip()
     firstname = request.form['firstname'].strip()
     lastname = request.form['lastname'].strip()
@@ -39,21 +44,24 @@ def search_user(form):
     if validate_search_input(username, phone, email):
         if user_type == "":
             users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
-                .format(username, firstname, lastname, email, phone)).json()
+                .format(username, firstname, lastname, email, phone)).json()["customers"]
             staffs = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
-                .format(username, firstname, lastname, email, phone, user_type)).json()
+                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
             users.extend(staffs)
         elif user_type == "customer":
             users = requests.get("http://127.0.0.1:8080/customers/read?username={}&first_name={}&last_name={}&email={}&phone={}"
-                .format(username, firstname, lastname, email, phone)).json()
+                .format(username, firstname, lastname, email, phone)).json()["customers"]
         elif user_type == "admin" or user_type == "manager" or user_type == "engineer":
             users = requests.get("http://127.0.0.1:8080/staffs/read?username={}&first_name={}&last_name={}&email={}&phone={}&user_type={}"
-                .format(username, firstname, lastname, email, phone, user_type)).json()
+                .format(username, firstname, lastname, email, phone, user_type)).json()["staffs"]
         # all in the search box will return all the tuples
         return render_template("admin/user_view.html", users=users, form=form)
     return display_all_users(form)
 
 def validate_search_input(username, phone, email):
+    """
+    This is the validation logic for the user search form. We check username and phone number against a regex if they exist.
+    """
     if username != "" and not Account.validate_username_input(username):
         return False
     if phone != "" and not Account.validate_phone_input(phone):
@@ -61,16 +69,20 @@ def validate_search_input(username, phone, email):
     return True
 
 def display_all_users(form):
-    """Show all users"""
-    users = requests.get("http://127.0.0.1:8080/customers/read?").json()
-    staffs = requests.get("http://127.0.0.1:8080/staffs/read?").json()
+    """If no search fields are filled, we show all users with this function."""
+    users = requests.get("http://127.0.0.1:8080/customers/read?").json()["customers"]
+    staffs = requests.get("http://127.0.0.1:8080/staffs/read?").json()["staffs"]
     users.extend(staffs)
     return render_template("admin/user_view.html", users=users, form=form)
 
 @admin.route("/update/user", methods=("GET", "POST"))
 @login_required
 def update_user():
-    """Update a user."""
+    """This page provides a form for the admin user to update users on GET. On POST, it updates the user instead. Parameters:
+    
+    user_id: The id of the user
+    user_type: The type of the user, e.g. engineer
+    """
     if (g.type != "Admin"):
         return "Access Denied"
     form = AdminUpdateUserForm()
@@ -90,22 +102,25 @@ def update_user():
 @admin.route("/delete/user", methods=("GET", "POST"))
 @login_required
 def delete_user():
+    """
+    This lets the admin user delete users -- it is never called directly as a view but only by a button.
+    """
     if (g.type != "Admin"):
         return "Access Denied"    
-    if request.args["user_type"] == "":
-        requests.put("http://127.0.0.1:8080/bookings/remove/customer?customer_id=" + request.args["user_id"])
-        requests.delete("http://127.0.0.1:8080/customers/delete?id=" + request.args["user_id"])
+    if request.args["user_type"] == None:
+        requests.put("http://127.0.0.1:8080/bookings/remove/customer?customer_id=" + request.args["car_id"])
     elif request.args["user_type"] == "Engineer":
         requests.put("http://127.0.0.1:8080/backlogs/remove/signed/engineer?id=" + request.args["user_id"])
         requests.put("http://127.0.0.1:8080/backlogs/remove/assigned/engineer?id=" + request.args["user_id"])
-        requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
     flash("User deleted!")
     return redirect(url_for("admin.user_view"))
 
 @admin.route("/cars", methods=("GET", "POST"))
 @login_required
 def car_view():
-    """Admin view car"""
+    """
+    This is the car search function for Admin users. If you access it via GET request, we assume you are arriving for the first time and display a search form with no listed cars. If you access it via POST request, we assume you've completed the search form and instead return both the search form and a table with results. Only Admin has access.
+    """
     if (g.type != "Admin"):
         return "Access Denied"
     form = AdminCarSearchForm()
@@ -114,7 +129,7 @@ def car_view():
     return display_all_cars(form)
 
 def search_car(form):
-    """Search car by filter"""
+    """This is the control logic that receives data from WTForms and returns cars."""
     brand = request.form['brand'].strip()
     car_type = request.form['car_type'].strip()
     color = request.form['color'].strip()
@@ -124,30 +139,33 @@ def search_car(form):
     if not Booking.validate_cost(cost):
         return display_all_cars(form)
     cars = requests.get(
-        "http://127.0.0.1:8080/cars/read?brand={}&type={}&color={}&seat={}&cost={}&mac_address={}"
+        "http://127.0.0.1:8080/cars/read?brand={}&car_type={}&color={}&seat={}&cost={}&mac_address={}"
         .format(brand, car_type, color, seat, cost, mac_address)
     ).json()
-    return render_template("admin/car_view.html", cars=cars, form=form)
+    return render_template("admin/car_view.html", cars=cars["cars"], form=form)
 
 def display_all_cars(form):
-    """Show all cars"""
+    """If no search fields are filled or under certain errors, we show all users with this function."""
     cars = requests.get(
         "http://127.0.0.1:8080/cars/read?"
-    ).json()
+    ).json()["cars"]
     return render_template("admin/car_view.html", cars=cars, form=form)
 
 @admin.route("/car/bookings", methods=("GET", "POST"))
 @login_required
 def car_bookings():
+    """
+    This gets all bookings for a given car. It's accessed by pressing a button on the admin car search page.
+    """
     if (g.type != "Admin"):
         return "Access Denied"
     bookings = requests.get("http://127.0.0.1:8080/cars/history?id={}".format(request.args["car_id"])).json()
-    return render_template("admin/car_bookings.html", bookings=bookings, id=request.args["car_id"])
+    return render_template("admin/car_bookings.html", bookings=bookings["history"], id=request.args["car_id"])
 
 @admin.route("/create/car", methods=("GET", "POST"))
 @login_required
 def create_car():
-    """Create a new car for the current user."""
+    """This loads a form for the admin user to create a new car"""
     if (g.type != "Admin"):
         return "Access Denied"
     form = AdminCreateCarForm()
@@ -168,7 +186,10 @@ def create_car():
 @admin.route("/update/car", methods=("GET", "POST"))
 @login_required
 def update_car():
-    """Update a car."""
+    """On POST request, this creates a car. On GET, it returns a form to fill out to update a car. Parameters:
+    
+    car_id: The id of the car to update.
+    """
     if g.type != "Admin":
         return "Access Denied"
     form = AdminUpdateCarForm()
@@ -190,6 +211,11 @@ def update_car():
 @admin.route("/delete/car", methods=("POST","GET"))
 @login_required
 def delete_car():
+    """
+    This deletes a car. Parameters:
+    
+    car_id: The id of the car to delete
+    """
     if (g.type != "Admin"):
         return "Access Denied"
     requests.put("http://127.0.0.1:8080/backlogs/remove/car?car_id=" + request.args["car_id"])
@@ -201,10 +227,13 @@ def delete_car():
 @admin.route("/report/car", methods=("POST","GET"))
 @login_required
 def report_car():
+    """
+    This flags a car to be repaired by an engineer. Accessed by searching for a car, then selecting the update button.
+    """
     if (g.type != "Admin"):
         return "Access Denied"
-    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(request.args["car_id"])).json()[0]
-    engineer = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()[0]
+    car = requests.get("http://127.0.0.1:8080/cars/read?id=" + str(request.args["car_id"])).json()["cars"][0]
+    engineer = requests.get("http://127.0.0.1:8080/staffs/read?user_type=engineer").json()["staffs"][0]
     form = NewBacklogForm()
     if request.method == "POST":
         description = request.form["description"].strip()
@@ -218,8 +247,18 @@ def report_car():
                 .format(str(engineer["ID"]), str(car["ID"]), str(description)))
         return redirect(url_for("admin.car_view"))
     return render_template("admin/confirm_report.html", form=form, car=car, engineer=engineer)
-     
+    
+    
 def send_email(receiver, car_id, description):
+    """
+    This sends out an email to an engineer when a new repair request is made. We used a HTML email template from [https://github.com/leemunroe/responsive-html-email-template] and modified it with the input to this function. Parameters:
+    
+    receiver: Email address of the person receiving the email. 
+    car_id: The car_id that needs repair
+    description: A short description of the repairs to make.
+    
+    Note that the sending address needs to have 'allow less secure' authentication methods enabled in Gmail so that it can use smtp authentication instead of OAuth2.
+    """
     message = MIMEMultipart("alternative")
     message["Subject"] = "Car Maintenance Request"
     message["From"] = "ahjhj24012000@gmail.com"
