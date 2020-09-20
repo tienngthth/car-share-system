@@ -71,19 +71,16 @@ class Account():
 
     @staticmethod
     def verify_password(username, input_password):
-        if not Account.validate_username_input(username):
-            flash("Incorrectly formatted username.")
-        elif not Account.validate_password_input(input_password):
-            flash("Invalid formatted password")
-        else:
-            try:
-                user = requests.get("http://127.0.0.1:8080/get/user/info?username="+username).json()
-                if hash.sha256_crypt.verify(input_password, user["Password"]):
-                    return user
-                else:
-                    flash("Invalid password or username.")
-            except:
-                flash("Can not verify credential.")
+        if Account.validate_username_input(username):
+            if Account.validate_password_input(input_password):
+                try:
+                    user = requests.get("http://127.0.0.1:8080/get/user/info?username="+username).json()
+                    if hash.sha256_crypt.verify(input_password, user["Password"]):
+                        return user
+                    else:
+                        flash("Invalid password or username.")
+                except:
+                    flash("Can not verify credential.")
         return False
 
     @staticmethod

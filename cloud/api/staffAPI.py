@@ -86,7 +86,9 @@ def update():
             " Email = CASE WHEN %(email)s = '' OR %(email)s IS NULL " + 
             " THEN Email ELSE %(email)s END, " +
             " Phone = CASE WHEN %(phone)s = '' OR %(phone)s IS NULL " + 
-            " THEN Phone ELSE %(phone)s END ",
+            " THEN Phone ELSE %(phone)s END, " +
+            " EngineerMacAddress = CASE WHEN %(mac_address)s = '' OR %(mac_address)s IS NULL " + 
+            " THEN EngineerMacAddress ELSE %(mac_address)s END " ,
             " WHERE ID = %(id)s", 
             {
                 "id": request.args.get("id"),
@@ -95,7 +97,8 @@ def update():
                 "first_name": request.args.get("first_name"),
                 "last_name": request.args.get("last_name"), 
                 "email": request.args.get("email"),
-                "phone": request.args.get("phone")
+                "phone": request.args.get("phone"),
+                "mac_address": request.args.get("mac_address")
             }
         )
         return "Success"

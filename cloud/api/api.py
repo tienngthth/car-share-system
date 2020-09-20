@@ -24,7 +24,7 @@ def page_not_found(e):
     return "Page not found"
 
 @app.route("/get/user/info")
-def get_encrypted_password():
+def get_user_info():
     username = request.args.get("username")
     user = get_user("Customers", username)
     if len(user) == 0:

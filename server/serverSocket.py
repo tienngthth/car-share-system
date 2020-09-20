@@ -20,16 +20,22 @@ def handle_request(message):
         message_type = message["message_type"]
         if message_type == "credential":
             validate_crendential(message)
+            # server.send_message(str({"password": hash.sha256_crypt(message["Password"]), "booking_id": 1}))
         elif message_type == "check_backlog":
             check_for_car_maintainance(message)
+            # server.send_message("DC:F7:56:2D:C1:97")
         elif message_type == "update_car_status" or message_type == "close_backlog":
             update_car_status(message)
+            # pass
         elif message_type == "update_car_status":
             update_car_status(message)
+            # pass
         elif message_type == "get_car_id":
             get_car_id_by_ap_addr(message)
+            # server.send_message("1")
         elif message_type == "done_booking":
-            get_car_id_by_ap_addr(message)
+            done_booking(message)
+            # pass
     except:
         server.send_message("invalid")
 
@@ -39,7 +45,7 @@ def validate_crendential(message):
     if user != "invalid":
         booking = requests.get(
             "http://127.0.0.1:8080/bookings/read?car_id=" + message["car_id"] + 
-            "customer_id" + message["customer_id"]
+            "customer_id=" + user["ID"]
         ).json()
         if len(booking) != 0:
             change_car_status("In use", message["car_id"])

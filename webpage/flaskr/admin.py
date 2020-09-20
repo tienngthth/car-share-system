@@ -78,6 +78,10 @@ def update_user():
     except:
         user_type = "customers"
     form = AdminUpdateUserForm()
+    try:
+        user_type = request.args["user_type"]
+    except:
+        user_type = ""
     if request.method == "POST":
         username = request.form["username"].strip()
         password = request.form["password"]
@@ -85,7 +89,8 @@ def update_user():
         lastname = request.form["lastname"].strip()
         email = request.form["email"].strip()
         phone = request.form["phone"].strip()
-        account = Account(username, password, email, firstname, lastname, phone, user_type)
+        mac_address = request.form["mac_address"].strip()
+        account = Account(username, password, email, firstname, lastname, phone, request.args["user_id"], mac_address)
         if account.validate_update_account():
             account.update_account(user_type)
             return redirect(url_for("admin.user_view"))
