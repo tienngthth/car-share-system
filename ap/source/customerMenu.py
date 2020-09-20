@@ -15,7 +15,7 @@ def login_menu():
     
 def authenticate(option):
     customer = Customer(option)
-    if customer.username == "invalid":
+    if customer.username == "invalid" or customer.password == "invalid":
         Util.log_messages("incorrect_credential")
         return False
     else:

@@ -11,7 +11,7 @@ Base on socket protocal and package, create client using socket programming
 
 class Client:
    #Initialize instance
-   def __init__(self, host = '127.0.0.1', port = 9961):
+   def __init__(self, host = '127.0.0.1', port = 9960):
       self.__address = (host, port)
       self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       self.__connect_socket()

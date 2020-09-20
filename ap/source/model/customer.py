@@ -38,7 +38,7 @@ class Customer():
             self.password = message["password"]
             self.booking_id = message["booking_id"]
             self.__first_login_to_car()
-        return self.password
+        self.password = "invalid"
 
     def __get_encrypted_password_from_mp(self, client):
         client.send_message(str(self.__get_credential_message_to_mp()))
@@ -55,6 +55,7 @@ class Customer():
             "message_type":"credential",
             "username": self.username,
             "password": self.password,
+            "car_id": car.car_id,
             "user_type":"customers"
         }
 
