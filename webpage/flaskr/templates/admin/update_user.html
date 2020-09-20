@@ -34,7 +34,7 @@
   </div>
   </form>
   <form style="float:right; margin-top:-65px; padding-right:30px;"
-      action="{{ url_for('admin.delete_user', user_id=id, user_type=user_type) }}" method="post">
+      action="{{ url_for('admin.delete_user', user_id=user_id, user_type=user_type) }}" method="post">
     <input style="padding-right: 25px;" class="danger" type="submit" value="Delete" 
       onclick="return confirm('Are you sure you want to delete this account?');"
     >
