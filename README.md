@@ -386,14 +386,8 @@ If the code has required information, AP will send a message to MP to close all 
 We have around 100 test cases covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
 
 1. Download the mp-test branch.
-2. Run ./run.sh in your console to initiate the cloud APIs.
-3. Run ./cloud.sh to initiate the cloud database connection.
-    Password:
-4. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
-    A customer credential: tiennguyen | 2@aA2222</br>
-    The admin credential: minh_nguyen | 2@aA3333</br>
-    The manager credential: tam_nguyen | 3#aA4444</br>
-    The engineer credential: cuong_nguyen | 1!aA2222</br>
+2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
+3. Run python ./cloud/unittest/test_suite.py in your console to run the test suite and view the results.
 
 ## Acknowledgments
 
