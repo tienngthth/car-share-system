@@ -1,1 +1,1 @@
-export FLASK_APP=webpage/flaskr && export FLASK_ENV=development && export OAUTHLIB_INSECURE_TRANSPORT=1 && export GOOGLE_APPLICATION_CREDENTIALS="webpage/flaskr/script/files/client.json" && flask run 
+export FLASK_APP=webpage/flaskr && export FLASK_ENV=development && export OAUTHLIB_INSECURE_TRANSPORT=1 && export GOOGLE_APPLICATION_CREDENTIALS="webpage/flaskr/files/client.json" && flask run 
