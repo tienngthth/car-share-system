@@ -57,7 +57,7 @@ def read():
         " * ", 
         " Bookings ", 
         " WHERE CarID = %(car_id)s " +
-        " OR CustomerID = %(customer_id)s " +
+        " AND CustomerID = %(customer_id)s " +
         " AND RentTime <= NOW() AND NOW() <= ReturnTime AND Status = 'Booked' OR Status = 'Done'",
         {
             "car_id": request.args.get("car_id"),
