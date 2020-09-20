@@ -87,7 +87,7 @@ def confirm_booking():
     total_cost = request.args['total_cost']
     response = requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
-    session["renttime"] = start_date
+    session["starttime"] = start_date
     session["car_id"] = car_id
     session["customer_id"] = g.user['ID']
     
@@ -96,6 +96,7 @@ def confirm_booking():
     endrenttime = start_date + timedelta(minutes = 30)
     session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
     flash("Booking confirmed!") 
+    return request.args["google_calendar"]
     # if request.args["google_calendar"]:
     #     return "Yes"
     #     return redirect(url_for("customer.booking_view"))
@@ -117,7 +118,7 @@ def send_calendar():
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
-    return insert_event(service)
+    insert_event(service)
     session['startdate'] = None
     session['renttime'] = None
     session['endrenttime'] = None
@@ -144,13 +145,12 @@ def insert_event(service):
             ],
         }
     }
-    calendar =  requests.get("http://127.0.0.1:8080/bookings/read/lastest/record?car_id={}&customer_id={}&rent_time={}"
-    .format( session["car_id"], session["customer_id"], session["renttime"]))[0]["CarID"]
+    calendar = requests.get("http://127.0.0.1:8080/bookings/read/lastest/record?car_id={}&customer_id={}&rent_time={}"
+    .format( session["car_id"], session["customer_id"], session["starttime"])).json()[0]['ID']
     event = service.events().insert(calendarId = "primary", body = event).execute()
-    request.post("http://127.0.0.1:8080/bookings/add/calendar?id={}&event_id={}"
+    requests.put("http://127.0.0.1:8080/bookings/add/eventId?id={}&event_id={}"
     .format( calendar, event["id"]))
     return "send"
-
 
 @customer.route('/authorize')
 @login_required
@@ -261,12 +261,11 @@ def view_booking_detail():
 def cancel_booking():
     if g.type != "Customer":
         return "Access Denied"
-    booking_id = request.args["booking_id"]
-    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(booking_id))
+    session["booking_id"] = request.args["booking_id"]
     flash("Booking cancelled!")
-    return redirect(url_for("customer.delete_calendar", booking_id))
+    return redirect(url_for("customer.delete_calendar"))
 
-@customer.route('/send/calendar')
+@customer.route('/delete/calendar')
 @login_required
 def delete_calendar():
     if g.type != "Customer":
@@ -281,20 +280,20 @@ def delete_calendar():
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
-    return delete_event(service, request.args.get("booking_id"))
+    response = delete_event(service)
     if response != "Success":
-        flash("Access Denied or There is no calendar event")
+        flash("Access denied or there is no calendar event")
+    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(session['booking_id']))
+    session["booking_id"] = None
     return redirect(url_for("customer.booking_view"))
 
-def insert_event(service):
-    eventId =  requests.get("http://127.0.0.1:8080/bookings/read/lastest/record?car_id={}&customer_id={}&rent_time={}"
-    .format( session["car_id"], session["customer_id"], session["renttime"]))[0]["CarID"]
+def delete_event(service):
+    eventId =  requests.get("http://127.0.0.1:8080/bookings/read/record?id=" + str(session['booking_id'])).json()[0]["EventID"]
     if eventId == None:
         return "There no calendar event"
     else:
         try: 
             event = service.events().delete(calendarId = "primary", eventId = eventId).execute()
-            return event
         except:
             return "Access Denied"
     return "Success"

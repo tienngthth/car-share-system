@@ -38,7 +38,7 @@ def update():
     except:
         return "Fail"
 
-@booking_api.route("/add/calendar", methods=['GET', 'PUT'])
+@booking_api.route("/add/eventId", methods=['GET', 'PUT'])
 def add_calendar_booking():
     try:
         Database.update_record_parameterized(
@@ -47,6 +47,10 @@ def add_calendar_booking():
             " WHERE ID = (%s)",
             (request.args.get("event_id"), request.args.get("id"))
         )
+        return "Success"
+    except:
+        return "Fail"
+
 @booking_api.route("/cancel/passed/return/time", methods=['GET', 'PUT'])
 def update_passed_bookings():
     try:
@@ -61,7 +65,7 @@ def update_passed_bookings():
         return "Fail"
 
 @booking_api.route("/read/lastest/record")
-def read():
+def read_last_record():
     results = Database.select_record_parameterized(
         " * ", 
         " Bookings ", 
@@ -75,6 +79,16 @@ def read():
             "customer_id": request.args.get("customer_id"),
             "rent_time": request.args.get("rent_time")
         },
+    ) 
+    return jsonify(results)
+
+@booking_api.route("/read/record")
+def read_record():
+    results = Database.select_record_parameterized(
+        " * ", 
+        " Bookings ", 
+        " WHERE ID = %s ",
+        (request.args.get("id"),)
     ) 
     return jsonify(results)
 

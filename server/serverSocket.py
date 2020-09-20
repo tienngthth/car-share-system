@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-"""
 from server import Server
 from passlib import hash
-from model.code import Code
 import requests, json
 
 def listen_to_client():
@@ -16,7 +15,7 @@ def listen_to_client():
     
 def handle_request(message):
     try:
-        message = Code.parse_json(message.replace("\'", "\""))
+        message = json.loads(message.replace("\'", "\""))
         message_type = message["message_type"]
         if message_type == "credential":
             validate_crendential(message)
