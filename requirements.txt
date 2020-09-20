@@ -1,0 +1,12 @@
+WTForms==2.3.3
+requests==2.24.0
+PyMySQL==0.10.0
+Flask_WTF==0.14.3
+google_auth_oauthlib==0.4.1
+pip==20.2.2
+Flask==1.1.2
+passlib==1.7.2
+google_api_python_client==1.12.1
+protobuf==3.13.0
+pytest==6.0.2
+wheel==0.35.1
