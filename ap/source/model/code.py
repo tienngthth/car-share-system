@@ -1,6 +1,9 @@
 import datetime
 import json
 
+"""
+Like a Util class to encode and decode data for better conversion re-usable code
+"""
 class Code():
     def __init__(self, raw_data):
         self.__raw_data = raw_data

@@ -3,6 +3,9 @@ from model.util import Util
 from customerMenu import login_menu
 from engineerMenu import start_searching
 
+"""
+This function will display the main menu after having establish a connection with mp
+"""
 def main_menu():
     while True:
         Util.log_messages("main_menu")

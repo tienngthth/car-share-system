@@ -4,6 +4,9 @@ from .client import Client
 from .util import Util
 from .code import Code
 
+"""
+This class is a singleton to handle and pass all the car information throughout the program
+"""
 class Car:
     __instance = None
 

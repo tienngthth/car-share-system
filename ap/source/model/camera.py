@@ -3,6 +3,9 @@ import cv2
 from pyzbar import pyzbar
 from .code import Code
 
+"""
+Camera class is connect pi to the camera and getting image frame from the camera for further analysis
+"""
 class Camera():
     cam = None
     frame = None 

@@ -4,6 +4,9 @@ from abc import ABC, ABCMeta, abstractmethod
 from model.localDatabase import LocalDatabase
 from .util import Util
 
+"""
+Account class is use to pass all the user credential, information during the booking session
+"""
 class Account():
     username_regex = "^[A-Za-z0-9]{6,15}$"
     passwod_regex = "^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$"

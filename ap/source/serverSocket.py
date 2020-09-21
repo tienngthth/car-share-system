@@ -5,6 +5,9 @@ from passlib import hash
 from model.code import Code
 import requests, json
 
+"""
+Listen to the message from AP and pass it to the message handle
+"""
 def listen_to_client():
     # Constantly handle request from client until receiving end signal
     while True:
@@ -13,7 +16,10 @@ def listen_to_client():
             server.close_connection()
         elif message != "":
             handle_request(message)
-    
+
+"""
+Message handle analyze the message and redirect the flow to the right function
+"""    
 def handle_request(message):
     try:
         message = Code.parse_json(message.replace("\'", "\""))
@@ -39,6 +45,9 @@ def handle_request(message):
     except:
         server.send_message("invalid")
 
+"""
+Handle verification of the credential sent by AP
+"""
 # Validate credential
 def validate_crendential(message):
     user = verify_password(message["username"], message["password"])
@@ -54,6 +63,9 @@ def validate_crendential(message):
             return
     server.send_message("invalid")
 
+"""
+Handle verification of the password sent by AP
+"""
 def verify_password(username, input_password):
     try:
         user = requests.get("http://127.0.0.1:8080/get/user/info?username="+username).json()
@@ -71,6 +83,9 @@ def done_booking(message):
 def update_booking_status(status, booking_id):
     requests.put("http://127.0.0.1:8080/bookings/update?" + "status=" + status + "&id=" + booking_id)
 
+"""
+Check to see if there are any backlogs undone
+"""
 # Check for car maintainance
 def check_for_car_maintainance(message):
     engineer_id = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=" + message["car_id"]).json()
@@ -100,7 +115,10 @@ def close_backlog(engineer_id, car_id):
         "http://127.0.0.1:8080/backlogs/close?" + 
         "signed_engineer_id=" + engineer_id + "&car_id=" +  car_id
     )
-    
+
+"""
+Get car id base on the mac address of the pi attached to the car
+"""
 # Get car id by ap mac address
 def get_car_id_by_ap_addr(message):
     car_id = requests.get("http://127.0.0.1:8080/cars/get/id?mac_address=" + message["ap_addr"]).text

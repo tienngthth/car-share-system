@@ -5,8 +5,7 @@ from time import sleep
 from .util import Util
 
 """
-Class Server is to create instances to send context messages and accept connection request
-Base on socket protocal and package, create client using socket programming
+Class Client is to create TCP socket instances to send message to mp 
 """
 
 class Client:

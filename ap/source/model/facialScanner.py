@@ -4,6 +4,9 @@ import os
 from .camera import Camera
 from .util import Util
 
+"""
+FacialScanner Class is create when there is a facial login request. This recognize the face of the customer and pass the username as one of the two part process of the authentication
+"""
 class FacialScanner():
     names = ['invalid', 'cuongnguyen', 'tiennguyen','tamnguyen', 'minhnguyen'] 
     recognizer = cv2.face.LBPHFaceRecognizer_create()

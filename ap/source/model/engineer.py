@@ -4,6 +4,9 @@ from .camera import Camera
 from .client import Client
 from .util import Util
 
+"""
+Each time the engineer login, Engineer class will create a instance which contain all user information
+"""
 class Engineer():    
     def __init__(self):
         self.__engineer_info = car.get_assgined_engineer_info()

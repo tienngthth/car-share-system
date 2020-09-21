@@ -7,6 +7,9 @@ from .localDatabase import LocalDatabase
 from .car import car
 from .code import Code
 
+"""
+Each time the customer login, Customer class will create a instance which contain all user information
+"""
 class Customer():    
     def __init__(self, get_username_option):
         self.__username = "invalid"
