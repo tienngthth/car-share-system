@@ -66,7 +66,7 @@ This project has been developed for around 6 weeks. Git, git hub, Trello, Google
 
 This respository is private and shared between 4 contributors and 2 observers.
 
-There are 15 different branches beside the default master. Contributors are using different branches to develop different components. Enventually, all the branches are mereged to the two seperate main branches, which are ap for Agent Pi Application and mp for Master Pi Application.
+There are 15 different branches beside the default master. Contributors are using different branches to develop different components. Enventually, all the branches are mereged to the two seperate main branches, which are ap for Agent Pi Application and mp for Master Pi Application. At the end, both branches are then merged in to one master-pi branch for final wrap up.
 
 ![Github](images/git_branches.png)
 
@@ -265,7 +265,7 @@ Review [MP requirements.txt](https://github.com/tienngthth/car-share-system/blob
 
 1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
-3. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
+3. Access to web application at localhost:5000, please use Chromium Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
     The admin credential: minh_nguyen | 2@aA3333</br>
     The manager credential: tam_nguyen | 3#aA4444</br>
@@ -365,7 +365,7 @@ Manager can view three type of graphs.
 ### Agent Pi
 
 1. Go to the ap directory.
-2. Run ./source/mainMenu.py or python3 ./source/mainMenu.py in your console to start the console based application.
+2. Run python3 ./source/mainMenu.py in your console to start the console based application.
 
 
 #### Authentication flow
