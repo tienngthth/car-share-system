@@ -424,5 +424,5 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 
 ## Acknowledgments
 
-* [Google Calendar Python Quickstart] https://developers.google.com/calendar/quickstart/python
+* [Google Calendar Python Quickstart](https://developers.google.com/calendar/quickstart/python)
 
