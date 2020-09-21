@@ -73,10 +73,10 @@ def get_all_backlogs():
     Returns a JSON object of all engineering backlog tasks. No parameters required.
     """
     results = Database.select_record(
-        "Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID," +
-        "Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description, Backlogs.ID AS BacklogID" , 
-        "Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID",
-        ""
+        " Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID, " +
+        " Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description, Backlogs.ID AS BacklogID " , 
+        " Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID ",
+        " ORDER BY Backlogs.CreatedDate DESC "
     )
     return jsonify(results)
 
