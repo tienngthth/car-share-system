@@ -429,5 +429,4 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 * [Google Map Setup](https://developers.google.com/maps/documentation/javascript/overview)
 * [Google Data Studio](https://www.seerinteractive.com/blog/google-data-studio-whats-working-whats-missing/)
 * [Graph Configuration Using Chart.js](https://www.chartjs.org/)
-
-
+* [Flask app](https://flask.palletsprojects.com/en/1.1.x/tutorial/factory/)
