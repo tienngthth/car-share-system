@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+staffAPI.py handles CRUD on staff users, and also a check if a given username exists.
+"""
 from flask import Blueprint, request
 from database import Database
 from flask.json import jsonify
@@ -8,6 +11,19 @@ staff_api = Blueprint("staff_api", __name__)
 
 @staff_api.route("read")
 def read():
+    """
+    Searches for all staff users that match a set of criteria. Parameters:
+    id: The user's id
+    username: The user's username
+    first_name: The user's first name
+    last_name: The user's last name
+    email: The user's email address. Validated elsewhere by regex.
+    phone: The user's phone number
+    user_type: The user's user type
+    
+    Returns a dictionary containing all matches.
+    
+    """
     results = Database.select_record_parameterized(
         " * ", 
         " Staffs ", 
@@ -39,6 +55,11 @@ def read():
 
 @staff_api.route("/check/existed/username")
 def check_username():
+    """
+    Check if a username exists.
+    
+    username: the user's username
+    """
     result = Database.select_record_parameterized(
         " COUNT(*) AS SUM ", 
         " Staffs ", 
@@ -49,6 +70,11 @@ def check_username():
 
 @staff_api.route("get/engineer/mac/address")
 def get_engineer_mac_address():
+    """
+    Get engineer mac address. Parameters:
+    
+    id: the engineer's id
+    """
     results = Database.select_record_parameterized(
         " EngineerMacAddress ", 
         " Staffs ", 
@@ -62,6 +88,13 @@ def get_engineer_mac_address():
 
 @staff_api.route("/delete", methods=['GET', 'DELETE'])
 def delete():
+    """
+    Deletes a staff. Parameters:
+    
+    id: The user id of the user to delete.
+    
+    Returns Success if an entry was deleted, and Fail otherwise.
+    """
     try:
         Database.delete_record_parameterized(
             " Staffs ",
@@ -74,6 +107,19 @@ def delete():
 
 @staff_api.route("/update", methods=['GET', 'PUT'])
 def update():
+    """
+    Updates a user. Parameters:
+    
+    username: The username requested
+    password: The user's requested password. Will be SHA256 hashed before storing.
+    first_name: The user's first name
+    last_name: The user's last name
+    email: The user's email address. Validated elsewhere by regex.
+    phone: The user's phone number
+    engineer mac address: The user's mac address
+    
+    Returns Success if the entry is updated, and Fail otherwise.
+    """
     try:
         Database.update_record_parameterized(
             " Staffs ",
