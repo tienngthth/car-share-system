@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""
+set up all the tables
+"""
 from database import Database
 
 def create_customer_table():
