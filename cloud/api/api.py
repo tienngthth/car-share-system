@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- 
+"""
+api.py mainly manages collects all the branches of the API that we wrote. It also defines an errorhandler, and a function to return a user's hashed password, and a function to return a user's type.
+Uses UTF-8 encoding
+"""
 from flask import Flask, request
 from customerAPI import customer_api
 from staffAPI import staff_api
@@ -21,10 +25,16 @@ app.register_blueprint(location_api, url_prefix="/locations")
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """
+    This errorhandler passes the error text defined here whenever a user gets a 404 page not found error
+    """
     return "Page not found"
 
 @app.route("/get/user/info")
 def get_user_info():
+    """
+    This returns a user's hashed password.
+    """
     username = request.args.get("username")
     user = get_user("Customers", username)
     if len(user) == 0:
@@ -34,6 +44,12 @@ def get_user_info():
     return jsonify(user[0])
 
 def get_user(user_type, username):
+    """
+    This returns a user entry from the database given their name and type. Parameters:
+    
+    username: The username
+    user_type: The user type, e.g. engineer
+    """
     return Database.select_record_parameterized(
         " * ", 
         user_type,
