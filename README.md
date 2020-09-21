@@ -302,7 +302,7 @@ Customer can search for cars by max cost, seat, type, brand, color filter.
 
 ```
 Customer can view the booking detail and is asked to confirm or cancel the new bookinng.
-After confirm booking, customer is asked to log in to calendar in order to create an event.
+After confirm booking, customer is asked to log in to google calendar (oauth2 authentication) in order to create an event. 
 ```
 
 ```
@@ -427,3 +427,4 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 * [Google Calendar Python Quickstart](https://developers.google.com/calendar/quickstart/python)
 * [Real time face recognition](https://www.hackster.io/mjrobot/real-time-face-recognition-an-end-to-end-project-a10826)
 * [Barcode and QR code scanner](https://www.pyimagesearch.com/2018/05/21/an-opencv-barcode-and-qr-code-scanner-with-zbar/)
+* [Oauth2 web server](https://developers.google.com/identity/protocols/oauth2/web-server)
