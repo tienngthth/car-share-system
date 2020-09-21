@@ -88,7 +88,6 @@ class Car:
         while True:
             message = client.receive_message()
             if message != "":
-                print(message)
                 if message != "invalid":
                     message = Code.parse_json(message.replace("\'", "\""))
                 client.send_message("end")
