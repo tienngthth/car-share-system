@@ -1,0 +1,3 @@
+booking_view.html : fix border-radius on table headings
+
+API.py -- why do we have a function that returns a user's hashed password? That's super insecure!

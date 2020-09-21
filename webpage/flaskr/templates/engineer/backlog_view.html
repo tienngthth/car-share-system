@@ -33,7 +33,7 @@
     <td>{{ backlog.Status }}</td>
     <td style="max-width:40px;">
       {% if backlog.Status == "Not done" %}
-      <form style="margin:0px;" action="{{ url_for('engineer.close_backlog', car_id=backlog.CarID, backlog_id=backlog.BacklogID)}}" method="post">
+      <form style="margin:0px;" action="{{ url_for('engineer.close_backlog', car_id=backlog.CarID)}}" method="post">
         <input style="font-size: smaller;" class="warning" type="submit" value="Repair" 
         onclick="return confirm('Are you sure you want to mark this car as repaired?');">
       </form>

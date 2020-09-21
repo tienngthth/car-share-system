@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Only use this to check the cloud database
+
 import pymysql
-from database import Database
+from model.database import Database
 
 def select_from_customers(cursor):
     print("Customers table:")
@@ -137,7 +139,11 @@ def execute_queries():
     # select_from_customers(cursor)
     select_from_staffs(cursor)
     # select_from_cars(cursor)
+<<<<<<< HEAD
     # select_from_bookings(cursor)    
+=======
+    select_from_bookings(cursor)    
+>>>>>>> origin/mp-sphinx-doc
     # select_from_backlogs(cursor)
     # #Additional queries (for drawing graphs)
     # select_number_of_bookings_per_day(cursor)

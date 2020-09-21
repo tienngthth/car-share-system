@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Misc Functions &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="User Interface" href="User%20Interface.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="misc-functions">
+<h1>Misc Functions<a class="headerlink" href="#misc-functions" title="Permalink to this headline">¶</a></h1>
+<p>These are miscellaneous functions used by the webpage on the master Pi. Most of them are validators.</p>
+<div class="section" id="module-script.model.account">
+<span id="account-validator"></span><h2>Account Validator<a class="headerlink" href="#module-script.model.account" title="Permalink to this headline">¶</a></h2>
+<p>account.py holds the various input validation functions applied to accounts. There is both conditional logic and regular expressions.</p>
+<dl class="py class">
+<dt id="script.model.account.Account">
+<em class="property">class </em><code class="sig-prename descclassname">script.model.account.</code><code class="sig-name descname">Account</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">firstname</span></em>, <em class="sig-param"><span class="n">lastname</span></em>, <em class="sig-param"><span class="n">phone</span></em>, <em class="sig-param"><span class="n">user_id</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">mac_address</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class holds all the functions in this file.</p>
+<dl class="py method">
+<dt id="script.model.account.Account.hash_salt_password">
+<em class="property">static </em><code class="sig-name descname">hash_salt_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_input</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.hash_salt_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.hash_salt_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>This hashes a received password before we store it anywhere or compare it to a stored value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.register_account">
+<code class="sig-name descname">register_account</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.register_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.register_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>This registers an account.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.update_account">
+<code class="sig-name descname">update_account</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.update_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.update_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>This updates an account.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_email_input">
+<em class="property">static </em><code class="sig-name descname">validate_email_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_email_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_email_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid email input: 
+1. Before “&#64;”, minimum length of the text (between 2 dots/underscors) is 2. 
+2. Has to start with/end with/contain only alphanumerical characters.
+3. After “&#64;”, requires 2 alphabetical text with a “.” between. The latter contains 2 to 3 characters.</p>
+<p>Returns True if OK, otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_new_account">
+<code class="sig-name descname">validate_new_account</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_new_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_new_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the validation chain to validate a new account. It must pass all these functions.</p>
+<p>If it passes all of them, it returns True. Otherwise it returns False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_password_input">
+<em class="property">static </em><code class="sig-name descname">validate_password_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_password_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_password_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Valid password contains at least: 8 characters, 1 upper case, 1 lower case, 1 digit, 1 special characters</p>
+<p>Returns True if it’s OK, otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_phone_input">
+<em class="property">static </em><code class="sig-name descname">validate_phone_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_phone_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_phone_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate phone contains at least 5 characters, all must be digits.</p>
+<p>Returns True if OK, otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_update_account">
+<code class="sig-name descname">validate_update_account</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_update_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_update_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>These are the validators for when an admin user is updating an account.</p>
+<p>Returns True if all pass, and otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_username_input">
+<em class="property">static </em><code class="sig-name descname">validate_username_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_username_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_username_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates that a username merts minimum length requirements and doesn’t have non-allowed characters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.validate_username_uniqueness">
+<em class="property">static </em><code class="sig-name descname">validate_username_uniqueness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.validate_username_uniqueness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.validate_username_uniqueness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks a username is unique across both staff and customer user sets.</p>
+<p>If it exists, returns True. Otherwise returns False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.account.Account.verify_password">
+<em class="property">static </em><code class="sig-name descname">verify_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">input_password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/account.html#Account.verify_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.account.Account.verify_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Here we verify a password. The password that a user enters is hashed, then compared agaisnt the hash stored in the database.</p>
+<p>Returns the user if it’s a match, otherwise returns False.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-script.model.booking">
+<span id="booking-validator"></span><h2>Booking Validator<a class="headerlink" href="#module-script.model.booking" title="Permalink to this headline">¶</a></h2>
+<p>booking.py holds all the validators used for bookings.</p>
+<dl class="py class">
+<dt id="script.model.booking.Booking">
+<em class="property">class </em><code class="sig-prename descclassname">script.model.booking.</code><code class="sig-name descname">Booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em>, <em class="sig-param"><span class="n">customer_id</span></em>, <em class="sig-param"><span class="n">rent_time</span></em>, <em class="sig-param"><span class="n">return_time</span></em>, <em class="sig-param"><span class="n">totalCost</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/booking.html#Booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.booking.Booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class holds al lthe functions in this file.</p>
+<dl class="py method">
+<dt id="script.model.booking.Booking.validate_booking_input">
+<em class="property">static </em><code class="sig-name descname">validate_booking_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cost</span></em>, <em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/booking.html#Booking.validate_booking_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.booking.Booking.validate_booking_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a helper function that combines cost and date validation.</p>
+<p>Returns True if both pass, otherwise returns False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.booking.Booking.validate_cost">
+<em class="property">static </em><code class="sig-name descname">validate_cost</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cost</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/booking.html#Booking.validate_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.booking.Booking.validate_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure any time someone enters a cost, that it can be cleanly converted to a float. It doesn’t have to be an integer, e.g. 5.003 is a valid entry but ‘yellow’ is not.</p>
+<p>Returns True if the cost can be cleanly converted to a float, False otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.booking.Booking.validate_date">
+<em class="property">static </em><code class="sig-name descname">validate_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/booking.html#Booking.validate_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.booking.Booking.validate_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure the start date is before the end date. Booking for negative times would charge negative fees and that would be very bad.</p>
+<p>Returns False if the dates are nonsensical, True if they are OK.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-script.model.car">
+<span id="car-validator"></span><h2>Car Validator<a class="headerlink" href="#module-script.model.car" title="Permalink to this headline">¶</a></h2>
+<p>car.py hold the various alidation functions applied to cars.</p>
+<dl class="py class">
+<dt id="script.model.car.Car">
+<em class="property">class </em><code class="sig-prename descclassname">script.model.car.</code><code class="sig-name descname">Car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">brand</span></em>, <em class="sig-param"><span class="n">car_type</span></em>, <em class="sig-param"><span class="n">color</span></em>, <em class="sig-param"><span class="n">seat</span></em>, <em class="sig-param"><span class="n">cost</span></em>, <em class="sig-param"><span class="n">location_id</span></em>, <em class="sig-param"><span class="n">mac_address</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">status</span><span class="o">=</span><span class="default_value">'Available'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class holds all the functions in this file.</p>
+<dl class="py method">
+<dt id="script.model.car.Car.create_car">
+<code class="sig-name descname">create_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.create_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.create_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new car.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.car.Car.update_car">
+<code class="sig-name descname">update_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.update_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.update_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates an existing car.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.car.Car.validate_cost">
+<em class="property">static </em><code class="sig-name descname">validate_cost</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cost</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.validate_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.validate_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost must be possible to convert into a float ( 3.002 is OK, ‘yellow’ in not”) and also has to be between 1 and 1000. Cars should not rent for less than 1$ or more than 1000$ per hour. Mostly this is to prevent typos.</p>
+<p>Returns False if there’s a problem, otherwise True.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.car.Car.validate_location_id">
+<em class="property">static </em><code class="sig-name descname">validate_location_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.validate_location_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.validate_location_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure the location id is an integer. These integers map to locations, e.g. 1 = office parking lot, 2 = downtown mall parking lot.</p>
+<p>Returns True if it’s an integer, otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.car.Car.validate_new_car">
+<code class="sig-name descname">validate_new_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.validate_new_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.validate_new_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper function that combines cost and location validation.</p>
+<p>Returns True if both pass, otherwise False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="script.model.car.Car.validate_update_car">
+<code class="sig-name descname">validate_update_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/script/model/car.html#Car.validate_update_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#script.model.car.Car.validate_update_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another helper function combining cost and location validation, this time specifically for the update form.</p>
+<p>Returns True if both pass, otherwise False.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="calendar-reference-implementation">
+<h2>Calendar Reference Implementation<a class="headerlink" href="#calendar-reference-implementation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Run.html">Running Cloudcar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Misc Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-script.model.account">Account Validator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-script.model.booking">Booking Validator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-script.model.car">Car Validator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calendar-reference-implementation">Calendar Reference Implementation</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Misc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Misc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

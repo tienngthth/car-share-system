@@ -1,0 +1,24 @@
+Misc Functions
+====================================
+These are miscellaneous functions used by the webpage on the master Pi. Most of them are validators.
+
+Account Validator
+-----------------
+.. automodule:: script.model.account
+    :members:
+
+Booking Validator
+-----------------
+.. automodule:: script.model.booking
+    :members:
+
+Car Validator
+-------------
+.. automodule:: script.model.car
+    :members:
+
+Calendar Reference Implementation
+---------------------------------
+.. automodule:: script.model.googleCalendar
+    :members:
+

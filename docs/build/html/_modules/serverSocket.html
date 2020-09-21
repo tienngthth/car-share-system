@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>serverSocket &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for serverSocket</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">serverSocket.py</span>
+<span class="sd">====================================</span>
+<span class="sd">This contains the functions that listen for client requests. It also handles user validation, and otherwise routes different request types, e.g. check_backlog, to the appropriate function. We use UTF-8 encoding for all requests.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># !/usr/bin/env python3</span>
+
+
+<span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">server</span> <span class="kn">import</span> <span class="n">Server</span>
+<span class="kn">from</span> <span class="nn">passlib</span> <span class="kn">import</span> <span class="nb">hash</span>
+
+<div class="viewcode-block" id="listen_to_client"><a class="viewcode-back" href="../Server.html#serverSocket.listen_to_client">[docs]</a><span class="k">def</span> <span class="nf">listen_to_client</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constantly handle request from client until receiving end signal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">close_connection</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">handle_request</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="handle_request"><a class="viewcode-back" href="../Server.html#serverSocket.handle_request">[docs]</a><span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Route a request to the correct handler. Parameters:</span>
+
+<span class="sd">    message: must be credential, check_backlog, update_car_status, close_backlog, or get_car_id. Otherwise will return Invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="n">message_type</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;message_type&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;credential&quot;</span><span class="p">:</span>
+            <span class="n">validate_crendential</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;check_backlog&quot;</span><span class="p">:</span>
+            <span class="n">check_for_car_maintainance</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;update_car_status&quot;</span> <span class="ow">or</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;close_backlog&quot;</span><span class="p">:</span>
+            <span class="n">update_car_status</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;get_car_id&quot;</span><span class="p">:</span>
+            <span class="n">get_car_id_by_ap_addr</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">)</span></div>
+
+<span class="c1"># Validate credential</span>
+<div class="viewcode-block" id="validate_crendential"><a class="viewcode-back" href="../Server.html#serverSocket.validate_crendential">[docs]</a><span class="k">def</span> <span class="nf">validate_crendential</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a username+password pair is a valid user, passing the password on to a dedicated password validation function. If valid, returns the user&#39;s bookings for a particular car. Parameters:</span>
+
+<span class="sd">    message: must contain a username and password, along with the car ID and customer_id. If the authentication fails, returns Invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">verify_password</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+        <span class="n">booking</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/bookings/read?car_id=&quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">]</span> <span class="o">+</span> 
+            <span class="s2">&quot;customer_id&quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;customer_id&quot;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;bookings&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">booking</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s2">&quot;Password&quot;</span><span class="p">])</span>
+            <span class="k">return</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="verify_password"><a class="viewcode-back" href="../Server.html#serverSocket.verify_password">[docs]</a><span class="k">def</span> <span class="nf">verify_password</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">input_password</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Verify the password of a user. Passwords are stored as SHA256 hashes of the password plaintext, so we hash the password before comparing to what&#39;s stored in the database. Parameters:</span>
+
+<span class="sd">    username: A username must be specified</span>
+<span class="sd">    input_password: The password must be specified.</span>
+<span class="sd">    If there are any missing fields or the username+password pair is not recognized, returns Invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/get/user/info?username=&quot;</span><span class="o">+</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hash</span><span class="o">.</span><span class="n">sha256_crypt</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">input_password</span><span class="p">,</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;Password&quot;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">user</span>
+        <span class="k">return</span> <span class="s2">&quot;invalid&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;invalid&quot;</span></div>
+
+<span class="c1"># Check for car maintainance</span>
+<div class="viewcode-block" id="check_for_car_maintainance"><a class="viewcode-back" href="../Server.html#serverSocket.check_for_car_maintainance">[docs]</a><span class="k">def</span> <span class="nf">check_for_car_maintainance</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the engineer assigned to repair a particular car, and the MAC address assigned to them. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    message: must contain the car_id. Returns Invalid otherwise, or if no engineer is assigned to that car, or if the engineer assigned does not have a MAC address recorded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engineer_id</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;AssignedEngineerID&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">engineer_id</span> <span class="o">!=</span> <span class="s2">&quot;No engineer found&quot;</span><span class="p">:</span>
+        <span class="n">engineer_mac_address</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">engineer_id</span><span class="p">))</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;EngineerMacAddress&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">engineer_mac_address</span> <span class="o">!=</span> <span class="s2">&quot;No mac address found&quot;</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">engineer_mac_address</span><span class="p">)</span>
+            <span class="k">return</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">)</span></div>
+
+<span class="c1"># Update car status</span>
+<div class="viewcode-block" id="update_car_status"><a class="viewcode-back" href="../Server.html#serverSocket.update_car_status">[docs]</a><span class="k">def</span> <span class="nf">update_car_status</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a car&#39;s status, for example to mark it as available, or requiring repairs. Parameters:</span>
+
+<span class="sd">    message: if the message type is close_backlog, it closes the backlog entry</span>
+<span class="sd">             Otherwise, it will look for car_status and car_id, and apply that status to the given car</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+		<span class="s2">&quot;http://127.0.0.1:8080/cars/update?&quot;</span> <span class="o">+</span>
+		<span class="s2">&quot;status=&quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;car_status&quot;</span><span class="p">]</span> <span class="o">+</span>
+		<span class="s2">&quot;&amp;id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">])</span>
+	<span class="p">)</span>
+    <span class="c1"># Close backlog</span>
+    <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;message_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;close_backlog&quot;</span><span class="p">:</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/backlogs/close?&quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot;signed_engineer_id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;engineer_id&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&amp;car_id=&quot;</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">])</span>
+        <span class="p">)</span></div>
+    
+<span class="c1"># Get car id by ap mac address</span>
+<div class="viewcode-block" id="get_car_id_by_ap_addr"><a class="viewcode-back" href="../Server.html#serverSocket.get_car_id_by_ap_addr">[docs]</a><span class="k">def</span> <span class="nf">get_car_id_by_ap_addr</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a car&#39;s ID using the MAC address of the Agent Pi. Parameters:</span>
+
+<span class="sd">    message: Searches for a car id if the message contains ap_addr, which must be a MAC address. If none are found, returns Invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">car_id</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/cars/get/id?mac_address=&quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;ap_addr&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">car_id</span> <span class="o">==</span> <span class="s2">&quot;No car found&quot;</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">car_id</span><span class="p">))</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">global</span> <span class="n">server</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">()</span>
+    <span class="n">listen_to_client</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

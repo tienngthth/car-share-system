@@ -9,7 +9,7 @@ class TestCarAPI(unittest.TestCase):
     def test_read(self):
         resp = requests.get("http://127.0.0.1:8080/cars/read").json()
         test_data = resp[0]        
-        self.assertEqual(test_data["Address"], "RMIT Vietnam, 702 Nguy\u1ec5n V\u0103n Linh, T\u00e2n H\u01b0ng, Qu\u1eadn 7, Th\u00e0nh ph\u1ed1 H\u1ed3 Ch\u00ed Minh, Vietnam")
+        self.assertEqual(test_data["Address"], "RMIT Vietnam, 702 Nguyen Van Linh, Tan Hung, Quan 7, Thanh pho Ho Chi Minh, Vietnam")
         self.assertEqual(test_data["Brand"], "Ford")
         self.assertEqual(test_data["Color"], "White")
         self.assertEqual(test_data["Cost"], 2)
@@ -22,7 +22,7 @@ class TestCarAPI(unittest.TestCase):
     def test_get_available_car(self):
         resp = requests.get("http://127.0.0.1:8080/cars/status/available").json()
         test_data = resp[1]         
-        self.assertEqual(test_data["Address"], "Crescent Mall, 101 T\u00f4n D\u1eadt Ti\u00ean, T\u00e2n Phong, Qu\u1eadn 7, Th\u00e0nh ph\u1ed1 H\u1ed3 Ch\u00ed Minh, Vietnam")
+        self.assertEqual(test_data["Address"], "Crescent Mall, 101 Ton Dat Tien, Tan Phong, Quan 7, Thanh pho Ho Chi Minh, Vietnam")
         self.assertEqual(test_data["Brand"], "Audi")
         self.assertEqual(test_data["Color"], "Black")
         self.assertEqual(test_data["Cost"], 2)

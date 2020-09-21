@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cloud.api.backlogAPI &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cloud.api.backlogAPI</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">backlogAPI.py defines the backlog API, whcih handles requests for engineers to repair cars.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">Markup</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">flask.json</span> <span class="kn">import</span> <span class="n">jsonify</span>
+
+<span class="n">backlog_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;backlog_api&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="create_backlog"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.create_backlog">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">create_backlog</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates a new engineering backlog entry. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    assigned_engineer_id: The ID of the engineer responsible for this task</span>
+<span class="sd">    car_id: The car the engineer is assigned to repair</span>
+<span class="sd">    status: The status of the car. Needs to be set to Repair</span>
+<span class="sd">    description: Description of repairs required</span>
+<span class="sd">    </span>
+<span class="sd">    If all parameters are present and valid, the function returns Success, otherwise it returns Fail </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">insert_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot;Backlogs(AssignedEngineerID, CarID, CreatedDate, Status, Description) &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, CURDATE(), </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;assigned_engineer_id&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="close_backlog"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.close_backlog">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/close&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">close_backlog</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This closes an engineering backlog task as complete. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    signed_engineer_id: The ID of the engineer responsible for this repair</span>
+<span class="sd">    car_id: The car that was just repaired</span>
+<span class="sd">    </span>
+<span class="sd">    The function will return Success if all parameters are valid, and Fail if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; Status = &#39;Done&#39;, SignedEngineerID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE CarID = (</span><span class="si">%s</span><span class="s2">) AND Status = &#39;Not done&#39; &quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;signed_engineer_id&quot;</span><span class="p">),</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">))</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="get_all_repaired_car_ids"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.get_all_repaired_car_ids">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/backlogs/data&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all_repaired_car_ids</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This returns a JSON object of all cars that have been repaired. No parameters are required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record</span><span class="p">(</span>
+        <span class="s2">&quot; CarID, CONVERT(COUNT(CarID), SIGNED) as Total&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; GROUP BY CarID &quot;</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<span class="c1">#New API starts here</span>
+<div class="viewcode-block" id="get_all_backlogs"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.get_all_backlogs">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/all&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all_backlogs</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a JSON object of all engineering backlog tasks. No parameters required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record</span><span class="p">(</span>
+        <span class="s2">&quot;Cars.ID AS CarID, Cars.Type AS CarType, Cars.Brand AS CarBrand, Cars.LocationID as LocationID,&quot;</span> <span class="o">+</span>
+        <span class="s2">&quot;Backlogs.CreatedDate AS CreatedDate, Backlogs.Status AS Status, Backlogs.Description AS Description&quot;</span> <span class="p">,</span> 
+        <span class="s2">&quot;Cars INNER JOIN Backlogs ON Cars.ID = Backlogs.CarID INNER JOIN Locations ON Cars.LocationID = Locations.ID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;backlogs&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_engineer_id"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.get_engineer_id">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/get/engineer/id&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_engineer_id</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the ID of the engineer assigned to repair a particular car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns the engineer ID if there is an open task for that car, otherwise will return No engineer found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; AssignedEngineerID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE CarID LIKE </span><span class="si">%s</span><span class="s2"> AND Status LIKE &#39;Not done&#39; &quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),)</span>
+    <span class="p">)</span> 
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;No engineer found&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="remove_assigned_engineer_from_backlogs"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.remove_assigned_engineer_from_backlogs">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;remove/assigned/engineer&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">remove_assigned_engineer_from_backlogs</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unassigns a particular assigned engineer from their tasks. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    id: The ID of the assigned engineer.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if there were tasks to remove the given engineer from, and Fail otherwise. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; AssignedEngineerID = NULL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE AssignedEngineerID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="remove_signed_engineer_from_backlogs"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.remove_signed_engineer_from_backlogs">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;remove/signed/engineer&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">remove_signed_engineer_from_backlogs</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unassigns a particular assigned engineer from their tasks. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    id: The ID of the signed engineer.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if there were tasks to remove the given engineer from, and Fail otherwise. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; SignedEngineer = NULL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE SignedEngineer = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="remove_car_from_backlogs"><a class="viewcode-back" href="../../../API.html#cloud.api.backlogAPI.remove_car_from_backlogs">[docs]</a><span class="nd">@backlog_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;remove/car&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">remove_car_from_backlogs</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove a particular car from all engineering backlogs. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car in question.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if any records were found and updated, Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Backlogs &quot;</span><span class="p">,</span> 
+            <span class="s2">&quot; CarID = NULL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE CarID = (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;car_id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span> 
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

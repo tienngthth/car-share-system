@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+=======
+"""
+forms.py hold all the forms we import into all the user pages that need to display forms.
+"""
+>>>>>>> origin/mp-sphinx-doc
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import (StringField,
                      TextAreaField,
@@ -17,13 +23,13 @@ from datetime import *
 from wtforms.widgets.html5 import DateTimeLocalInput
 
 class LoginForm(FlaskForm):
-    """Login to the system""" 
+    """This is the login form. All fiels are required""" 
     username = StringField('Username', [DataRequired()])
     password = PasswordField('Password', [DataRequired()])
     submit = SubmitField('Log in')
 
 class RegisterForm(FlaskForm):  
-    """Create new customer account""" 
+    """This is the registration form. All fiels are required""" 
     username = StringField('Username', [DataRequired()])
     password = PasswordField('Password', [DataRequired()])
     firstname = StringField('First Name', [DataRequired()])
@@ -33,14 +39,14 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class UserBookingSearchForm(FlaskForm):   
-    """ My Booking search form for users"""
+    """ This is the booking search form for users"""
     start = StringField('Start', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     end = StringField('End', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     page = StringField('page')
     submit = SubmitField('Search')
 
 class AdminCreateCarForm(FlaskForm):
-    """New car form for admin"""
+    """This is the form for an admin user to create a new car"""
     brand = StringField('Brand',[DataRequired()])
     car_type = StringField('Type',[DataRequired()])
     mac_address = StringField('Mac Address',[DataRequired()])
@@ -81,7 +87,7 @@ class AdminCreateCarForm(FlaskForm):
     submit = SubmitField('Create')
 
 class AdminCarSearchForm(FlaskForm):
-    """Car search form for admin"""
+    """This is the car search form for admin users. It lets yo usearch by location and status unlike the customer car form"""
     brand = StringField('Brand')
     car_type = StringField('Type')
     mac_address = StringField('Mac Address')
@@ -104,13 +110,14 @@ class AdminCarSearchForm(FlaskForm):
                                  ('8', '8')
                                  ])
     cost = DecimalField('Cost')
+    location_id = StringField('LocationID')
     submit = SubmitField('Search')
 
 class AdminUpdateCarForm(FlaskForm):
-    """Update car form for admin"""
+    """This is the update car form for admin users"""
     brand = StringField('Brand')
     car_type = StringField('Type')
-    mac_address = StringField('Mac Address')
+    mac_address = StringField('MacAddress')
     color = SelectField(
         'Color',
         choices=[
@@ -155,7 +162,7 @@ class AdminUpdateCarForm(FlaskForm):
     submit = SubmitField('Update')
 
 class AdminUserSearchForm(FlaskForm):
-    """User search form for admin"""
+    """This is the user search form for admin users"""
     username = StringField('Username')
     user_type = SelectField('User Type',
                         choices=[('', 'Any'),
@@ -170,8 +177,8 @@ class AdminUserSearchForm(FlaskForm):
     submit = SubmitField('Search')
     
 class AdminUpdateUserForm(FlaskForm):
-    """Update user""" 
-    username = StringField('Username')
+    """This form lets admins update user info""" 
+    username = StringField('Usernam')
     password = PasswordField('Password')
     firstname = StringField('First Name')
     lastname = StringField('Last Name')
@@ -181,7 +188,7 @@ class AdminUpdateUserForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class UserCarSearchForm(FlaskForm):
-    """Car search form for users"""
+    """This is the car search form for customers"""
     brand = StringField('Brand')
     car_type = StringField('Type')
     color = SelectField('Color',
@@ -208,6 +215,9 @@ class UserCarSearchForm(FlaskForm):
     submit = SubmitField('Search')
 
 class NewBacklogForm(FlaskForm):
+    """
+    This is the form for admins to create new backlog items for engineers.
+    """
     engineer_ID = StringField('EngineerID')
     date = StringField('Date', [DataRequired()], widget=DateTimeLocalInput(), default=datetime.now())
     description = StringField('Description')

@@ -6,7 +6,7 @@
   <form method="POST" action="{{ url_for('admin.update_user', user_id=user_id, user_type=user_type)}}">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
     <div autocomplete="off" class="form-field" style="float:left; margin-left: 40px;">
-      {{ form.username.label }}&nbsp;&nbsp;&nbsp;&nbsp;{{ form.username }}
+      {{ form.username.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.username }}
     </div>
     <div autocomplete="off" type="password" class="form-field" style="float:left; margin-left: 40px;">
       {{ form.password.label }}&nbsp;&nbsp;&nbsp;&nbsp;{{ form.password }}
