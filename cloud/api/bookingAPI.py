@@ -99,11 +99,10 @@ def read():
         " Bookings ", 
         " WHERE CarID = %(car_id)s " +
         " AND CustomerID = %(customer_id)s " +
-        " AND RentTime <= NOW() AND NOW() <= ReturnTime AND Status = 'Booked' OR Status = 'In use'",
+        " AND RentTime <= DATE_ADD(NOW(), INTERVAL 7 HOUR) AND DATE_ADD(NOW(), INTERVAL 7 HOUR) <= ReturnTime AND (Status = 'Booked' OR Status = 'In use')",
         {
             "car_id": request.args.get("car_id"),
-            "customer_id": request.args.get("customer_id"),
-            "rent_time": request.args.get("rent_time")
+            "customer_id": request.args.get("customer_id")
         },
     ) 
     return jsonify(results)
@@ -132,7 +131,7 @@ def get_bookings_data():
     results = Database.select_record_parameterized(
         " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 
-        " WHERE Status = 'Booked' GROUP BY CarID ORDER BY Total DESC LIMIT 10",
+        " WHERE Status = 'Booked'  AND CarID != 'None' GROUP BY CarID ORDER BY Total DESC LIMIT 10",
         ()
     ) 
     return jsonify(results)

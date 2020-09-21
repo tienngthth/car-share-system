@@ -38,7 +38,7 @@ def get_backlogs_data():
     results = Database.select_record(
         " CarID, CONVERT(COUNT(CarID), SIGNED) as Total", 
         " Backlogs ", 
-        " GROUP BY CarID "
+        " WHERE CarID != 'None' GROUP BY CarID "
     ) 
     return jsonify(results)
 

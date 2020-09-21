@@ -16,6 +16,7 @@ def listen_to_client():
     
 def handle_request(message):
     try:
+        print (message)
         message = json.loads(message.replace("\'", "\""))
         message_type = message["message_type"]
         if message_type == "credential":
@@ -26,16 +27,12 @@ def handle_request(message):
             # server.send_message("DC:F7:56:2D:C1:97")
         elif message_type == "update_car_status" or message_type == "close_backlog":
             update_car_status(message)
-            # pass
-        elif message_type == "update_car_status":
-            update_car_status(message)
-            # pass
         elif message_type == "get_car_id":
             get_car_id_by_ap_addr(message)
             # server.send_message("1")
         elif message_type == "done_booking":
             done_booking(message)
-            # pass
+                # pass
     except:
         server.send_message("invalid")
 
@@ -44,13 +41,13 @@ def validate_crendential(message):
     user = verify_password(message["username"], message["password"])
     if user != "invalid":
         booking = requests.get(
-            "http://127.0.0.1:8080/bookings/read?car_id=" + message["car_id"] + 
-            "customer_id=" + user["ID"]
+            "http://127.0.0.1:8080/bookings/read?car_id=" + str(message["car_id"]) + 
+            "&customer_id=" + str(user["ID"])
         ).json()
         if len(booking) != 0:
             change_car_status("In use", message["car_id"])
-            update_booking_status("In use", booking["ID"])
-            server.send_message(str({"password": user["Password"], "booking_id": booking["ID"]}))
+            update_booking_status("In use", str(booking[0]["ID"]))
+            server.send_message(str({"password": user["Password"], "booking_id": str(booking[0]["ID"])}))
             return
     server.send_message("invalid")
 
@@ -66,6 +63,7 @@ def verify_password(username, input_password):
 # Update car status
 def done_booking(message):
     update_booking_status("Done", message["booking_id"])
+    server.send_message("Done")
 
 # Update car status
 def update_booking_status(status, booking_id):
@@ -73,11 +71,11 @@ def update_booking_status(status, booking_id):
 
 # Check for car maintainance
 def check_for_car_maintainance(message):
-    engineer_id = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=" + message["car_id"]).json()
+    engineer_id = requests.get("http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=" + str(message["car_id"])).json()
     if engineer_id != "No engineer found":
         engineer_mac_address = requests.get("http://127.0.0.1:8080/staffs/get/engineer/mac/address?id=" + str(engineer_id)).text
         if engineer_mac_address != "No mac address found":
-            server.send_message(engineer_mac_address)
+            server.send_message(str({"engineer_id": engineer_id, "engineer_mac_address": engineer_mac_address}))
             return
     server.send_message("invalid")
 
@@ -87,20 +85,21 @@ def update_car_status(message):
     # Close backlog
     if message["message_type"] == "close_backlog":
         close_backlog(message["engineer_id"], message["car_id"])
+    server.send_message("Done")
         
 def change_car_status(status, car_id):
     requests.put(
 		"http://127.0.0.1:8080/cars/update?" +
 		"status=" + status +
-		"&id=" + car_id
+		"&id=" + str(car_id)
 	)
 
 def close_backlog(engineer_id, car_id):
     requests.put(
         "http://127.0.0.1:8080/backlogs/close?" + 
-        "signed_engineer_id=" + engineer_id + "&car_id=" +  car_id
+        "signed_engineer_id=" + engineer_id + "&car_id=" +  str(car_id)
     )
-    
+
 # Get car id by ap mac address
 def get_car_id_by_ap_addr(message):
     car_id = requests.get("http://127.0.0.1:8080/cars/get/id?mac_address=" + message["ap_addr"]).text

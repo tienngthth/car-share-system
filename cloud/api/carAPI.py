@@ -132,7 +132,7 @@ def get_available_car():
         " AND Cost <= CASE WHEN %(cost)s = '' OR %(cost)s IS NULL " +
         " THEN Cost ELSE %(cost)s END " +
         " AND Cars.ID NOT IN (SELECT Bookings.CarID AS ID From Bookings " +
-        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s AND Bookings.Status NOT LIKE 'Cancelled')",
+        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s AND Bookings.Status NOT LIKE 'Cancelled' AND Bookings.CarID != NULL) ",
         {
             "mac_address": request.args.get("mac_address"), 
             "brand": request.args.get("brand"), 
@@ -144,6 +144,19 @@ def get_available_car():
             "end": request.args.get("end")
         }
     ) 
+    return jsonify(results)
+
+@car_api.route("test")
+def test():
+    results = Database.select_record_parameterized(
+        " DISTINCT Bookings.CarID ",
+        " Bookings ",
+        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s AND Status NOT LIKE 'Cancelled' ",
+        {
+            "start": request.args.get("start"),
+            "end": request.args.get("end")
+        }
+    )
     return jsonify(results)
 
 @car_api.route("get/id")
