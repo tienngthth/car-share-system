@@ -39,15 +39,15 @@ This document describes:
 2. [Architecture](#architecture)
 
   * [Master Pi](#master-pi)
-  * [Web application API endpoints](#web-application-api-endpoints)
     
-      * [Cloud database](#-cloud-database)
-      * [Clould database API end points](#clould-database-api-endpoints)
-      
+    * [Web application API endpoints](#web-application-api-endpoints)
+    * [Clould database API end points](#cloud-database)
+    
   * [Agent Pi](#agent-pi)
-  * [Local database](#local-database)
-  * [Object recognition](#object-recognition)
-  * [Socket communication](#socket-communication)
+  
+    * [Local database](#local-database)
+    * [Object recognition](#object-recognition)
+    * [Socket communication](#socket-communication)
   
 3. [Instruction](#instruction)
 
