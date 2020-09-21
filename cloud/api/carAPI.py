@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-  
+"""
+carAPI.py defines all the functions regarding CRUD on cars, as well as a car's booking history
+"""
 from flask import Blueprint, request
 from database import Database
 from flask.json import jsonify
@@ -8,6 +11,21 @@ car_api = Blueprint("car_api", __name__)
 
 @car_api.route("/create", methods=['GET', 'POST'])
 def create():
+    """
+    This creates a new car. Parameters:
+    
+    mac_address: The MAC address of the car's agent Pi
+    brand: The brand of the car e.g. Honda
+    type: The make of the car, e.g. Civic
+    location_id: The location of the car
+    status: Whether the car requires repairs, is booked, or available
+    color: The color of the car. We use a list of colors in the UI but Other is an option.
+    seat: How many seats there are in the car
+    cost: The hourly cost of renting the car
+    
+    Returns Done or an error
+    
+    """
     try:
         Database.insert_record_parameterized(
             "Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) ",
@@ -29,6 +47,9 @@ def create():
 
 @car_api.route("/update", methods=['GET', 'PUT'])
 def update():
+    """
+    Updates a car. Functions the same as create()
+    """
     try:
         Database.update_record_parameterized(
             " Cars ",
@@ -67,6 +88,13 @@ def update():
 
 @car_api.route("/delete", methods=['GET', 'DELETE'])
 def delete_car():
+    """
+    Deletes a car. Parameters:
+    
+    car_id: The car to delete
+    
+    Returns Success if a record was deleted, Fail otherwise
+    """
     try:
         Database.delete_record_parameterized(
             " Cars ",
@@ -79,6 +107,21 @@ def delete_car():
 
 @car_api.route("/read")
 def read():
+    """
+    This searches for a cars mathing a set of criteria. Parameters:
+    
+    mac_address: The MAC address of the car's agent Pi
+    brand: The brand of the car e.g. Honda
+    type: The make of the car, e.g. Civic
+    location_id: The location of the car
+    status: Whether the car requires repairs, is booked, or available
+    color: The color of the car. We use a list of colors in the UI but Other is an option.
+    seat: How many seats there are in the car
+    cost: The hourly cost of renting the car
+    
+    Returns a dictionary containing cars that match the search criteria
+    
+    """
     results = Database.select_record_parameterized(
         " Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.MacAddress, " +
         " Cars.Seat, Locations.Address, Cars.Cost, Cars.Status", 
@@ -114,6 +157,14 @@ def read():
 
 @car_api.route("/status/available")
 def get_available_car():
+    """
+    Gets only cars available for booking during a certian time period. Parameters are the same as read() except:
+    
+    start: The start time a customer wants to book for
+    end: The time a customer wants to return the car
+    
+    Returns a dictionary of cars that match the search criteria.
+    """
     results = Database.select_record_parameterized(
         " Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.MacAddress, " +
         " Cars.Seat, Locations.Address, Cars.Cost, Cars.Status",
@@ -146,21 +197,15 @@ def get_available_car():
     ) 
     return jsonify(results)
 
-@car_api.route("test")
-def test():
-    results = Database.select_record_parameterized(
-        " DISTINCT Bookings.CarID ",
-        " Bookings ",
-        " WHERE Bookings.RentTime <= %(end)s AND Bookings.ReturnTime >= %(start)s AND Status NOT LIKE 'Cancelled' ",
-        {
-            "start": request.args.get("start"),
-            "end": request.args.get("end")
-        }
-    )
-    return jsonify(results)
-
 @car_api.route("get/id")
 def get_car_id_by_mac_address():
+    """
+    Gets a car ID given the MAC address of its installed agent Pi. Parameters:
+    
+    mac_address: The mac address of the agent Pi
+    
+    Returns No car found if no results were found. Otherwise, returns the id of a car.
+    """
     results = Database.select_record_parameterized(
         " ID ",
         " Cars ",
@@ -174,6 +219,13 @@ def get_car_id_by_mac_address():
 
 @car_api.route("history")
 def get_car_history():
+    """
+    Returns the booking history of a car. Parameters:
+    
+    id: the id of the car in question
+    
+    Returns the booking history of the car as a dictionary
+    """
     results = Database.select_record_parameterized(
         " Bookings.ID, Bookings.CarID, Bookings.CustomerID, Bookings.RentTime, " +
         " Bookings.ReturnTime, Bookings.TotalCost, Bookings.Status ", 
