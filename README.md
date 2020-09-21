@@ -70,7 +70,7 @@ There are 15 different branches beside the default master. Contributors are usin
 
 ![Github](images/git_branches.png)
 
-Review [distribution.txt](https://github.com/tienngthth/car-share-system/docs/distribution.txt) for more work distribution details.
+Review [distribution.txt](https://github.com/tienngthth/car-share-system/blob/master-pi/distribution.txt) for more work distribution details.
 
 #### Activities
 
