@@ -428,3 +428,4 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 * [Real time face recognition](https://www.hackster.io/mjrobot/real-time-face-recognition-an-end-to-end-project-a10826)
 * [Barcode and QR code scanner](https://www.pyimagesearch.com/2018/05/21/an-opencv-barcode-and-qr-code-scanner-with-zbar/)
 * [Oauth2 web server](https://developers.google.com/identity/protocols/oauth2/web-server)
+* [Connecting MySQL client using public IP](https://cloud.google.com/sql/docs/mysql/connect-admin-ip)
