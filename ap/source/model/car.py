@@ -46,7 +46,7 @@ class Car:
     @staticmethod 
     def detect_device(device_mac_address):
         # Wait until bluetooth is on and stable (loop throught the unstable period)
-        for i in range(1):         
+        for i in range(3):         
             try:
                 sleep(2)   
                 # Get all nearby devices mac address
