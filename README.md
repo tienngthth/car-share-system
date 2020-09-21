@@ -56,6 +56,10 @@ This document describes:
   
 4. [Acknowledgments](#acknowledgments)
 
+Review the Sphinx documentation for full code overview.
+* Open mp/docs/build/html/index.html for mp Sphinx documention
+* Open ap/docs/build/html/index.html for ap Sphinx documention
+
 ## Activities
 
 This project has been developed for around 6 weeks. Git, git hub, Trello, Google Drive have been used from the beginning of the project to manage the work and help contributors to collaborate with each other. 
@@ -115,10 +119,6 @@ Each card is assigned for the members with their color code, Yellow - Minh, Oran
 ## Architecture
 
 ![Architecture](images/architecture.png)
-
-Review the Sphinx documentation for full code overview.
-* Open mp/docs/build/html/index.html for mp Sphinx documention
-* Open ap/docs/build/html/index.html for ap Sphinx documention
 
 Following is the description of the architecture components.
 
