@@ -430,3 +430,6 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 * [Google Data Studio](https://www.seerinteractive.com/blog/google-data-studio-whats-working-whats-missing/)
 * [Graph Configuration Using Chart.js](https://www.chartjs.org/)
 * [Flask app](https://flask.palletsprojects.com/en/1.1.x/tutorial/factory/)
+* [Real time face recognition](https://www.hackster.io/mjrobot/real-time-face-recognition-an-end-to-end-project-a10826)
+* [OAuth 2.0 Web Server](https://developers.google.com/identity/protocols/oauth2/web-server)
+* [Connecting MySQL client using public IP](https://cloud.google.com/sql/docs/mysql/connect-admin-ip)
