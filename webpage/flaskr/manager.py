@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+manager.py is where we define all the control logic for pages the manager can use. 
+"""
 from flask import Blueprint, g, redirect, render_template
 from flask import request, url_for
 from .auth import login_required
@@ -10,6 +13,9 @@ manager = Blueprint("manager", __name__)
 @manager.route("/dashboard", methods=("GET",))
 @login_required
 def manager_dashboard():
+    """
+    This is the manager dashboard. They can select one of three graph types to display.
+    """
     if g.type != "Manager":
         return redirect(url_for("home.index"))
     if request.method == "GET":
@@ -18,6 +24,9 @@ def manager_dashboard():
 @manager.route("/bar_chart", methods=("GET",))
 @login_required
 def bar_chart():
+    """
+    This displays the Most Booked Cars bar chart.
+    """
     if g.type != "Manager":
         return redirect(url_for("home.index"))
     data = requests.get("http://127.0.0.1:8080/bookings/get/data").json()
@@ -27,6 +36,9 @@ def bar_chart():
 @manager.route("/line_chart", methods=("GET", "POST"))
 @login_required
 def line_chart():
+    """
+    This displays the Gross Profit by Date line chart.
+    """
     if g.type != "Manager":
         return redirect(url_for("home.index"))
     data = requests.get("http://127.0.0.1:8080/bookings/get/profit/data").json()
@@ -36,6 +48,9 @@ def line_chart():
 @manager.route("/pie_chart", methods=("GET",))
 @login_required
 def pie_chart():
+    """
+    This displays the Most Repaired Cars pie chart.
+    """
     if g.type != "Manager":
         return redirect(url_for("home.index"))
     pie_colors = [
