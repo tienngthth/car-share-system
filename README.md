@@ -118,7 +118,7 @@ Each card is assigned for the members with their color code, Yellow - Minh, Oran
 
 Review the Sphinx documentation for full code overview.
 * Open mp/docs/build/html/index.html for mp Sphinx documention
-* Open ap/docs/build/html/index.html for mp Sphinx documention
+* Open ap/docs/build/html/index.html for ap Sphinx documention
 
 ### Master Pi
 
