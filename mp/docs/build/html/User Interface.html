@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Interface &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Validators" href="Validators.html" />
+    <link rel="prev" title="Database" href="Database.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="user-interface">
+<h1>User Interface<a class="headerlink" href="#user-interface" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-flaskr.admin">
+<span id="admin-interface"></span><h2>Admin Interface<a class="headerlink" href="#module-flaskr.admin" title="Permalink to this headline">¶</a></h2>
+<p>admin.py contains the control logic for all pages for user_type=Admin</p>
+<dl class="py function">
+<dt id="flaskr.admin.car_bookings">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">car_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#car_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.car_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gets all bookings for a given car. It’s accessed by pressing a button on the admin car search page.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.car_view">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">car_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#car_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.car_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the car search function for Admin users. If you access it via GET request, we assume you are arriving for the first time and display a search form with no listed cars. If you access it via POST request, we assume you’ve completed the search form and instead return both the search form and a table with results. Only Admin has access.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.create_car">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">create_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#create_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.create_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This loads a form for the admin user to create a new car</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.delete_car">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">delete_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#delete_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.delete_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This deletes a car. Parameters:</p>
+<p>car_id: The id of the car to delete</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.delete_user">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">delete_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#delete_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.delete_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This lets the admin user delete users – it is never called directly as a view but only by a button.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.display_all_cars">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">display_all_cars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#display_all_cars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.display_all_cars" title="Permalink to this definition">¶</a></dt>
+<dd><p>If no search fields are filled or under certain errors, we show all users with this function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.display_all_users">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">display_all_users</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#display_all_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.display_all_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>If no search fields are filled, we show all users with this function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.report_car">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">report_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#report_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.report_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This flags a car to be repaired by an engineer. Accessed by searching for a car, then selecting the update button.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.search_car">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">search_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#search_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.search_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the control logic that receives data from WTForms and returns cars.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.search_user">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">search_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#search_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.search_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the control logic that receives data from WTForms and returns users.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.send_email">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">send_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">receiver</span></em>, <em class="sig-param"><span class="n">car_id</span></em>, <em class="sig-param"><span class="n">description</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#send_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.send_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sends out an email to an engineer when a new repair request is made. We used a HTML email template from [<a class="reference external" href="https://github.com/leemunroe/responsive-html-email-template">https://github.com/leemunroe/responsive-html-email-template</a>] and modified it with the input to this function. Parameters:</p>
+<p>receiver: Email address of the person receiving the email. 
+car_id: The car_id that needs repair
+description: A short description of the repairs to make.</p>
+<p>Note that the sending address needs to have ‘allow less secure’ authentication methods enabled in Gmail so that it can use smtp authentication instead of OAuth2.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.update_car">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">update_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#update_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.update_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>On POST request, this creates a car. On GET, it returns a form to fill out to update a car. Parameters:</p>
+<p>car_id: The id of the car to update.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.update_user">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">update_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#update_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.update_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This page provides a form for the admin user to update users on GET. On POST, it updates the user instead. Parameters:</p>
+<p>user_id: The id of the user
+user_type: The type of the user, e.g. engineer</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.user_view">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">user_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#user_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.user_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the user search function for Admin users. If you access it via GET request, we assume you are arriving for the first time and display a search form with no listed users. If you access it via POST request, we assume you’ve completed the search form and instead return both the search form and a table with results. Only Admin has access.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.admin.validate_search_input">
+<code class="sig-prename descclassname">flaskr.admin.</code><code class="sig-name descname">validate_search_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">phone</span></em>, <em class="sig-param"><span class="n">email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/admin.html#validate_search_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.admin.validate_search_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the validation logic for the user search form. We check username and phone number against a regex if they exist.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.auth">
+<span id="authentication-interface"></span><h2>Authentication Interface<a class="headerlink" href="#module-flaskr.auth" title="Permalink to this headline">¶</a></h2>
+<p>auth.py contains all the functions related to user authentication.</p>
+<dl class="py function">
+<dt id="flaskr.auth.load_logged_in_user">
+<code class="sig-prename descclassname">flaskr.auth.</code><code class="sig-name descname">load_logged_in_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/auth.html#load_logged_in_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.auth.load_logged_in_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a user id is stored in the session, load the user object from
+the database into <code class="docutils literal notranslate"><span class="pre">g.user</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.auth.login">
+<code class="sig-prename descclassname">flaskr.auth.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/auth.html#login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.auth.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the login form. The form code is located in forms.py. If you pass it a GET request, it serves you the form. If you pass it a POST request, it treats it as a form submission. Parameters:</p>
+<p>username: your username
+password: your password</p>
+<p>On submission, if your credentials are correct, it will create a session for the logged in user until they log out. The page you are redirected to depends on your user type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.auth.login_required">
+<code class="sig-prename descclassname">flaskr.auth.</code><code class="sig-name descname">login_required</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">view</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/auth.html#login_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.auth.login_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>This redirects anonymous users to the login page when they try to access a page when not logged in.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.auth.logout">
+<code class="sig-prename descclassname">flaskr.auth.</code><code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/auth.html#logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.auth.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is to log out. It clears the current session.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.auth.register">
+<code class="sig-prename descclassname">flaskr.auth.</code><code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/auth.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.auth.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a new user. Validates that the username is not already taken. Hashes the password for security in another function. The form code is is forms.py.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.customer">
+<span id="customer-interface"></span><h2>Customer Interface<a class="headerlink" href="#module-flaskr.customer" title="Permalink to this headline">¶</a></h2>
+<p>All the control logic for the pages in the customer interface resides here.</p>
+<dl class="py function">
+<dt id="flaskr.customer.authorize">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">authorize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#authorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.authorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start OAUTH2 authorization flow, passing it to the next step /oauth2callback</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.book_car">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">book_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#book_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.book_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Books a car for a customer. It gets the dates from the dates they chose to search for. It also uses these to estimate the total cost of the booking, which is needed by the confirmation page it returns (we round up to nearest hour).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.booking_view">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">booking_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#booking_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.booking_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>On a GET request, we display all of the logged in user’s bookings. On a POST request, we expect form data that includes a start time and end time to limit the booking search.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.cancel_booking">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">cancel_booking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#cancel_booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.cancel_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the user presses the Cancel Booking button, then the booking id is passed here for cancellation, and return them to their bookings page. Parameters:</p>
+<p>booking_id: the booking id to cancel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.car_view">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">car_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#car_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.car_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the customer home page, where they can search for and book cars.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.confirm_booking">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">confirm_booking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#confirm_booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.confirm_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a customer clicks ‘confirm’ on the booking confirmation page, the data will be sent here to create the booking. Then the user will be redirected to a handler for google calendar scheduling. Parameters:</p>
+<p>car_id: The id of the car being booked
+start_date: A string with the datetime when the booking begins 
+end_date: A string with the datetime when the booking ends
+total_cost: The total estimated cost of the booking, calculated earlier in book_car()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.credentials_to_dict">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">credentials_to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">credentials</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#credentials_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.credentials_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Covert credentials file to a dictionary, then pass it back to the function that calls this.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.delete_calendar">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">delete_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#delete_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.delete_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the user cancels the booking, the booking status will be changed to ‘Cancelled’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.delete_event">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">delete_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#delete_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.delete_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the user cancels the booking, the calendar event will be removed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.display_all_bookings">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">display_all_bookings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#display_all_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.display_all_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a page with a new search form, along with all bookings for the current user.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.display_match_bookings">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">display_match_bookings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em>, <em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#display_match_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.display_match_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a page with a new search form, along with the bookings that match the time range supplied.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.display_no_car">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">display_no_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#display_no_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.display_no_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display car search form, with no cars. This is what we do if a customer submits a GET request to their home page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.filter_booking">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">filter_booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#filter_booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.filter_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where we filter results to a range of time. Parameters:</p>
+<p>start_date: The start date, format determined by the HTML5 datetime selector
+end_date: The end date, format determined by the HTML5 datetime selector</p>
+<p>Returns a results page with just the bookings for the time range. IF no time range is set, it displays all bookings for the current user.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.insert_event">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">insert_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#insert_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.insert_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is what we send to the Google Calendar API to issue the car booking event.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.oauth2callback">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">oauth2callback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#oauth2callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.oauth2callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish OAUTH2 Authorization flow, and pass the resulting credentials to be further processed. Take the result and send the calendar invite.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.search_car">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">search_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#search_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.search_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search available cars, and display the result in a table with an option to book each. Parameters:</p>
+<p>brand: The brand of the car, e.g. Honda
+car_type = The make of the car, e.g. Civic
+color = The color of the car – it’s a dropdown select list.
+seat = Number of seats, also a drop-down select list. Common cars only have a few different number of seats.
+cost = The max hourly rental cost the user wishes to pay.
+start_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.
+end_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.send_calendar">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">send_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#send_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.send_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function issues a Google Calendar event if the user’s Calendar credentials exist in the session. If they don’t exist, we redirect them to /authorize to fix that.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.customer.view_booking_detail">
+<code class="sig-prename descclassname">flaskr.customer.</code><code class="sig-name descname">view_booking_detail</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/customer.html#view_booking_detail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.customer.view_booking_detail" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a user click the Details button after searching for their bookings, they end up here. The booking details are displayed. Parameters:</p>
+<p>booking: The booking id</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.engineer">
+<span id="engineer-interface"></span><h2>Engineer Interface<a class="headerlink" href="#module-flaskr.engineer" title="Permalink to this headline">¶</a></h2>
+<p>engineer.py defines the control logic for all the pages the engineer has access to.</p>
+<dl class="py function">
+<dt id="flaskr.engineer.backlog_view">
+<code class="sig-prename descclassname">flaskr.engineer.</code><code class="sig-name descname">backlog_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/engineer.html#backlog_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.engineer.backlog_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>This displays all cars requiring repairs. It only responds to GET requests.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.engineer.close_backlog">
+<code class="sig-prename descclassname">flaskr.engineer.</code><code class="sig-name descname">close_backlog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/engineer.html#close_backlog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.engineer.close_backlog" title="Permalink to this definition">¶</a></dt>
+<dd><p>This allows the engineer to mar a cr as repaired, making it available once again. Parameters:</p>
+<p>car_id: The id of the car that was repaired.</p>
+<p>Once done, it redirects the user back to the engineer home page.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.engineer.location_map">
+<code class="sig-prename descclassname">flaskr.engineer.</code><code class="sig-name descname">location_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/engineer.html#location_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.engineer.location_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a car and location identifier, this returns a map for the engineer to follow. Parameters:</p>
+<p>car_id: the id of the car we’re looking for
+location_id: The id of the location the car is at</p>
+<p>Returns a HTML render containing a map.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.manager">
+<span id="manager-interface"></span><h2>Manager Interface<a class="headerlink" href="#module-flaskr.manager" title="Permalink to this headline">¶</a></h2>
+<p>manager.py is where we define all the control logic for pages the manager can use.</p>
+<dl class="py function">
+<dt id="flaskr.manager.bar_chart">
+<code class="sig-prename descclassname">flaskr.manager.</code><code class="sig-name descname">bar_chart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/manager.html#bar_chart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.manager.bar_chart" title="Permalink to this definition">¶</a></dt>
+<dd><p>This displays the Most Booked Cars bar chart.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.manager.line_chart">
+<code class="sig-prename descclassname">flaskr.manager.</code><code class="sig-name descname">line_chart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/manager.html#line_chart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.manager.line_chart" title="Permalink to this definition">¶</a></dt>
+<dd><p>This displays the Gross Profit by Date line chart.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.manager.manager_dashboard">
+<code class="sig-prename descclassname">flaskr.manager.</code><code class="sig-name descname">manager_dashboard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/manager.html#manager_dashboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.manager.manager_dashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the manager dashboard. They can select one of three graph types to display.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.manager.pie_chart">
+<code class="sig-prename descclassname">flaskr.manager.</code><code class="sig-name descname">pie_chart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/manager.html#pie_chart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.manager.pie_chart" title="Permalink to this definition">¶</a></dt>
+<dd><p>This displays the Most Repaired Cars pie chart.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.forms">
+<span id="forms"></span><h2>Forms<a class="headerlink" href="#module-flaskr.forms" title="Permalink to this headline">¶</a></h2>
+<p>forms.py hold all the forms we import into all the user pages that need to display forms.</p>
+<dl class="py class">
+<dt id="flaskr.forms.AdminCarSearchForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">AdminCarSearchForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#AdminCarSearchForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.AdminCarSearchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the car search form for admin users. It lets yo usearch by location and status unlike the customer car form</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.AdminCreateCarForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">AdminCreateCarForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#AdminCreateCarForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.AdminCreateCarForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the form for an admin user to create a new car</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.AdminUpdateCarForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">AdminUpdateCarForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#AdminUpdateCarForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.AdminUpdateCarForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the update car form for admin users</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.AdminUpdateUserForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">AdminUpdateUserForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#AdminUpdateUserForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.AdminUpdateUserForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This form lets admins update user info</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.AdminUserSearchForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">AdminUserSearchForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#AdminUserSearchForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.AdminUserSearchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the user search form for admin users</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.LoginForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">LoginForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#LoginForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.LoginForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the login form. All fiels are required</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.NewBacklogForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">NewBacklogForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#NewBacklogForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.NewBacklogForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the form for admins to create new backlog items for engineers.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.RegisterForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">RegisterForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#RegisterForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.RegisterForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the registration form. All fiels are required</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.UserBookingSearchForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">UserBookingSearchForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#UserBookingSearchForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.UserBookingSearchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the booking search form for users</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="flaskr.forms.UserCarSearchForm">
+<em class="property">class </em><code class="sig-prename descclassname">flaskr.forms.</code><code class="sig-name descname">UserCarSearchForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/forms.html#UserCarSearchForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.forms.UserCarSearchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the car search form for customers</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-flaskr.home">
+<span id="homepages"></span><h2>Homepages<a class="headerlink" href="#module-flaskr.home" title="Permalink to this headline">¶</a></h2>
+<p>home.py defines which page is the home page for different user types.</p>
+<dl class="py function">
+<dt id="flaskr.home.index">
+<code class="sig-prename descclassname">flaskr.home.</code><code class="sig-name descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/home.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.home.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>This redirects different user types to their respective home pages after they log in.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flaskr.home.page_not_found">
+<code class="sig-prename descclassname">flaskr.home.</code><code class="sig-name descname">page_not_found</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">e</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskr/home.html#page_not_found"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskr.home.page_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an error handler for 404 page not found errors.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.admin">Admin Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.auth">Authentication Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.customer">Customer Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.engineer">Engineer Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.manager">Manager Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.forms">Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flaskr.home">Homepages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Validators.html">Validators</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/User Interface.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/User Interface.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Database" href="Database.html" />
+    <link rel="prev" title="Server" href="Server.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cloud.api.api">
+<span id="main-file"></span><h2>Main file<a class="headerlink" href="#module-cloud.api.api" title="Permalink to this headline">¶</a></h2>
+<p>api.py mainly manages collects all the branches of the API that we wrote. It also defines an errorhandler, and a function to return a user’s hashed password, and a function to return a user’s type.
+Uses UTF-8 encoding</p>
+<dl class="py function">
+<dt id="cloud.api.api.get_user">
+<code class="sig-prename descclassname">cloud.api.api.</code><code class="sig-name descname">get_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_type</span></em>, <em class="sig-param"><span class="n">username</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/api.html#get_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.api.get_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns a user entry from the database given their name and type. Parameters:</p>
+<p>username: The username
+user_type: The user type, e.g. engineer</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.api.get_user_info">
+<code class="sig-prename descclassname">cloud.api.api.</code><code class="sig-name descname">get_user_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/api.html#get_user_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.api.get_user_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns a user’s hashed password.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.api.page_not_found">
+<code class="sig-prename descclassname">cloud.api.api.</code><code class="sig-name descname">page_not_found</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">e</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/api.html#page_not_found"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.api.page_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>This errorhandler passes the error text defined here whenever a user gets a 404 page not found error</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.backlogAPI">
+<span id="backlog-api"></span><h2>Backlog API<a class="headerlink" href="#module-cloud.api.backlogAPI" title="Permalink to this headline">¶</a></h2>
+<p>backlogAPI.py defines the backlog API, whcih handles requests for engineers to repair cars.</p>
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.close_backlog">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">close_backlog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#close_backlog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.close_backlog" title="Permalink to this definition">¶</a></dt>
+<dd><p>This closes an engineering backlog task as complete. Parameters:</p>
+<p>signed_engineer_id: The ID of the engineer responsible for this repair
+car_id: The car that was just repaired</p>
+<p>The function will return Success if all parameters are valid, and Fail if not.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.create_backlog">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">create_backlog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#create_backlog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.create_backlog" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a new engineering backlog entry. Parameters:</p>
+<p>assigned_engineer_id: The ID of the engineer responsible for this task
+car_id: The car the engineer is assigned to repair
+status: The status of the car. Needs to be set to Repair
+description: Description of repairs required</p>
+<p>If all parameters are present and valid, the function returns Success, otherwise it returns Fail</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.get_all_backlogs">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">get_all_backlogs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#get_all_backlogs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.get_all_backlogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a JSON object of all engineering backlog tasks. No parameters required.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.get_backlogs_data">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">get_backlogs_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#get_backlogs_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.get_backlogs_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a JSON object of all car id and its occurances. No parameters required.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.get_engineer_id">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">get_engineer_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#get_engineer_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.get_engineer_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ID of the engineer assigned to repair a particular car. Parameters:</p>
+<p>car_id: The car in question.</p>
+<p>Returns the engineer ID if there is an open task for that car, otherwise will return No engineer found.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.remove_assigned_engineer_from_backlogs">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">remove_assigned_engineer_from_backlogs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#remove_assigned_engineer_from_backlogs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.remove_assigned_engineer_from_backlogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unassigns a particular assigned engineer from their tasks. Parameters:</p>
+<p>id: The ID of the assigned engineer.</p>
+<p>Returns Success if there were tasks to remove the given engineer from, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.remove_car_from_backlogs">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">remove_car_from_backlogs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#remove_car_from_backlogs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.remove_car_from_backlogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a particular car from all engineering backlogs. Parameters:</p>
+<p>car_id: The car in question.</p>
+<p>Returns Success if any records were found and updated, Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.backlogAPI.remove_signed_engineer_from_backlogs">
+<code class="sig-prename descclassname">cloud.api.backlogAPI.</code><code class="sig-name descname">remove_signed_engineer_from_backlogs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/backlogAPI.html#remove_signed_engineer_from_backlogs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.backlogAPI.remove_signed_engineer_from_backlogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unassigns a particular assigned engineer from their tasks. Parameters:</p>
+<p>id: The ID of the signed engineer.</p>
+<p>Returns Success if there were tasks to remove the given engineer from, and Fail otherwise.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.bookingAPI">
+<span id="booking-api"></span><h2>Booking API<a class="headerlink" href="#module-cloud.api.bookingAPI" title="Permalink to this headline">¶</a></h2>
+<p>bookingAPI.py defines the backlog API, whcih handles requests for engineers to repair cars.</p>
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.add_calendar_booking">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">add_calendar_booking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#add_calendar_booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.add_calendar_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the booking with the calendar ID.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.create">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a new booking. Parameters:</p>
+<p>customer_id: The ID of the customer making the booking
+car_id: the ID of the car being booked
+rent_time: The datetime where the user will start renting the car
+return_time: The datetime where the user is supposed to return the car
+total_cost: The expected total invoice for the rental during this period</p>
+<p>The function returns Success if a new record is created, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_all_customer_bookings">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_all_customer_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_all_customer_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_all_customer_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of all bookings for a given customer and car. Parameters:</p>
+<p>car_id: The car in question
+customer_id: The customer in question</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_bookings_data">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_bookings_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_bookings_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_bookings_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the profit data by car id</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_customer_bookings_by_time">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_customer_bookings_by_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_customer_bookings_by_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_customer_bookings_by_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of all bookings for a given customer and car, for a given time period. Parameters:</p>
+<p>car_id: The car in question
+customer_id: The customer in question
+start: The datetime to start the search period
+end: the datetime to end the search period</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_longest_duration">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_longest_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_longest_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_longest_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of the longest signle booking for each car, organized by car. No parameters required.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_most_profit">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_most_profit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_most_profit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_most_profit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the most profitable car by day as a list. No parameters required.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.get_profit_data">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">get_profit_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#get_profit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.get_profit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the profit data by date.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.read">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns any bookings for a given car and user that should be active presently, e.g. where the customer is presently in the car. Parameters:</p>
+<p>car_id: The car in question
+customer_id: the customer in question</p>
+<p>Returns a dictionary of bookings. The results can be empty.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.read_last_record">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">read_last_record</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#read_last_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.read_last_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last booking that the user has just booked, in order to save the calendar id back to the record. Parameters:</p>
+<p>car_id: the car id
+customer_id: the customer id
+rent_time: rent_time</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.read_record">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">read_record</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#read_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.read_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a booking by id. Parameters:</p>
+<p>id: the booking id</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.remove_car_from_bookings">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">remove_car_from_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#remove_car_from_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.remove_car_from_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a car from all bookings. Parameters:</p>
+<p>car_id: The car in question</p>
+<p>Returns Success if any records were changed, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.remove_customer_from_bookings">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">remove_customer_from_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#remove_customer_from_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.remove_customer_from_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a customer from all bookings. Parameters:</p>
+<p>customer_id: The customer in question</p>
+<p>Returns Success if any records were changed, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.update">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the status of a booking, e.g. to indicate the customer has unlocked the car. Parameters:</p>
+<p>status: The new status for the booking</p>
+<p>Returns Success if a record was updated, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.bookingAPI.update_passed_bookings">
+<code class="sig-prename descclassname">cloud.api.bookingAPI.</code><code class="sig-name descname">update_passed_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/bookingAPI.html#update_passed_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.bookingAPI.update_passed_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancell of the booking that were in the the pass. No parameteres required.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.carAPI">
+<span id="car-api"></span><h2>Car API<a class="headerlink" href="#module-cloud.api.carAPI" title="Permalink to this headline">¶</a></h2>
+<p>carAPI.py defines all the functions regarding CRUD on cars, as well as a car’s booking history</p>
+<dl class="py function">
+<dt id="cloud.api.carAPI.create">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>This creates a new car. Parameters:</p>
+<p>mac_address: The MAC address of the car’s agent Pi
+brand: The brand of the car e.g. Honda
+type: The make of the car, e.g. Civic
+location_id: The location of the car
+status: Whether the car requires repairs, is booked, or available
+color: The color of the car. We use a list of colors in the UI but Other is an option.
+seat: How many seats there are in the car
+cost: The hourly cost of renting the car</p>
+<p>Returns Done or an error</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.delete_car">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">delete_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#delete_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.delete_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a car. Parameters:</p>
+<p>car_id: The car to delete</p>
+<p>Returns Success if a record was deleted, Fail otherwise</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.get_available_car">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">get_available_car</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#get_available_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.get_available_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets only cars available for booking during a certian time period. Parameters are the same as read() except:</p>
+<p>start: The start time a customer wants to book for
+end: The time a customer wants to return the car</p>
+<p>Returns a dictionary of cars that match the search criteria.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.get_car_history">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">get_car_history</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#get_car_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.get_car_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the booking history of a car. Parameters:</p>
+<p>id: the id of the car in question</p>
+<p>Returns the booking history of the car as a dictionary</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.get_car_id_by_mac_address">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">get_car_id_by_mac_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#get_car_id_by_mac_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.get_car_id_by_mac_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a car ID given the MAC address of its installed agent Pi. Parameters:</p>
+<p>mac_address: The mac address of the agent Pi</p>
+<p>Returns No car found if no results were found. Otherwise, returns the id of a car.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.read">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>This searches for a cars mathing a set of criteria. Parameters:</p>
+<p>mac_address: The MAC address of the car’s agent Pi
+brand: The brand of the car e.g. Honda
+type: The make of the car, e.g. Civic
+location_id: The location of the car
+status: Whether the car requires repairs, is booked, or available
+color: The color of the car. We use a list of colors in the UI but Other is an option.
+seat: How many seats there are in the car
+cost: The hourly cost of renting the car</p>
+<p>Returns a dictionary containing cars that match the search criteria</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.carAPI.update">
+<code class="sig-prename descclassname">cloud.api.carAPI.</code><code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/carAPI.html#update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.carAPI.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a car. Functions the same as create()</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.customerAPI">
+<span id="customer-api"></span><h2>Customer API<a class="headerlink" href="#module-cloud.api.customerAPI" title="Permalink to this headline">¶</a></h2>
+<p>customerAPI.py handles CRUD on customer users, and also a check if a given username exists.</p>
+<dl class="py function">
+<dt id="cloud.api.customerAPI.check_username">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">check_username</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#check_username"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.check_username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a username exists. Parameters:</p>
+<p>username: the username of the user</p>
+<p>Returns 0 if the username does not exist, otherwise returns a count of the number of users with that name. Should never exceed 1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.customerAPI.create">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a customer. Parameters:</p>
+<p>username: The username requested
+password: The user’s requested password. Will be SHA256 hashed before storing.
+first_name: The user’s first name
+last_name: The user’s last name
+email: The user’s email address. Validated elsewhere by regex.
+phone: The user’s phone number</p>
+<p>Returns Success if an entry is created, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.customerAPI.delete">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a user. Parameters:</p>
+<p>id: The user id of the user to delete.</p>
+<p>Returns Success if an entry was deleted, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.customerAPI.get_id">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">get_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#get_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a user’s id given their username. Parameters:</p>
+<p>username: The username of the user</p>
+<p>Returns invalid if no users found, or the user ID of the first result (there should only ever be one) otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.customerAPI.read">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for all customer users that match a set of criteria. Parameters:
+id: The user’s id
+username: The user’s username
+first_name: The user’s first name
+last_name: The user’s last name
+email: The user’s email address. Validated elsewhere by regex.
+phone: The user’s phone number</p>
+<p>Returns a dictionary containing all matches.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.customerAPI.update">
+<code class="sig-prename descclassname">cloud.api.customerAPI.</code><code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/customerAPI.html#update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.customerAPI.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a user. Functions exactly like create()</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.locationAPI">
+<span id="location-api"></span><h2>Location API<a class="headerlink" href="#module-cloud.api.locationAPI" title="Permalink to this headline">¶</a></h2>
+<p>locationAPI.py contains only a function to return details on a given location.</p>
+<dl class="py function">
+<dt id="cloud.api.locationAPI.get_location">
+<code class="sig-prename descclassname">cloud.api.locationAPI.</code><code class="sig-name descname">get_location</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/locationAPI.html#get_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.locationAPI.get_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns details (e.g. latitude, longitude) of a defined location. Parameters:</p>
+<p>id: The id of the location in question</p>
+<p>Returns a dictionary with the location details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloud.api.staffAPI">
+<span id="staff-api"></span><h2>Staff API<a class="headerlink" href="#module-cloud.api.staffAPI" title="Permalink to this headline">¶</a></h2>
+<p>staffAPI.py handles CRUD on staff users, and also a check if a given username exists.</p>
+<dl class="py function">
+<dt id="cloud.api.staffAPI.check_username">
+<code class="sig-prename descclassname">cloud.api.staffAPI.</code><code class="sig-name descname">check_username</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/staffAPI.html#check_username"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.staffAPI.check_username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a username exists.</p>
+<p>username: the user’s username</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.staffAPI.delete">
+<code class="sig-prename descclassname">cloud.api.staffAPI.</code><code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/staffAPI.html#delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.staffAPI.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a staff. Parameters:</p>
+<p>id: The user id of the user to delete.</p>
+<p>Returns Success if an entry was deleted, and Fail otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.staffAPI.get_engineer_mac_address">
+<code class="sig-prename descclassname">cloud.api.staffAPI.</code><code class="sig-name descname">get_engineer_mac_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/staffAPI.html#get_engineer_mac_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.staffAPI.get_engineer_mac_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get engineer mac address. Parameters:</p>
+<p>id: the engineer’s id</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.staffAPI.read">
+<code class="sig-prename descclassname">cloud.api.staffAPI.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/staffAPI.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.staffAPI.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for all staff users that match a set of criteria. Parameters:
+id: The user’s id
+username: The user’s username
+first_name: The user’s first name
+last_name: The user’s last name
+email: The user’s email address. Validated elsewhere by regex.
+phone: The user’s phone number
+user_type: The user’s user type</p>
+<p>Returns a dictionary containing all matches.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="cloud.api.staffAPI.update">
+<code class="sig-prename descclassname">cloud.api.staffAPI.</code><code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cloud/api/staffAPI.html#update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloud.api.staffAPI.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a user. Parameters:</p>
+<p>username: The username requested
+password: The user’s requested password. Will be SHA256 hashed before storing.
+first_name: The user’s first name
+last_name: The user’s last name
+email: The user’s email address. Validated elsewhere by regex.
+phone: The user’s phone number
+engineer mac address: The user’s mac address</p>
+<p>Returns Success if the entry is updated, and Fail otherwise.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.api">Main file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.backlogAPI">Backlog API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.bookingAPI">Booking API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.carAPI">Car API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.customerAPI">Customer API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.locationAPI">Location API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cloud.api.staffAPI">Staff API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Validators.html">Validators</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/API.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/API.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

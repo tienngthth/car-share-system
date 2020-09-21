@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudcar documentation &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Server" href="Server.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cloudcar-documentation">
+<h1>Cloudcar documentation<a class="headerlink" href="#cloudcar-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This is the Cloudcard documentation built using Sphinx</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Server.html#server-py">server.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Server.html#serversocket-py">serverSocket.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.api">Main file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.backlogAPI">Backlog API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.bookingAPI">Booking API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.carAPI">Car API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.customerAPI">Customer API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.locationAPI">Location API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#module-cloud.api.staffAPI">Staff API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Database.html#module-cloud.api.database">Database Config</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="User%20Interface.html">User Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.admin">Admin Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.auth">Authentication Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.customer">Customer Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.engineer">Engineer Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.manager">Manager Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.forms">Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User%20Interface.html#module-flaskr.home">Homepages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Validators.html">Validators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Validators.html#module-flaskr.model.account">Account Validator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Validators.html#module-flaskr.model.booking">Booking Validator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Validators.html#module-flaskr.model.car">Car Validator</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="to-connect-to-the-gcp-database">
+<h2>To connect to the GCP database<a class="headerlink" href="#to-connect-to-the-gcp-database" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Download the Cloud SQL Proxy for your operating system. If in Linux, make it executeable with chmod.</p></li>
+<li><p>Download the JSON file included in this project</p></li>
+<li><p>In the command prompt, navigate to the location of the proxy and run this command:</p></li>
+</ol>
+<p>.cloud_sql_proxy -instances=clean-wonder-286803:asia-southeast2:s3747274=tcp:3306 -credential_file=&lt;PATH TO THE JSON FILE&gt;
+e.g.: C:UserstiennDownloadsclean-wonder-286803-fd26772409c0.json</p>
+<ol class="arabic simple" start="4">
+<li><p>Ctrl + C to terminate</p></li>
+</ol>
+</div>
+<div class="section" id="to-start-the-api-server">
+<h2>To start the API Server<a class="headerlink" href="#to-start-the-api-server" title="Permalink to this headline">¶</a></h2>
+<p>python3 /cloud/api/api.py</p>
+</div>
+<div class="section" id="to-start-flask">
+<h2>To start Flask<a class="headerlink" href="#to-start-flask" title="Permalink to this headline">¶</a></h2>
+<p>./webpage/runme.sh</p>
+<p>(or the long version: export FLASK_APP=webpage/flaskr &amp;&amp; export FLASK_ENV=development &amp;&amp; export OAUTHLIB_INSECURE_TRANSPORT=1 &amp;&amp; export GOOGLE_APPLICATION_CREDENTIALS=”/webpage/flaskr/script/files/client.json” &amp;&amp; flask run)</p>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="#">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Validators.html">Validators</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

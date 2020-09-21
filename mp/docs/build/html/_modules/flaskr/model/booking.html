@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flaskr.model.booking &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskr.model.booking</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">booking.py holds all the validators used for bookings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">flash</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<div class="viewcode-block" id="Booking"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.booking.Booking">[docs]</a><span class="k">class</span> <span class="nc">Booking</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class holds al lthe functions in this file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">car_id</span><span class="p">,</span> <span class="n">customer_id</span><span class="p">,</span> <span class="n">rent_time</span><span class="p">,</span> <span class="n">return_time</span><span class="p">,</span> <span class="n">totalCost</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">car_id</span> <span class="o">=</span> <span class="n">car_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">customer_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rent_time</span> <span class="o">=</span> <span class="n">rent_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_time</span> <span class="o">=</span> <span class="n">return_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totalCost</span> <span class="o">=</span> <span class="n">totalCost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;Booked&#39;</span>
+        
+<div class="viewcode-block" id="Booking.validate_date"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.booking.Booking.validate_date">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make sure the start date is before the end date. Booking for negative times would charge negative fees and that would be very bad.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns False if the dates are nonsensical, True if they are OK.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;End date must be later than start date.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">start_date</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">():</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Start date can not been sooner than today&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Duration must be at least 1 day&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Booking.validate_cost"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.booking.Booking.validate_cost">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_cost</span><span class="p">(</span><span class="n">cost</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make sure any time someone enters a cost, that it can be cleanly converted to a float. It doesn&#39;t have to be an integer, e.g. 5.003 is a valid entry but &#39;yellow&#39; is not.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if the cost can be cleanly converted to a float, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cost</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cost</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span> 
+                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Cost must be a number.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+        
+<div class="viewcode-block" id="Booking.validate_booking_input"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.booking.Booking.validate_booking_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_booking_input</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a helper function that combines cost and date validation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if both pass, otherwise returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Booking</span><span class="o">.</span><span class="n">validate_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">Booking</span><span class="o">.</span><span class="n">validate_cost</span><span class="p">(</span><span class="n">cost</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

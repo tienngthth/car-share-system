@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flaskr.engineer &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskr.engineer</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">engineer.py defines the control logic for all the pages the engineer has access to.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span>
+<span class="kn">from</span> <span class="nn">.auth</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">engineer</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;engineer&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="backlog_view"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.engineer.backlog_view">[docs]</a><span class="nd">@engineer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/backlogs&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">backlog_view</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This displays all cars requiring repairs. It only responds to GET requests.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Engineer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span><span class="p">:</span>
+        <span class="n">backlogs</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/backlogs/get/all&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;engineer/backlog_view.html&quot;</span><span class="p">,</span> <span class="n">backlogs</span><span class="o">=</span><span class="n">backlogs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="location_map"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.engineer.location_map">[docs]</a><span class="nd">@engineer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/location&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">location_map</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a car and location identifier, this returns a map for the engineer to follow. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: the id of the car we&#39;re looking for</span>
+<span class="sd">    location_id: The id of the location the car is at</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a HTML render containing a map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Engineer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/cars/read?id=&quot;</span> <span class="o">+</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/locations/get?id=&quot;</span> <span class="o">+</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;location_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;engineer/location_map.html&quot;</span><span class="p">,</span> <span class="n">car</span><span class="o">=</span><span class="n">car</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="close_backlog"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.engineer.close_backlog">[docs]</a><span class="nd">@engineer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/close/backlog&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">close_backlog</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This allows the engineer to mar a cr as repaired, making it available once again. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The id of the car that was repaired.</span>
+<span class="sd">    </span>
+<span class="sd">    Once done, it redirects the user back to the engineer home page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Engineer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+        <span class="s2">&quot;http://127.0.0.1:8080/backlogs/close?backlog_id=</span><span class="si">{}</span><span class="s2">&amp;signed_engineer_id=</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;backlog_id&#39;</span><span class="p">],</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">backlog_left</span> <span class="o">=</span>  <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;http://127.0.0.1:8080/backlogs/get/engineer/id?car_id=</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span>
+    <span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;No engineer found&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">backlog_left</span><span class="p">:</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/cars/update?id=</span><span class="si">{}</span><span class="s2">&amp;status=Available&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;engineer.backlog_view&quot;</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

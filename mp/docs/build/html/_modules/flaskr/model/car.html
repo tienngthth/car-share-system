@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flaskr.model.car &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskr.model.car</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">car.py hold the various alidation functions applied to cars.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">flash</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<div class="viewcode-block" id="Car"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car">[docs]</a><span class="k">class</span> <span class="nc">Car</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class holds all the functions in this file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brand</span><span class="p">,</span> <span class="n">car_type</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">seat</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">location_id</span><span class="p">,</span> <span class="n">mac_address</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;Available&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brand</span> <span class="o">=</span> <span class="n">brand</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">car_type</span> <span class="o">=</span> <span class="n">car_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seat</span> <span class="o">=</span> <span class="n">seat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">=</span> <span class="n">mac_address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">location_id</span>
+
+<div class="viewcode-block" id="Car.validate_cost"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.validate_cost">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_cost</span><span class="p">(</span><span class="n">cost</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost must be possible to convert into a float ( 3.002 is OK, &#39;yellow&#39; in not&quot;) and also has to be between 1 and 1000. Cars should not rent for less than 1$ or more than 1000$ per hour. Mostly this is to prevent typos. </span>
+<span class="sd">        </span>
+<span class="sd">        Returns False if there&#39;s a problem, otherwise True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cost</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cost</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cost</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="ow">or</span> <span class="n">cost</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Cost must be between 1 and 1000.&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">except</span><span class="p">:</span> 
+                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Cost must be a number&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Car.validate_location_id"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.validate_location_id">[docs]</a>    <span class="nd">@staticmethod</span>   
+    <span class="k">def</span> <span class="nf">validate_location_id</span><span class="p">(</span><span class="n">location_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes sure the location id is an integer. These integers map to locations, e.g. 1 = office parking lot, 2 = downtown mall parking lot.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if it&#39;s an integer, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">location_id</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">location_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">location_id</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span> 
+                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Location id must be a number&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Car.validate_new_car"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.validate_new_car">[docs]</a>    <span class="k">def</span> <span class="nf">validate_new_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A helper function that combines cost and location validation.</span>
+<span class="sd">       </span>
+<span class="sd">        Returns True if both pass, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Car</span><span class="o">.</span><span class="n">validate_cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span> <span class="ow">and</span> <span class="n">Car</span><span class="o">.</span><span class="n">validate_location_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Car.validate_update_car"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.validate_update_car">[docs]</a>    <span class="k">def</span> <span class="nf">validate_update_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Another helper function combining cost and location validation, this time specifically for the update form.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if both pass, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Car</span><span class="o">.</span><span class="n">validate_cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">Car</span><span class="o">.</span><span class="n">validate_location_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Car.create_car"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.create_car">[docs]</a>    <span class="k">def</span> <span class="nf">create_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/cars/create?&quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;mac_address=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;brand=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">brand</span> <span class="o">+</span> 
+            <span class="s2">&quot;&amp;type=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">car_type</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;location_id=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_id</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;status=Available&quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot;&amp;color=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;seat=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">seat</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;cost=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span>
+        <span class="p">)</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;New car created!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Car.update_car"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.car.Car.update_car">[docs]</a>    <span class="k">def</span> <span class="nf">update_car</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">car_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates an existing car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/cars/update?&quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;mac_address=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;brand=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">brand</span> <span class="o">+</span> 
+            <span class="s2">&quot;&amp;type=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">car_type</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;location_id=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_id</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;status=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;color=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;seat=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">seat</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;cost=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;id=&quot;</span> <span class="o">+</span> <span class="n">car_id</span>
+
+        <span class="p">)</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Car updated!&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

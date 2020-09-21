@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flaskr.customer &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskr.customer</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">All the control logic for the pages in the customer interface resides here.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span> <span class="nn">.auth</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">UserCarSearchForm</span><span class="p">,</span> <span class="n">UserBookingSearchForm</span>
+<span class="kn">from</span> <span class="nn">googleapiclient.discovery</span> <span class="kn">import</span> <span class="n">build</span>
+<span class="kn">from</span> <span class="nn">flaskr.model.car</span> <span class="kn">import</span> <span class="n">Car</span>
+<span class="kn">from</span> <span class="nn">flaskr.model.booking</span> <span class="kn">import</span> <span class="n">Booking</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">google.oauth2.credentials</span>
+<span class="kn">import</span> <span class="nn">google_auth_oauthlib.flow</span>
+<span class="kn">import</span> <span class="nn">googleapiclient.discovery</span>
+<span class="kn">import</span> <span class="nn">flask</span>
+
+<span class="n">customer</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;customer&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># This OAuth 2.0 access scope allows for full read/write access to the</span>
+<span class="c1"># authenticated user&#39;s account and requires requests to use an SSL connection.</span>
+<span class="n">SCOPES</span> <span class="o">=</span> <span class="s2">&quot;https://www.googleapis.com/auth/calendar&quot;</span>
+<span class="n">API_SERVICE_NAME</span> <span class="o">=</span> <span class="s1">&#39;drive&#39;</span>
+<span class="n">API_VERSION</span> <span class="o">=</span> <span class="s1">&#39;v2&#39;</span>
+<span class="n">CLIENT_SECRETS_FILE</span> <span class="o">=</span> <span class="s2">&quot;webpage/flaskr/files/client_secret.json&quot;</span>
+
+<div class="viewcode-block" id="car_view"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.car_view">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/cars&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">car_view</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the customer home page, where they can search for and book cars.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Customer view car&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserCarSearchForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">search_car</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">display_no_car</span><span class="p">(</span><span class="n">form</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="display_no_car"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.display_no_car">[docs]</a><span class="k">def</span> <span class="nf">display_no_car</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display car search form, with no cars. This is what we do if a customer submits a GET request to their home page&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;/customer/car_view.html&quot;</span><span class="p">,</span> <span class="n">cars</span><span class="o">=</span><span class="p">[],</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="search_car"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.search_car">[docs]</a><span class="k">def</span> <span class="nf">search_car</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Search available cars, and display the result in a table with an option to book each. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    brand: The brand of the car, e.g. Honda</span>
+<span class="sd">    car_type = The make of the car, e.g. Civic</span>
+<span class="sd">    color = The color of the car -- it&#39;s a dropdown select list.</span>
+<span class="sd">    seat = Number of seats, also a drop-down select list. Common cars only have a few different number of seats.</span>
+<span class="sd">    cost = The max hourly rental cost the user wishes to pay.</span>
+<span class="sd">    start_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.</span>
+<span class="sd">    end_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">brand</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;brand&#39;</span><span class="p">]</span>
+    <span class="n">car_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_type&#39;</span><span class="p">]</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+    <span class="n">seat</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;seat&#39;</span><span class="p">]</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Booking</span><span class="o">.</span><span class="n">validate_booking_input</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">display_no_car</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+    <span class="n">cars</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;http://127.0.0.1:8080/cars/status/available?brand=</span><span class="si">{}</span><span class="s2">&amp;type=</span><span class="si">{}</span><span class="s2">&amp;status=Available&amp;color=</span><span class="si">{}</span><span class="s2">&amp;seat=</span><span class="si">{}</span><span class="s2">&amp;cost=</span><span class="si">{}</span><span class="s2">&amp;start=</span><span class="si">{}</span><span class="s2">&amp;end=</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">brand</span><span class="p">,</span> <span class="n">car_type</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">seat</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;customer/car_view.html&quot;</span><span class="p">,</span> <span class="n">cars</span><span class="o">=</span><span class="n">cars</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="book_car"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.book_car">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/book/car&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">book_car</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Books a car for a customer. It gets the dates from the dates they chose to search for. It also uses these to estimate the total cost of the booking, which is needed by the confirmation page it returns (we round up to nearest hour).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">car</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;car&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)))</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;start_date&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;end_date&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="s2">&quot;Missing start_date, end_date or car arguments&quot;</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="n">car</span><span class="p">[</span><span class="s1">&#39;Cost&#39;</span><span class="p">]</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;confirm&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;customer/booking_detail.html&quot;</span><span class="p">,</span> <span class="n">car</span><span class="o">=</span><span class="n">car</span><span class="p">,</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">total_cost</span><span class="o">=</span><span class="n">total_cost</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="confirm_booking"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.confirm_booking">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/confirm/booking&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">confirm_booking</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If a customer clicks &#39;confirm&#39; on the booking confirmation page, the data will be sent here to create the booking. Then the user will be redirected to a handler for google calendar scheduling. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The id of the car being booked</span>
+<span class="sd">    start_date: A string with the datetime when the booking begins </span>
+<span class="sd">    end_date: A string with the datetime when the booking ends</span>
+<span class="sd">    total_cost: The total estimated cost of the booking, calculated earlier in book_car() </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">car_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">]</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;start_date&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;end_date&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;total_cost&#39;</span><span class="p">]</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/bookings/create?customer_id=</span><span class="si">{}</span><span class="s2">&amp;car_id=</span><span class="si">{}</span><span class="s2">&amp;rent_time=</span><span class="si">{}</span><span class="s2">&amp;return_time=</span><span class="si">{}</span><span class="s2">&amp;total_cost=</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">],</span> <span class="n">car_id</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">))</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;starttime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_date</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">car_id</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;customer_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;startdate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;renttime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">))</span>
+    <span class="n">endrenttime</span> <span class="o">=</span> <span class="n">start_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;endrenttime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">endrenttime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">))</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Booking confirmed!&quot;</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.send_calendar&quot;</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="send_calendar"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.send_calendar">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/send/calendar&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">send_calendar</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function issues a Google Calendar event if the user&#39;s Calendar credentials exist in the session. If they don&#39;t exist, we redirect them to /authorize to fix that. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;credentials&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.authorize&quot;</span><span class="p">))</span>
+    <span class="c1"># Load credentials from the session.</span>
+    <span class="n">credentials</span> <span class="o">=</span> <span class="n">google</span><span class="o">.</span><span class="n">oauth2</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">Credentials</span><span class="p">(</span>
+        <span class="o">**</span><span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;credentials&#39;</span><span class="p">])</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">googleapiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">&quot;calendar&quot;</span><span class="p">,</span> <span class="s2">&quot;v3&quot;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="c1"># Save credentials back to session in case access token was refreshed.</span>
+    <span class="c1"># ACTION ITEM: In a production app, you likely want to save these</span>
+    <span class="c1">#              credentials in a persistent database instead.</span>
+    <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;credentials&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">credentials_to_dict</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="n">insert_event</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;startdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;renttime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;endrenttime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.booking_view&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="insert_event"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.insert_event">[docs]</a><span class="k">def</span> <span class="nf">insert_event</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is what we send to the Google Calendar API to issue the car booking event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="s2">&quot;Your car is ready - Car Share&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Car Share Office&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Please visit Car Share Office to pick up your car&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dateTime&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">T</span><span class="si">{}</span><span class="s2">+07:00&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;startdate&#39;</span><span class="p">],</span> <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;renttime&#39;</span><span class="p">]),</span>
+            <span class="s2">&quot;timeZone&quot;</span><span class="p">:</span> <span class="s2">&quot;Asia/Ho_Chi_Minh&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dateTime&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">T</span><span class="si">{}</span><span class="s2">+07:00&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;startdate&#39;</span><span class="p">],</span> <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;endrenttime&#39;</span><span class="p">]),</span>
+            <span class="s2">&quot;timeZone&quot;</span><span class="p">:</span> <span class="s2">&quot;Asia/Ho_Chi_Minh&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;reminders&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;useDefault&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;overrides&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span> <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">},</span>
+                <span class="p">{</span> <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;popup&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="p">},</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">calendar</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/bookings/read/lastest/record?car_id=</span><span class="si">{}</span><span class="s2">&amp;customer_id=</span><span class="si">{}</span><span class="s2">&amp;rent_time=</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;car_id&quot;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;customer_id&quot;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;starttime&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">events</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">calendarId</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/bookings/add/eventId?id=</span><span class="si">{}</span><span class="s2">&amp;event_id=</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="s2">&quot;send&quot;</span></div>
+
+<div class="viewcode-block" id="authorize"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.authorize">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/authorize&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">authorize</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start OAUTH2 authorization flow, passing it to the next step /oauth2callback</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="c1"># Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="n">google_auth_oauthlib</span><span class="o">.</span><span class="n">flow</span><span class="o">.</span><span class="n">Flow</span><span class="o">.</span><span class="n">from_client_secrets_file</span><span class="p">(</span>
+        <span class="n">CLIENT_SECRETS_FILE</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">SCOPES</span><span class="p">)</span>
+    <span class="c1"># The URI created here must exactly match one of the authorized redirect URIs</span>
+    <span class="c1"># for the OAuth 2.0 client, which you configured in the API Console. If this</span>
+    <span class="c1"># value doesn&#39;t match an authorized URI, you will get a &#39;redirect_uri_mismatch&#39;</span>
+    <span class="c1"># error.</span>
+    <span class="n">flow</span><span class="o">.</span><span class="n">redirect_uri</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;customer.oauth2callback&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">authorization_url</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">authorization_url</span><span class="p">(</span>
+        <span class="c1"># Enable offline access so that you can refresh an access token without</span>
+        <span class="c1"># re-prompting the user for permission. Recommended for web server apps.</span>
+        <span class="n">access_type</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
+        <span class="c1"># Enable incremental authorization. Recommended as a best practice.</span>
+        <span class="n">include_granted_scopes</span><span class="o">=</span><span class="s1">&#39;true&#39;</span><span class="p">)</span>
+    <span class="c1"># Store the state so the callback can verify the auth server response.</span>
+    <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">authorization_url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="oauth2callback"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.oauth2callback">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/oauth2callback&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">oauth2callback</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finish OAUTH2 Authorization flow, and pass the resulting credentials to be further processed. Take the result and send the calendar invite.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="c1"># Specify the state when creating the flow in the callback so that it can</span>
+    <span class="c1"># verified in the authorization server response.</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="n">google_auth_oauthlib</span><span class="o">.</span><span class="n">flow</span><span class="o">.</span><span class="n">Flow</span><span class="o">.</span><span class="n">from_client_secrets_file</span><span class="p">(</span>
+        <span class="n">CLIENT_SECRETS_FILE</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">SCOPES</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">flow</span><span class="o">.</span><span class="n">redirect_uri</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;customer.oauth2callback&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Use the authorization server&#39;s response to fetch the OAuth 2.0 tokens.</span>
+    <span class="n">authorization_response</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">flow</span><span class="o">.</span><span class="n">fetch_token</span><span class="p">(</span><span class="n">authorization_response</span><span class="o">=</span><span class="n">authorization_response</span><span class="p">)</span>
+    <span class="c1"># Store credentials in the session.</span>
+    <span class="c1"># ACTION ITEM: In a production app, you likely want to save these</span>
+    <span class="c1">#              credentials in a persistent database instead.</span>
+    <span class="n">credentials</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">credentials</span>
+    <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;credentials&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">credentials_to_dict</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;customer.send_calendar&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="credentials_to_dict"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.credentials_to_dict">[docs]</a><span class="k">def</span> <span class="nf">credentials_to_dict</span><span class="p">(</span><span class="n">credentials</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Covert credentials file to a dictionary, then pass it back to the function that calls this.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+          <span class="s1">&#39;refresh_token&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">refresh_token</span><span class="p">,</span>
+          <span class="s1">&#39;token_uri&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">token_uri</span><span class="p">,</span>
+          <span class="s1">&#39;client_id&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+          <span class="s1">&#39;client_secret&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">client_secret</span><span class="p">,</span>
+          <span class="s1">&#39;scopes&#39;</span><span class="p">:</span> <span class="n">credentials</span><span class="o">.</span><span class="n">scopes</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="booking_view"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.booking_view">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/bookings&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">booking_view</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    On a GET request, we display all of the logged in user&#39;s bookings. On a POST request, we expect form data that includes a start time and end time to limit the booking search.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserBookingSearchForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">filter_booking</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">display_all_bookings</span><span class="p">(</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="filter_booking"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.filter_booking">[docs]</a><span class="k">def</span> <span class="nf">filter_booking</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is where we filter results to a range of time. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    start_date: The start date, format determined by the HTML5 datetime selector</span>
+<span class="sd">    end_date: The end date, format determined by the HTML5 datetime selector</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a results page with just the bookings for the time range. IF no time range is set, it displays all bookings for the current user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">display_match_bookings</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">form</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="display_match_bookings"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.display_match_bookings">[docs]</a><span class="k">def</span> <span class="nf">display_match_bookings</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a page with a new search form, along with the bookings that match the time range supplied.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+    <span class="n">bookings</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;http://127.0.0.1:8080/bookings/get/by/time?customer_id=</span><span class="si">{}</span><span class="s2">&amp;start=</span><span class="si">{}</span><span class="s2">&amp;end=</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;customer/booking_view.html&quot;</span><span class="p">,</span> <span class="n">bookings</span><span class="o">=</span><span class="n">bookings</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="display_all_bookings"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.display_all_bookings">[docs]</a><span class="k">def</span> <span class="nf">display_all_bookings</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a page with a new search form, along with all bookings for the current user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+    <span class="n">bookings</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;http://127.0.0.1:8080/bookings/get/all?customer_id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;customer/booking_view.html&quot;</span><span class="p">,</span> <span class="n">bookings</span><span class="o">=</span><span class="n">bookings</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="view_booking_detail"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.view_booking_detail">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/bookings/details&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">view_booking_detail</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If a user click the Details button after searching for their bookings, they end up here. The booking details are displayed. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    booking: The booking id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;view&quot;</span>
+    <span class="n">booking</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;booking&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">booking</span><span class="p">[</span><span class="s2">&quot;RentTime&quot;</span><span class="p">]</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">booking</span><span class="p">[</span><span class="s2">&quot;ReturnTime&quot;</span><span class="p">]</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="n">booking</span><span class="p">[</span><span class="s2">&quot;TotalCost&quot;</span><span class="p">]</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/cars/read?id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">booking</span><span class="p">[</span><span class="s1">&#39;CarID&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">booking</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]</span>
+    <span class="n">booking_id</span><span class="o">=</span><span class="n">booking</span><span class="p">[</span><span class="s2">&quot;BookingID&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s2">&quot;customer/booking_detail.html&quot;</span><span class="p">,</span> 
+        <span class="n">car</span><span class="o">=</span><span class="n">car</span><span class="p">,</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">total_cost</span><span class="o">=</span><span class="n">total_cost</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span><span class="n">booking_id</span><span class="o">=</span><span class="n">booking_id</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="n">action</span>
+    <span class="p">)</span></div>
+
+<span class="c1">#Cancel booking (Can only be done by customer)    </span>
+<div class="viewcode-block" id="cancel_booking"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.cancel_booking">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/bookings/cancel&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">cancel_booking</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If the user presses the Cancel Booking button, then the booking id is passed here for cancellation, and return them to their bookings page. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    booking_id: the booking id to cancel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;booking_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;booking_id&quot;</span><span class="p">]</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Booking cancelled!&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.delete_calendar&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="delete_calendar"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.delete_calendar">[docs]</a><span class="nd">@customer</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/delete/calendar&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">delete_calendar</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; If the user cancels the booking, the booking status will be changed to &#39;Cancelled&#39;&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;Customer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;credentials&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.authorize&quot;</span><span class="p">))</span>
+    <span class="c1"># Load credentials from the session.</span>
+    <span class="n">credentials</span> <span class="o">=</span> <span class="n">google</span><span class="o">.</span><span class="n">oauth2</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">Credentials</span><span class="p">(</span>
+        <span class="o">**</span><span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;credentials&#39;</span><span class="p">])</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">googleapiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">&quot;calendar&quot;</span><span class="p">,</span> <span class="s2">&quot;v3&quot;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="c1"># Save credentials back to session in case access token was refreshed.</span>
+    <span class="c1"># ACTION ITEM: In a production app, you likely want to save these</span>
+    <span class="c1">#              credentials in a persistent database instead.</span>
+    <span class="n">flask</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;credentials&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">credentials_to_dict</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">delete_event</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="o">!=</span> <span class="s2">&quot;Success&quot;</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;No calendar event found or access denied.&quot;</span><span class="p">)</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/bookings/update?status=Cancelled&amp;id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;booking_id&#39;</span><span class="p">]))</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">&quot;booking_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">&quot;customer.booking_view&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="delete_event"><a class="viewcode-back" href="../../User%20Interface.html#flaskr.customer.delete_event">[docs]</a><span class="k">def</span> <span class="nf">delete_event</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; If the user cancels the booking, the calendar event will be removed&quot;&quot;&quot;</span>
+    <span class="n">eventId</span> <span class="o">=</span>  <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/bookings/read/record?id=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;booking_id&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;EventID&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">eventId</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;There is no calendar event&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">event</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">events</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">calendarId</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="n">eventId</span> <span class="o">=</span> <span class="n">eventId</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Access Denied&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;Success&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

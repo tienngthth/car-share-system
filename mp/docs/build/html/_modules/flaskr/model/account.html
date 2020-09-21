@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flaskr.model.account &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskr.model.account</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">account.py holds the various input validation functions applied to accounts. There is both conditional logic and regular expressions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">passlib</span> <span class="kn">import</span> <span class="nb">hash</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">flash</span>
+
+<div class="viewcode-block" id="Account"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account">[docs]</a><span class="k">class</span> <span class="nc">Account</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class holds all the functions in this file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">firstname</span><span class="p">,</span> <span class="n">lastname</span><span class="p">,</span> <span class="n">phone</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mac_address</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">firstname</span> <span class="o">=</span> <span class="n">firstname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastname</span> <span class="o">=</span> <span class="n">lastname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>      
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>      
+        <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">=</span> <span class="n">mac_address</span>        
+
+<div class="viewcode-block" id="Account.validate_new_account"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_new_account">[docs]</a>    <span class="k">def</span> <span class="nf">validate_new_account</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is the validation chain to validate a new account. It must pass all these functions.</span>
+<span class="sd">        </span>
+<span class="sd">        If it passes all of them, it returns True. Otherwise it returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_uniqueness</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_password_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_email_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_phone_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone</span><span class="p">):</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.register_account"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.register_account">[docs]</a>    <span class="k">def</span> <span class="nf">register_account</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This registers an account.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/customers/create?&quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;username=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;password=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_salt_password</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;first_name=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstname</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;last_name=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastname</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;email=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;phone=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phone</span>
+        <span class="p">)</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Account registered! Please log in.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.validate_update_account"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_update_account">[docs]</a>    <span class="k">def</span> <span class="nf">validate_update_account</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        These are the validators for when an admin user is updating an account.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if all pass, and otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_uniqueness</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_password_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">):</span>  
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_email_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_phone_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Account updated!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Account.update_account"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.update_account">[docs]</a>    <span class="k">def</span> <span class="nf">update_account</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This updates an account.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_type</span> <span class="o">!=</span> <span class="s2">&quot;customers&quot;</span><span class="p">:</span>
+            <span class="n">user_type</span> <span class="o">=</span> <span class="s2">&quot;staffs&quot;</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/&quot;</span> <span class="o">+</span> <span class="n">user_type</span> <span class="o">+</span> <span class="s2">&quot;/update?&quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;username=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;password=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_salt_password</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;first_name=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstname</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;last_name=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastname</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;email=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;phone=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;mac_address=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">+</span>
+            <span class="s2">&quot;&amp;id=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.hash_salt_password"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.hash_salt_password">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hash_salt_password</span><span class="p">(</span><span class="n">raw_input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This hashes a received password before we store it anywhere or compare it to a stored value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="o">.</span><span class="n">sha256_crypt</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">raw_input</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.verify_password"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.verify_password">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">verify_password</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">input_password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Here we verify a password. The password that a user enters is hashed, then compared agaisnt the hash stored in the database.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns the user if it&#39;s a match, otherwise returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_input</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_password_input</span><span class="p">(</span><span class="n">input_password</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">user</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://127.0.0.1:8080/get/user/info?username=&quot;</span><span class="o">+</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">hash</span><span class="o">.</span><span class="n">sha256_crypt</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">input_password</span><span class="p">,</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;Password&quot;</span><span class="p">]):</span>
+                        <span class="k">return</span> <span class="n">user</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid password or username.&quot;</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Can not verify credential.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.validate_username_input"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_username_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_username_input</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates that a username merts minimum length requirements and doesn&#39;t have non-allowed characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^[A-Za-z0-9_]{6,15}$&quot;</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span> <span class="ow">and</span> <span class="n">username</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Incorrectly formatted username. Valid username must contain 6-15 letters.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.validate_username_uniqueness"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_username_uniqueness">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_username_uniqueness</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks a username is unique across both staff and customer user sets.</span>
+<span class="sd">        </span>
+<span class="sd">        If it exists, returns True. Otherwise returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">customer_username_check</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/customers/check/existed/username?username=&quot;</span> 
+            <span class="o">+</span> <span class="n">username</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> 
+        <span class="n">staff_username_check</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;http://127.0.0.1:8080/staffs/check/existed/username?username=&quot;</span> 
+            <span class="o">+</span> <span class="n">username</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span>
+        <span class="k">if</span> <span class="n">customer_username_check</span> <span class="ow">and</span> <span class="n">staff_username_check</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Already existed username.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.validate_password_input"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_password_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_password_input</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Valid password contain contain at least: 8 characters, 1 upper case, 1 lower case, 1 digit, 1 special characters</span>
+<span class="sd">       </span>
+<span class="sd">        Returns True if it&#39;s OK, otherwise False. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$&quot;</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid formatted password. Valid password must contain at least 8 characters, 1 upper case, 1 lower case, 1 digit, 1 special characters&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.validate_email_input"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_email_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_email_input</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Valid email input: </span>
+<span class="sd">        1. Before &quot;@&quot;, minimum length of the text (between 2 dots/underscors) is 2. </span>
+<span class="sd">        2. Has to start with/end with/contain only alphanumerical characters.</span>
+<span class="sd">        3. After &quot;@&quot;, requires 2 alphabetical text with a &quot;.&quot; between. The latter contains 2 to 3 characters.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if OK, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^([A-Za-z0-9]+([.]|[_])?[A-Za-z0-9]+)+[@][A-Za-z]+[.][A-Za-z]{2,3}$&quot;</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid formatted email.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.validate_phone_input"><a class="viewcode-back" href="../../../Validators.html#flaskr.model.account.Account.validate_phone_input">[docs]</a>    <span class="nd">@staticmethod</span>      
+    <span class="k">def</span> <span class="nf">validate_phone_input</span><span class="p">(</span><span class="n">phone</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate phone must contains at least 5 characters, all must be digits.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns True if OK, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^[0-9]{5,}$&quot;</span><span class="p">,</span> <span class="n">phone</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid formatted phone. Valid phone must contain at least 5 characters, all must be digits.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cloud.api.staffAPI &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cloud.api.staffAPI</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">staffAPI.py handles CRUD on staff users, and also a check if a given username exists.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">flask.json</span> <span class="kn">import</span> <span class="n">jsonify</span>
+
+<span class="n">staff_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;staff_api&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../API.html#cloud.api.staffAPI.read">[docs]</a><span class="nd">@staff_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;read&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">read</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches for all staff users that match a set of criteria. Parameters:</span>
+<span class="sd">    id: The user&#39;s id</span>
+<span class="sd">    username: The user&#39;s username</span>
+<span class="sd">    first_name: The user&#39;s first name</span>
+<span class="sd">    last_name: The user&#39;s last name</span>
+<span class="sd">    email: The user&#39;s email address. Validated elsewhere by regex.</span>
+<span class="sd">    phone: The user&#39;s phone number</span>
+<span class="sd">    user_type: The user&#39;s user type</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dictionary containing all matches.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; * &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Staffs &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE ID LIKE CASE WHEN </span><span class="si">%(id)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(id)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN ID ELSE </span><span class="si">%(id)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Username LIKE CASE WHEN </span><span class="si">%(username)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(username)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Username ELSE </span><span class="si">%(username)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND FirstName LIKE CASE WHEN </span><span class="si">%(first_name)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(first_name)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN FirstName ELSE </span><span class="si">%(first_name)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND LastName LIKE CASE WHEN </span><span class="si">%(last_name)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(last_name)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+        <span class="s2">&quot; THEN LastName ELSE </span><span class="si">%(last_name)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Email LIKE CASE WHEN </span><span class="si">%(email)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(email)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+        <span class="s2">&quot; THEN Email ELSE </span><span class="si">%(email)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Phone LIKE CASE WHEN </span><span class="si">%(phone)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(phone)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+        <span class="s2">&quot; THEN Phone ELSE </span><span class="si">%(phone)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND UserType LIKE CASE WHEN </span><span class="si">%(user_type)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(user_type)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN UserType ELSE </span><span class="si">%(user_type)s</span><span class="s2"> END &quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;first_name&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;last_name&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phone&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;user_type&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_type&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="check_username"><a class="viewcode-back" href="../../../API.html#cloud.api.staffAPI.check_username">[docs]</a><span class="nd">@staff_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/check/existed/username&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_username</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a username exists.</span>
+<span class="sd">    </span>
+<span class="sd">    username: the user&#39;s username</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; COUNT(*) AS SUM &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Staffs &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Username = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> 
+        <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">),)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;SUM&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="get_engineer_mac_address"><a class="viewcode-back" href="../../../API.html#cloud.api.staffAPI.get_engineer_mac_address">[docs]</a><span class="nd">@staff_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;get/engineer/mac/address&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_engineer_mac_address</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get engineer mac address. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    id: the engineer&#39;s id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; EngineerMacAddress &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Staffs &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE ID = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> 
+        <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span> <span class="p">)</span>
+    <span class="p">)</span> 
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;No mac address found&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;EngineerMacAddress&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="delete"><a class="viewcode-back" href="../../../API.html#cloud.api.staffAPI.delete">[docs]</a><span class="nd">@staff_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deletes a staff. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    id: The user id of the user to delete.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if an entry was deleted, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">delete_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Staffs &quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE ID = </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="p">,</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../API.html#cloud.api.staffAPI.update">[docs]</a><span class="nd">@staff_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/update&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates a user. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    username: The username requested</span>
+<span class="sd">    password: The user&#39;s requested password. Will be SHA256 hashed before storing.</span>
+<span class="sd">    first_name: The user&#39;s first name</span>
+<span class="sd">    last_name: The user&#39;s last name</span>
+<span class="sd">    email: The user&#39;s email address. Validated elsewhere by regex.</span>
+<span class="sd">    phone: The user&#39;s phone number</span>
+<span class="sd">    engineer mac address: The user&#39;s mac address</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if the entry is updated, and Fail otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Staffs &quot;</span><span class="p">,</span>
+            <span class="s2">&quot; Username = CASE WHEN </span><span class="si">%(username)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(username)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; THEN Username ELSE </span><span class="si">%(username)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; FirstName = CASE WHEN </span><span class="si">%(first_name)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(first_name)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN FirstName ELSE </span><span class="si">%(first_name)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; LastName = CASE WHEN </span><span class="si">%(last_name)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(last_name)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN LastName ELSE </span><span class="si">%(last_name)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Email = CASE WHEN </span><span class="si">%(email)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(email)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Email ELSE </span><span class="si">%(email)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Phone = CASE WHEN </span><span class="si">%(phone)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(phone)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Phone ELSE </span><span class="si">%(phone)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; EngineerMacAddress = CASE WHEN </span><span class="si">%(mac_address)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(mac_address)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN EngineerMacAddress ELSE </span><span class="si">%(mac_address)s</span><span class="s2"> END &quot;</span> <span class="p">,</span>
+            <span class="s2">&quot; WHERE ID = </span><span class="si">%(id)s</span><span class="s2">&quot;</span><span class="p">,</span> 
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;first_name&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;last_name&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phone&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;mac_address&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

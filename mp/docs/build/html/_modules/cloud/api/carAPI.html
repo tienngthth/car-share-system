@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cloud.api.carAPI &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cloud.api.carAPI</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-  </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">carAPI.py defines all the functions regarding CRUD on cars, as well as a car&#39;s booking history</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">flask.json</span> <span class="kn">import</span> <span class="n">jsonify</span>
+
+<span class="n">car_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;car_api&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.create">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">create</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This creates a new car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    mac_address: The MAC address of the car&#39;s agent Pi</span>
+<span class="sd">    brand: The brand of the car e.g. Honda</span>
+<span class="sd">    type: The make of the car, e.g. Civic</span>
+<span class="sd">    location_id: The location of the car</span>
+<span class="sd">    status: Whether the car requires repairs, is booked, or available</span>
+<span class="sd">    color: The color of the car. We use a list of colors in the UI but Other is an option.</span>
+<span class="sd">    seat: How many seats there are in the car</span>
+<span class="sd">    cost: The hourly cost of renting the car</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Done or an error</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">insert_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot;Cars(MacAddress, Brand, Type, LocationID, Status, Color, Seat, Cost) &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;brand&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;location_id&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seat&quot;</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.update">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/update&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates a car. Functions the same as create()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">update_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Cars &quot;</span><span class="p">,</span>
+            <span class="s2">&quot; MacAddress = CASE WHEN </span><span class="si">%(mac_address)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(mac_address)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; THEN MacAddress ELSE </span><span class="si">%(mac_address)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Brand = CASE WHEN </span><span class="si">%(brand)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(brand)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; THEN Brand ELSE </span><span class="si">%(brand)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Type = CASE WHEN </span><span class="si">%(type)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(type)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Type ELSE </span><span class="si">%(type)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; LocationID = CASE WHEN </span><span class="si">%(location_id)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(location_id)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN LocationID ELSE </span><span class="si">%(location_id)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Status = CASE WHEN </span><span class="si">%(status)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(status)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Status ELSE </span><span class="si">%(status)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Color = CASE WHEN </span><span class="si">%(color)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(color)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Color ELSE </span><span class="si">%(color)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Seat = CASE WHEN </span><span class="si">%(seat)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(seat)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Seat ELSE </span><span class="si">%(seat)s</span><span class="s2"> END, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; Cost = CASE WHEN </span><span class="si">%(cost)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(cost)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span> 
+            <span class="s2">&quot; THEN Cost ELSE </span><span class="si">%(cost)s</span><span class="s2"> END &quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE ID = </span><span class="si">%(car_id)s</span><span class="s2">&quot;</span><span class="p">,</span> 
+            <span class="p">{</span>
+                <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;mac_address&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;brand&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;brand&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;location_id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;location_id&quot;</span><span class="p">),</span> 
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;seat&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seat&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="delete_car"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.delete_car">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">delete_car</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deletes a car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    car_id: The car to delete</span>
+<span class="sd">    </span>
+<span class="sd">    Returns Success if a record was deleted, Fail otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Database</span><span class="o">.</span><span class="n">delete_record_parameterized</span><span class="p">(</span>
+            <span class="s2">&quot; Cars &quot;</span><span class="p">,</span>
+            <span class="s2">&quot; WHERE ID = </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="p">,</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Fail&quot;</span></div>
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.read">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/read&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">read</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This searches for a cars mathing a set of criteria. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    mac_address: The MAC address of the car&#39;s agent Pi</span>
+<span class="sd">    brand: The brand of the car e.g. Honda</span>
+<span class="sd">    type: The make of the car, e.g. Civic</span>
+<span class="sd">    location_id: The location of the car</span>
+<span class="sd">    status: Whether the car requires repairs, is booked, or available</span>
+<span class="sd">    color: The color of the car. We use a list of colors in the UI but Other is an option.</span>
+<span class="sd">    seat: How many seats there are in the car</span>
+<span class="sd">    cost: The hourly cost of renting the car</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dictionary containing cars that match the search criteria</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.MacAddress, &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; Cars.Seat, Locations.Address, Cars.Cost, Cars.Status&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE Cars.ID LIKE CASE WHEN </span><span class="si">%(id)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(id)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Cars.ID ELSE </span><span class="si">%(id)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND MacAddress LIKE CASE WHEN </span><span class="si">%(mac_address)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(mac_address)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN MacAddress ELSE </span><span class="si">%(mac_address)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Brand LIKE CASE WHEN </span><span class="si">%(brand)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(brand)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Brand ELSE </span><span class="si">%(brand)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Type LIKE CASE WHEN </span><span class="si">%(type)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(type)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Type ELSE </span><span class="si">%(type)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Status LIKE CASE WHEN </span><span class="si">%(status)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(status)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Status ELSE </span><span class="si">%(status)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Color LIKE CASE WHEN </span><span class="si">%(color)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(color)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Color ELSE </span><span class="si">%(color)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Seat LIKE CASE WHEN </span><span class="si">%(seat)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(seat)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Seat ELSE </span><span class="si">%(seat)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Cost &lt;= CASE WHEN </span><span class="si">%(cost)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(cost)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Cost ELSE </span><span class="si">%(cost)s</span><span class="s2"> END &quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;mac_address&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;brand&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;brand&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;seat&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seat&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_available_car"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.get_available_car">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/status/available&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_available_car</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets only cars available for booking during a certian time period. Parameters are the same as read() except:</span>
+<span class="sd">    </span>
+<span class="sd">    start: The start time a customer wants to book for</span>
+<span class="sd">    end: The time a customer wants to return the car</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a dictionary of cars that match the search criteria.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; Cars.ID, Cars.Brand, Cars.Type, Cars.Color, Cars.MacAddress, &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; Cars.Seat, Locations.Address, Cars.Cost, Cars.Status&quot;</span><span class="p">,</span>
+        <span class="s2">&quot; Cars INNER JOIN Locations ON Cars.LocationID = Locations.ID &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; WHERE MacAddress LIKE CASE WHEN </span><span class="si">%(mac_address)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(mac_address)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN MacAddress ELSE </span><span class="si">%(mac_address)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Brand LIKE CASE WHEN </span><span class="si">%(brand)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(brand)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Brand ELSE </span><span class="si">%(brand)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Type LIKE CASE WHEN </span><span class="si">%(type)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(type)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Type ELSE </span><span class="si">%(type)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Cars.Status LIKE &#39;Available&#39; &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Color LIKE CASE WHEN </span><span class="si">%(color)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(color)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Color ELSE </span><span class="si">%(color)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Seat LIKE CASE WHEN </span><span class="si">%(seat)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(seat)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Seat ELSE </span><span class="si">%(seat)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Cost &lt;= CASE WHEN </span><span class="si">%(cost)s</span><span class="s2"> = &#39;&#39; OR </span><span class="si">%(cost)s</span><span class="s2"> IS NULL &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; THEN Cost ELSE </span><span class="si">%(cost)s</span><span class="s2"> END &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; AND Cars.ID NOT IN (SELECT Bookings.CarID AS ID From Bookings &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; WHERE Bookings.RentTime &lt;= </span><span class="si">%(end)s</span><span class="s2"> AND Bookings.ReturnTime &gt;= </span><span class="si">%(start)s</span><span class="s2"> AND Bookings.Status NOT LIKE &#39;Cancelled&#39; AND Bookings.CarID != NULL) &quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;mac_address&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;brand&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;brand&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;seat&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seat&quot;</span><span class="p">),</span> 
+            <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span> 
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_car_id_by_mac_address"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.get_car_id_by_mac_address">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;get/id&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_car_id_by_mac_address</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets a car ID given the MAC address of its installed agent Pi. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    mac_address: The mac address of the agent Pi</span>
+<span class="sd">    </span>
+<span class="sd">    Returns No car found if no results were found. Otherwise, returns the id of a car.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; ID &quot;</span><span class="p">,</span>
+        <span class="s2">&quot; Cars &quot;</span><span class="p">,</span>
+        <span class="s2">&quot; WHERE MacAddress = </span><span class="si">%s</span><span class="s2"> AND MacAddress NOT LIKE &#39;&#39;&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mac_address&quot;</span><span class="p">),)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;No car found&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ID&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="get_car_history"><a class="viewcode-back" href="../../../API.html#cloud.api.carAPI.get_car_history">[docs]</a><span class="nd">@car_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_car_history</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the booking history of a car. Parameters:</span>
+<span class="sd">    </span>
+<span class="sd">    id: the id of the car in question</span>
+<span class="sd">    </span>
+<span class="sd">    Returns the booking history of the car as a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">select_record_parameterized</span><span class="p">(</span>
+        <span class="s2">&quot; Bookings.ID, Bookings.CarID, Bookings.CustomerID, Bookings.RentTime, &quot;</span> <span class="o">+</span>
+        <span class="s2">&quot; Bookings.ReturnTime, Bookings.TotalCost, Bookings.Status &quot;</span><span class="p">,</span> 
+        <span class="s2">&quot; Cars LEFT JOIN Bookings ON Cars.ID = Bookings.CarID &quot;</span><span class="p">,</span>
+        <span class="s2">&quot; WHERE Cars.ID = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../User%20Interface.html">User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Validators.html">Validators</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
