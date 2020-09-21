@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 admin.py contains the control logic for all pages for user_type=Admin
 """
 
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, url_for, session
 from .auth import login_required
@@ -126,12 +123,9 @@ def delete_user():
     elif request.args["user_type"] == "Engineer":
         requests.put("http://127.0.0.1:8080/backlogs/remove/signed/engineer?id=" + request.args["user_id"])
         requests.put("http://127.0.0.1:8080/backlogs/remove/assigned/engineer?id=" + request.args["user_id"])
-<<<<<<< HEAD
         requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
     else:
         requests.delete("http://127.0.0.1:8080/staffs/delete?id=" + request.args["user_id"])
-=======
->>>>>>> origin/mp-sphinx-doc
     flash("User deleted!")
     return redirect(url_for("admin.user_view"))
 

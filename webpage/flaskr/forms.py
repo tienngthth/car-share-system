@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 forms.py hold all the forms we import into all the user pages that need to display forms.
 """
->>>>>>> origin/mp-sphinx-doc
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import (StringField,
                      TextAreaField,

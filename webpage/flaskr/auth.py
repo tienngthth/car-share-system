@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 auth.py contains all the functions related to user authentication.
 """
 
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, session, url_for
 from flaskr.model.account import Account

@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 home.py defines which page is the home page for different user types.
 """
 
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, g, redirect, url_for
 from .auth import login_required
 

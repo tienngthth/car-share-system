@@ -20,11 +20,7 @@ class Server:
     Define the port and interface to listen on, then open the socket.
     """
     #Initialize instance
-<<<<<<< HEAD
     def __init__(self, host = '10.247.169.92', port = 9956):
-=======
-    def __init__(self, host = '127.0.0.1', port = 9967):
->>>>>>> origin/mp-sphinx-doc
         self.__address = (host, port)
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__set_up_connection()
@@ -42,14 +38,10 @@ class Server:
 
     #Accept connection
     def __accept_connection(self):
-<<<<<<< HEAD
-        print("Listening on {}...".format(self.__address))
-=======
         """
         Accept inbound connections
         """
         print("Listening on {}...".format(self.__address))  
->>>>>>> origin/mp-sphinx-doc
         self.__connection, client_address = self.__socket.accept()
         print("Connected to {}".format(client_address))
 

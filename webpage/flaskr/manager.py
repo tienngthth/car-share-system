@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 manager.py is where we define all the control logic for pages the manager can use. 
 """
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, g, redirect, render_template
 from flask import request, url_for
 from .auth import login_required

@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 staffAPI handles user queries that are only for staff members, e.g. admin users.
 """
 
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, request
 from database import Database
 

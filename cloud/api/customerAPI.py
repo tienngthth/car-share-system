@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 customerAPI.py handles CRUD on customer users, and also a check if a given username exists.
 """
 
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, request
 from database import Database
 

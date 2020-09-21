@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 database.py handles the connection to the Google Cloud DB, and contains helper functions for modifying entries that are used widely in this application.
 """
->>>>>>> origin/mp-sphinx-doc
 import pymysql
 
 class Database:

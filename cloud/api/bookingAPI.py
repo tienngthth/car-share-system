@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
 """
 bookingAPI.py defines the backlog API, whcih handles requests for engineers to repair cars.
 """
->>>>>>> origin/mp-sphinx-doc
 from flask import Blueprint, request
 from database import Database
 
@@ -61,7 +58,6 @@ def update():
     except:
         return "Fail"
 
-<<<<<<< HEAD
 @booking_api.route("/add/eventId", methods=['GET', 'PUT'])
 def add_calendar_booking():
     try:
@@ -116,8 +112,6 @@ def read_record():
     ) 
     return jsonify(results)
 
-=======
->>>>>>> origin/mp-sphinx-doc
 @booking_api.route("/read")
 def read():
     """
@@ -132,25 +126,15 @@ def read():
         " * ", 
         " Bookings ", 
         " WHERE CarID = %(car_id)s " +
-<<<<<<< HEAD
         " AND CustomerID = %(customer_id)s " +
         " AND RentTime <= DATE_ADD(NOW(), INTERVAL 7 HOUR) AND DATE_ADD(NOW(), INTERVAL 7 HOUR) <= ReturnTime AND (Status = 'Booked' OR Status = 'In use')",
-=======
-        " OR CustomerID = %(customer_id)s " +
-        " AND RentTime <= NOW() AND NOW() <= ReturnTime ",
->>>>>>> origin/mp-sphinx-doc
         {
             "car_id": request.args.get("car_id"),
             "customer_id": request.args.get("customer_id")
         },
     ) 
-<<<<<<< HEAD
     return jsonify(results)
     
-=======
-    return {"bookings" : results}
-
->>>>>>> origin/mp-sphinx-doc
 @booking_api.route("/get/profit/data")
 def get_all_rent_time():
     """
@@ -184,11 +168,7 @@ def get_all_booked_car_ids():
     results = Database.select_record_parameterized(
         " CarID, CONVERT(SUM(TIMESTAMPDIFF(MINUTE, RentTime, ReturnTime)), SIGNED) AS Total", 
         " Bookings ", 
-<<<<<<< HEAD
         " WHERE Status = 'Booked'  AND CarID != 'None' GROUP BY CarID ORDER BY Total DESC LIMIT 10",
-=======
-        " WHERE Status = 'Booked' GROUP BY CarID",
->>>>>>> origin/mp-sphinx-doc
         ()
     ) 
     return {"results": results}
