@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+set up all the samples
+"""
 from database import Database
 from passlib import hash
 
