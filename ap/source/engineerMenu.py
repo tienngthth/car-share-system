@@ -9,7 +9,7 @@ from model.engineer import Engineer
 def start_searching():
     global engineer
     engineer = Engineer()
-    if engineer.mac_address != "invalid":
+    if engineer.engineer_info != "invalid":
         Util.log_messages("bluetooth_start")
         if Car.detect_device(engineer.mac_address):
             engineer_menu(engineer)

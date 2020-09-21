@@ -16,6 +16,7 @@ class Car:
             self.__ap_addr = ap_addr
             self.__first_login = first_login
             self.__car_id = None
+            self.__booking_id = None
             self.__get_car_id()
 
     def __get_car_id(self):
@@ -61,6 +62,7 @@ class Car:
     def return_car(self):
         Util.log_messages("car_returned")
         self.first_login = True
+        self.booking_id = None
         self.__change_car_status("Available")
 
     #speak to MP to change car status to available
@@ -68,10 +70,15 @@ class Car:
         client = Client()
         car_status_message = {
             "message_type":"update_car_status",
-            "car_id":self.car_id,
+            "car_id": self.car_id,
             "car_status":status
         }
         client.send_message(str(car_status_message))
+        while True:
+            message = client.receive_message()
+            if message != "":
+                client.send_message("end")
+                break
         client.send_message("end")
 
     def get_assgined_engineer_info(self):
@@ -81,8 +88,11 @@ class Car:
         while True:
             message = client.receive_message()
             if message != "":
+                print(message)
+                if message != "invalid":
+                    message = Code.parse_json(message.replace("\'", "\""))
                 client.send_message("end")
-                return Code.parse_json(message.replace("\'", "\""))
+                return message
 
     @property
     def first_login(self):
@@ -107,6 +117,14 @@ class Car:
     @car_id.setter
     def car_id(self, car_id):
         self.__car_id = car_id
+  
+    @property
+    def booking_id(self):
+        return self.__booking_id
+
+    @booking_id.setter
+    def booking_id(self, booking_id):
+        self.__booking_id = booking_id
 
 car = Car()
 

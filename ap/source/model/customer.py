@@ -11,7 +11,6 @@ class Customer():
     def __init__(self, get_username_option):
         self.__username = "invalid"
         self.__password = "invalid"
-        self.__booking_id = None
         self.__get_credential(get_username_option)  
 
     def __get_credential(self, get_username_option):
@@ -36,9 +35,10 @@ class Customer():
         message = self.__get_encrypted_password_from_mp(client)
         if message != "invalid":
             self.password = message["password"]
-            self.booking_id = message["booking_id"]
+            car.booking_id = message["booking_id"]
             self.__first_login_to_car()
-        self.password = "invalid"
+        else:
+            self.password = "invalid"
 
     def __get_encrypted_password_from_mp(self, client):
         client.send_message(str(self.__get_credential_message_to_mp()))
@@ -64,18 +64,22 @@ class Customer():
         LocalDatabase.insert_record("Credential", "((?), (?))",(self.username, self.password))
 
     def return_car(self):
-        car.return_car()
         self.__done_booking()
+        car.return_car()
         LocalDatabase.delete_record("Credential", " WHERE Username = (?)", (self.username,))
 
     def __done_booking(self):
         client = Client()
         car_status_message = {
             "message_type":"done_booking",
-            "car_id":self.booking_id
+            "booking_id": car.booking_id
         }
         client.send_message(str(car_status_message))
-        client.send_message("end")
+        while True:
+            message = client.receive_message()
+            if message != "":
+                client.send_message("end")
+                break
 
     @property
     def username(self):

@@ -6,9 +6,10 @@ from .util import Util
 
 class Engineer():    
     def __init__(self):
-        engineer_info = car.get_assgined_engineer_info()
-        self.__mac_address = engineer_info["mac_address"]
-        self.__engineer_id = engineer_info["engineer_id"]
+        self.__engineer_info = car.get_assgined_engineer_info()
+        if self.__engineer_info != "invalid":
+            self.__mac_address = self.__engineer_info["engineer_mac_address"]
+            self.__engineer_id = self.__engineer_info["engineer_id"]
 
     def scan_code(self):
         Camera.start_camera()
@@ -43,7 +44,11 @@ class Engineer():
             "car_status" : "Available"
         }
         client.send_message(str(message))
-        client.send_message("end")
+        while True:
+            message = client.receive_message()
+            if message != "":
+                client.send_message("end")
+                break
         Util.log_messages("backlog_closed")
 
     @property
@@ -61,5 +66,13 @@ class Engineer():
     @mac_address.setter
     def mac_address(self, mac_address):
         self.__mac_address = mac_address
+
+    @property
+    def engineer_info(self):
+        return self.__engineer_info
+
+    @engineer_info.setter
+    def engineer_info(self, engineer_info):
+        self.__engineer_info = engineer_info
 
 

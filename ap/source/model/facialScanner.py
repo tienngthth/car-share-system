@@ -21,9 +21,9 @@ class FacialScanner():
                         Camera.frame,
                         cv2.COLOR_BGR2GRAY)[y:y+h,x:x+w]
                     )
-                    if (confidence > 30):  
+                    if (confidence > 50):  
                         Camera.stop_camera()
-                        print(FacialScanner().names[id])
+                        print("\nUsername: "  + FacialScanner().names[id])
                         return FacialScanner().names[id]
                 Camera.stop_camera_key_stroke()
             return FacialScanner().names[0]
