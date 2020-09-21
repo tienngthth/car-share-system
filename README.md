@@ -54,7 +54,7 @@ This document describes:
   * [Master Pi](#master-pi-1)
   * [Agent Pi](#agent-pi-1)
   
-4. [Acknowledgments](#acknowledgement)
+4. [Acknowledgments](#acknowledgments)
 
 ## Activities
 
@@ -259,7 +259,7 @@ MP and AP talk to each other via socket communication with MP as a server and AP
 
 ## Instruction
 
-Review [requirements.txt](https://github.com/tienngthth/car-share-system/requirements.txt) to make sure all packages have been installed. 
+Review [MP requirements.txt](https://github.com/tienngthth/car-share-system/blob/master-pi/ap/requirements.txt) or [AP requirements.txt](https://github.com/tienngthth/car-share-system/blob/master-pi/ap/requirements.txt) to make sure all packages have been installed. 
 
 ### Master Pi
 
