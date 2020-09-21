@@ -3,7 +3,7 @@
 {% endblock %}
 {% block content %}
 <div class="loginbox">
-  <form method="POST" action="{{ url_for('admin.update_user', user_id=id)}}">
+  <form method="POST" action="{{ url_for('admin.update_user', user_id=user_id, user_type=user_type)}}">
   <div style="display:block; width:100%; clear:both; float:none;min-height:50px;">
     <div autocomplete="off" class="form-field" style="float:left; margin-left: 40px;">
       {{ form.username.label }}&nbsp;&nbsp;&nbsp;&nbsp;{{ form.username }}
@@ -34,7 +34,7 @@
   </div>
   </form>
   <form style="float:right; margin-top:-65px; padding-right:30px;"
-      action="{{ url_for('admin.delete_user', user_id=id, user_type=user_type) }}" method="post">
+      action="{{ url_for('admin.delete_user', user_id=user_id, user_type=user_type) }}" method="post">
     <input style="padding-right: 25px;" class="danger" type="submit" value="Delete" 
       onclick="return confirm('Are you sure you want to delete this account?');"
     >

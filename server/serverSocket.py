@@ -1,8 +1,8 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import requests, json
 from server import Server
 from passlib import hash
-from model.code import Code
 import requests, json
 
 def listen_to_client():
@@ -19,17 +19,23 @@ def handle_request(message):
         message = Code.parse_json(message.replace("\'", "\""))
         message_type = message["message_type"]
         if message_type == "credential":
-            validate_crendential(message)
+            # validate_crendential(message)
+            server.send_message(str({"password": hash.sha256_crypt(message["Password"]), "booking_id": 1}))
         elif message_type == "check_backlog":
-            check_for_car_maintainance(message)
+            # check_for_car_maintainance(message)
+            server.send_message("DC:F7:56:2D:C1:97")
         elif message_type == "update_car_status" or message_type == "close_backlog":
-            update_car_status(message)
+            # update_car_status(message)
+            pass
         elif message_type == "update_car_status":
-            update_car_status(message)
+            # update_car_status(message)
+            pass
         elif message_type == "get_car_id":
-            get_car_id_by_ap_addr(message)
+            # get_car_id_by_ap_addr(message)
+            server.send_message("1")
         elif message_type == "done_booking":
-            get_car_id_by_ap_addr(message)
+            # done_booking(message)
+            pass
     except:
         server.send_message("invalid")
 

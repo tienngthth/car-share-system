@@ -1,5 +1,5 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request
 from database import Database
 from flask.json import jsonify
@@ -38,6 +38,19 @@ def update():
     except:
         return "Fail"
 
+@booking_api.route("/add/eventId", methods=['GET', 'PUT'])
+def add_calendar_booking():
+    try:
+        Database.update_record_parameterized(
+            " Bookings ",
+            " EventID = %s ",
+            " WHERE ID = (%s)",
+            (request.args.get("event_id"), request.args.get("id"))
+        )
+        return "Success"
+    except:
+        return "Fail"
+
 @booking_api.route("/cancel/passed/return/time", methods=['GET', 'PUT'])
 def update_passed_bookings():
     try:
@@ -51,6 +64,34 @@ def update_passed_bookings():
     except:
         return "Fail"
 
+@booking_api.route("/read/lastest/record")
+def read_last_record():
+    results = Database.select_record_parameterized(
+        " * ", 
+        " Bookings ", 
+        " WHERE CarID = %(car_id)s " +
+        " AND CustomerID = %(customer_id)s " +
+        " AND RentTime = %(rent_time)s " + 
+        " AND Status LIKE 'Booked' " +
+        " LIMIT 1 ",
+        {
+            "car_id": request.args.get("car_id"),
+            "customer_id": request.args.get("customer_id"),
+            "rent_time": request.args.get("rent_time")
+        },
+    ) 
+    return jsonify(results)
+
+@booking_api.route("/read/record")
+def read_record():
+    results = Database.select_record_parameterized(
+        " * ", 
+        " Bookings ", 
+        " WHERE ID = %s ",
+        (request.args.get("id"),)
+    ) 
+    return jsonify(results)
+
 @booking_api.route("/read")
 def read():
     results = Database.select_record_parameterized(
@@ -61,11 +102,12 @@ def read():
         " AND RentTime <= NOW() AND NOW() <= ReturnTime AND Status = 'Booked' OR Status = 'In use'",
         {
             "car_id": request.args.get("car_id"),
-            "customer_id": request.args.get("customer_id")
-        }
+            "customer_id": request.args.get("customer_id"),
+            "rent_time": request.args.get("rent_time")
+        },
     ) 
     return jsonify(results)
-
+    
 @booking_api.route("/get/profit/data")
 def get_profit_data():
     results = Database.select_record(

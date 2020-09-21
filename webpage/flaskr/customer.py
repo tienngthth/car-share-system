@@ -1,12 +1,12 @@
-"""#!/usr/bin/env python3
-# -*- coding: utf-8 -*-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, url_for, session
 from .auth import login_required
 from .forms import UserCarSearchForm, UserBookingSearchForm
 from googleapiclient.discovery import build
-from flaskr.script.model.car import Car
-from flaskr.script.model.booking import Booking
+from flaskr.model.car import Car
+from flaskr.model.booking import Booking
 from datetime import datetime, timedelta
 import requests
 import math
@@ -23,7 +23,7 @@ customer = Blueprint("customer", __name__)
 SCOPES = "https://www.googleapis.com/auth/calendar"
 API_SERVICE_NAME = 'drive'
 API_VERSION = 'v2'
-CLIENT_SECRETS_FILE = "webpage/flaskr/script/files/client_secret.json"
+CLIENT_SECRETS_FILE = "webpage/flaskr/files/client_secret.json"
 
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
@@ -67,7 +67,7 @@ def book_car():
     if g.type != "Customer":
         return "Access Denied"
     try:
-        car = json.loads(request.args['car'].replace("'", "\""))
+        car = json.loads(str(request.args['car'].replace("'", "\"")))
         start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
         end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
     except: 
@@ -85,17 +85,16 @@ def confirm_booking():
     start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d %H:%M:%S')
     end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d %H:%M:%S')
     total_cost = request.args['total_cost']
-    requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
+    response = requests.post("http://127.0.0.1:8080/bookings/create?customer_id={}&car_id={}&rent_time={}&return_time={}&total_cost={}"
     .format(g.user['ID'], car_id, start_date, end_date, total_cost))
+    session["starttime"] = start_date
+    session["car_id"] = car_id
+    session["customer_id"] = g.user['ID']
     session["startdate"] = str(start_date.strftime('%Y-%m-%d'))
     session["renttime"] = str(start_date.strftime('%H:%M:%S'))
     endrenttime = start_date + timedelta(minutes = 30)
     session["endrenttime"] = str(endrenttime.strftime('%H:%M:%S'))
     flash("Booking confirmed!") 
-    # if request.args["google_calendar"]:
-    #     return "Yes"
-    #     return redirect(url_for("customer.booking_view"))
-    # return "No"
     return redirect(url_for("customer.send_calendar"))
     
 @customer.route('/send/calendar', methods=("GET", "POST"))
@@ -140,7 +139,11 @@ def insert_event(service):
             ],
         }
     }
+    calendar = requests.get("http://127.0.0.1:8080/bookings/read/lastest/record?car_id={}&customer_id={}&rent_time={}"
+    .format( session["car_id"], session["customer_id"], session["starttime"])).json()[0]['ID']
     event = service.events().insert(calendarId = "primary", body = event).execute()
+    requests.put("http://127.0.0.1:8080/bookings/add/eventId?id={}&event_id={}"
+    .format( calendar, event["id"]))
     return "send"
 
 @customer.route('/authorize')
@@ -252,7 +255,39 @@ def view_booking_detail():
 def cancel_booking():
     if g.type != "Customer":
         return "Access Denied"
-    booking_id = request.args["booking_id"]
-    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(booking_id))
+    session["booking_id"] = request.args["booking_id"]
     flash("Booking cancelled!")
+    return redirect(url_for("customer.delete_calendar"))
+
+@customer.route('/delete/calendar')
+@login_required
+def delete_calendar():
+    if g.type != "Customer":
+        return "Access Denied"
+    if 'credentials' not in flask.session:
+        return redirect(url_for("customer.authorize"))
+    # Load credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+        **flask.session['credentials'])
+    service = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    flask.session['credentials'] = credentials_to_dict(credentials)
+    response = delete_event(service)
+    if response != "Success":
+        flash("No calendar event found or access denied.")
+    requests.put("http://127.0.0.1:8080/bookings/update?status=Cancelled&id=" + str(session['booking_id']))
+    session["booking_id"] = None
     return redirect(url_for("customer.booking_view"))
+
+def delete_event(service):
+    eventId =  requests.get("http://127.0.0.1:8080/bookings/read/record?id=" + str(session['booking_id'])).json()[0]["EventID"]
+    if eventId == None:
+        return "There is no calendar event"
+    else:
+        try: 
+            event = service.events().delete(calendarId = "primary", eventId = eventId).execute()
+        except:
+            return "Access Denied"
+    return "Success"
