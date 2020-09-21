@@ -75,11 +75,11 @@ def create_sample_cars_data():
     #Cars
     global cars 
     cars = []
-    cars.append(("DC:A6:32:4A:0C:41", "Ford", "Sedan", 1, "Unavailable", "White", 4, 2))
+    cars.append(("DC:A6:32:4A:0C:41", "Ford", "Sedan", 1, "In use", "White", 4, 2))
     cars.append(("", "BMW", "Minivan", 1, "Available", "Blue", 2, 3))
     cars.append(("", "Audi", "Sedan", 2, "Available", "Black", 4, 2))
     cars.append(("", "Toyota", "Truck", 1, "Available", "Blue", 2, 4))
-    cars.append(("", "Ford", "Truck", 2, "Unavailable", "Yellow", 2, 4))
+    cars.append(("", "Ford", "Truck", 2, "In use", "Yellow", 2, 4))
     cars.append(("", "Toyota", "Sedan", 2, "Available", "White", 4, 2))
     cars.append(("", "BMW", "Truck", 2, "Available", "Black", 2, 4))
     cars.append(("", "Audi", "Minivan", 2, "Available", "Blue", 2, 3))
@@ -155,7 +155,7 @@ def create_sample_bookings_data():
     bookings.append((2, 2, "2020-09-15 10:00:00", "2020-09-17 10:00:00", 1500, "Booked", ""))
     bookings.append((3, 9, "2020-09-15 10:00:00", "2020-09-17 10:00:00", 1500, "Cancelled", ""))
     bookings.append((2, 7, "2020-09-15 10:00:00", "2020-09-17 10:00:00", 200, "Booked", ""))
-    bookings.append((2, 12, "2020-09-15 10:00:00", "2020-09-18 10:00:00", 200, "Booked", ""))
+    bookings.append((2, 12, "2020-09-15 10:00:00", "2020-09-18 10:00:00", 200, "Done", ""))
     bookings.append((1, 13, "2020-09-15 10:00:00", "2020-09-18 10:00:00", 500, "Booked", ""))
 
 def create_sample_backlogs_data():
