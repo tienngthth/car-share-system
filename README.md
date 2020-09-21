@@ -120,6 +120,8 @@ Review the Sphinx documentation for full code overview.
 * Open mp/docs/build/html/index.html for mp Sphinx documention
 * Open ap/docs/build/html/index.html for ap Sphinx documention
 
+Following is the description of the architecture components.
+
 ### Master Pi
 
 Master Pi is a raspberry pi with a web application. 
