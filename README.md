@@ -68,7 +68,9 @@ This respository is private and shared between 4 contributors and 2 observers.
 
 There are 15 different branches beside the default master. Contributors are using different branches to develop different components. Enventually, all the branches are mereged to the two seperate main branches, which are ap for Agent Pi Application and mp for Master Pi Application.
 
-Review [distribution.txt](https://github.com/tienngthth/car-share-system/distribution.txt) for more work distribution details.
+![Github](images/git_branches.png)
+
+Review [distribution.txt](https://github.com/tienngthth/car-share-system/docs/distribution.txt) for more work distribution details.
 
 #### Activities
 
@@ -76,15 +78,43 @@ Contributors pull code from the appropriate branch everytime to continue working
 
 For the first half of the cycle, contributors worked on small, seperate components.
 
-For the second half of the cycle, contributors merged the repaired components to the main branches (mp-test and ap) and work on the work flow.
+![Github](images/git_start.png)
+
+For the second half of the cycle, contributors merged the repaired components to the main branches, mp-test (blue line) and ap (red line) and work on the work flow.
+
+![Github](images/git_ap.png)
+
+![Github](images/git_mp.png)
 
 ### Trello
 
-* Images go here
+The team has ultilized Trello board for this project. The board has:
+
+1. Important notices: Spin all the documentation, links, notices that one want to announce everyone with a tick box to confirm on reading.
+
+![Trello Board](images/trello_one.png)
+
+![Trello Board](images/trello_notices.png)
+
+2. Current sprint: Show the current sprint focus
+
+3. Cards are then created and move foward: To do, doing, review and done columns.
+
+Each card is assigned for the members with their color code, Yellow - Minh, Orange - Tam, Green - Cuong, Blue - Tien.
+
+![Trello Board](images/trello_tien.png)
+
+![Trello Board](images/trello_minh.png)
+
+![Trello Board](images/trello_cuong.png)
+
+![Trello Board](images/trello_tam.png)
+
+![Trello Board](images/trello_detail.png)
 
 ## Architecture
 
-![Architecture](architecture.png)
+![Architecture](images/architecture.png)
 
 
 ### Master Pi
@@ -233,7 +263,7 @@ Review [requirements.txt](https://github.com/tienngthth/car-share-system/require
 
 ### Master Pi
 
-1. Download the mp-test branch.
+1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
 3. Access to web application at localhost:5000, please use Google Chrome Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
@@ -334,8 +364,8 @@ Manager can view three type of graphs.
 
 ### Agent Pi
 
-1. Download the ap branch.
-2. Run ./mainMenu.py in your console to start the console based application.
+1. Go to the ap directory.
+2. Run ./source/mainMenu.py or python3 ./source/mainMenu.py in your console to start the console based application.
 
 
 #### Authentication flow
@@ -385,7 +415,7 @@ If the code has required information, AP will send a message to MP to close all 
 
 We have around 100 test cases covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
 
-1. Download the mp-test branch.
+1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
 3. Run python ./cloud/unittest/test_suite.py in your console to run the test suite and view the results.
 
