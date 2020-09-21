@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>model.account &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for model.account</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">account.py is used to pass all the user credential, information during the booking session</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">passlib</span> <span class="kn">import</span> <span class="nb">hash</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">model.localDatabase</span> <span class="kn">import</span> <span class="n">LocalDatabase</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">Util</span>
+
+
+<div class="viewcode-block" id="Account"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account">[docs]</a><span class="k">class</span> <span class="nc">Account</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All functions in this file are stored in this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">username_regex</span> <span class="o">=</span> <span class="s2">&quot;^[A-Za-z0-9]{6,15}$&quot;</span>
+    <span class="n">passwod_regex</span> <span class="o">=</span> <span class="s2">&quot;^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*|[a-zA-Z0-9]*)$&quot;</span>
+
+<div class="viewcode-block" id="Account.hash_salt_password"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.hash_salt_password">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hash_salt_password</span><span class="p">(</span><span class="n">raw_input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hash password before sending it for verification.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="o">.</span><span class="n">sha256_crypt</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">raw_input</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.verify_credential"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.verify_credential">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">verify_credential</span><span class="p">(</span><span class="n">input_password</span><span class="p">,</span> <span class="n">encrypted_password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify a password hash against the inputted password.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">hash</span><span class="o">.</span><span class="n">sha256_crypt</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">input_password</span><span class="p">,</span> <span class="n">encrypted_password</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Account.verify_credential_locally"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.verify_credential_locally">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">verify_credential_locally</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">input_password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the password hash for local verification</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">encrypted_password</span> <span class="o">=</span> <span class="n">LocalDatabase</span><span class="o">.</span><span class="n">select_a_record_parameterized</span><span class="p">(</span>
+                <span class="s2">&quot;Password&quot;</span><span class="p">,</span> 
+                <span class="s2">&quot;Credential&quot;</span><span class="p">,</span> 
+                <span class="s2">&quot; WHERE Username = (?)&quot;</span><span class="p">,</span> 
+                <span class="p">(</span><span class="n">username</span><span class="p">,)</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">Account</span><span class="o">.</span><span class="n">verify_credential</span><span class="p">(</span><span class="n">input_password</span><span class="p">,</span> <span class="n">encrypted_password</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+        
+<div class="viewcode-block" id="Account.validate_username_input"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.validate_username_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_username_input</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pass the inputted username against a regex to make sure it&#39;s valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Account</span><span class="o">.</span><span class="n">username_regex</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.validate_password_input"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.validate_password_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_password_input</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Valid password contains at least:</span>
+<span class="sd">        8 characters, 1 upper case, 1 lower case,</span>
+<span class="sd">        1 digit, 1 special characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Account</span><span class="o">.</span><span class="n">passwod_regex</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Account.get_user_name_input"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.get_user_name_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_user_name_input</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the inputted username fro mthe user interface.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">get_input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Username (contains 6-15 alphanumerical characters): &quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_username_input</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">get_input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Invalid username input</span><span class="se">\n\n</span><span class="s2">Username: &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">username</span></div>
+
+<div class="viewcode-block" id="Account.get_password_input"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.account.Account.get_password_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_password_input</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the inputted password from the user interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">get_password</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Password (contains at least 8 characters, 1 upper case, &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;1 lower case, 1 digit, 1 special character): &quot;</span>
+        <span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">validate_password_input</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">get_password</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Invalid password input</span><span class="se">\n\n</span><span class="s2">Password: &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">password</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Menus.html">Menus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Users%20and%20Cars.html">Users and Cars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Facial%20Recognition.html">Facial Recognition</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

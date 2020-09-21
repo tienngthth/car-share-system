@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>model.car &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for model.car</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">car.py is a singleton to handle and pass all the car information throughout the program</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">bluetooth</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">Util</span>
+<span class="kn">from</span> <span class="nn">.code</span> <span class="kn">import</span> <span class="n">Code</span>
+
+
+<div class="viewcode-block" id="Car"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car">[docs]</a><span class="k">class</span> <span class="nc">Car</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All functions in this file are stored in this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_login</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ap_addr</span> <span class="o">=</span> <span class="s2">&quot;DC:A6:32:4A:0C:41&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Virtual private constructor. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Car</span><span class="o">.</span><span class="n">__instance</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This class is a singleton!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Car</span><span class="o">.</span><span class="n">__instance</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__ap_addr</span> <span class="o">=</span> <span class="n">ap_addr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__first_login</span> <span class="o">=</span> <span class="n">first_login</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__car_id</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__booking_id</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_car_id</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__get_car_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This gets information about a car from the server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;message_type&quot;</span><span class="p">:</span><span class="s2">&quot;get_car_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ap_addr&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">__ap_addr</span><span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+                    <span class="n">Util</span><span class="o">.</span><span class="n">log_messages</span><span class="p">(</span><span class="s2">&quot;car_not_registered&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">car_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">break</span>
+
+<div class="viewcode-block" id="Car.getInstance"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car.getInstance">[docs]</a>    <span class="nd">@staticmethod</span> 
+    <span class="k">def</span> <span class="nf">getInstance</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Static access method. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Car</span><span class="o">.</span><span class="n">__instance</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Car</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Car</span><span class="o">.</span><span class="n">__instance</span></div>
+
+<div class="viewcode-block" id="Car.detect_device"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car.detect_device">[docs]</a>    <span class="nd">@staticmethod</span> 
+    <span class="k">def</span> <span class="nf">detect_device</span><span class="p">(</span><span class="n">device_mac_address</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait until bluetooth is on and stable (loop throught the unstable period)</span>
+<span class="sd">        </span>
+<span class="sd">        Get all nearby devices mac address. Loop through all nearby devices -- if the car mac address is found, return TRUE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>         
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   
+                <span class="c1"># Get all nearby devices mac address</span>
+                <span class="n">nearby_devices_mac_address</span> <span class="o">=</span> <span class="n">bluetooth</span><span class="o">.</span><span class="n">discover_devices</span><span class="p">()</span>
+                <span class="c1"># Loop through all nearby devices</span>
+                <span class="k">for</span> <span class="n">mac_address</span> <span class="ow">in</span> <span class="n">nearby_devices_mac_address</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">mac_address</span> <span class="o">==</span> <span class="n">device_mac_address</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">Car</span><span class="o">.</span><span class="n">detect_device</span><span class="p">(</span><span class="n">device_mac_address</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Car.first_login_to_car"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car.first_login_to_car">[docs]</a>    <span class="k">def</span> <span class="nf">first_login_to_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the first login flag -- it&#39;s the first time the user has entered the car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_login</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Car.return_car"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car.return_car">[docs]</a>    <span class="k">def</span> <span class="nf">return_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the status of the car as returned -- the user is done with it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Util</span><span class="o">.</span><span class="n">log_messages</span><span class="p">(</span><span class="s2">&quot;car_returned&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_login</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">booking_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__change_car_status</span><span class="p">(</span><span class="s2">&quot;Available&quot;</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">__change_car_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Speak to MP to change car status to available</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">car_status_message</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;message_type&quot;</span><span class="p">:</span><span class="s2">&quot;update_car_status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">car_id</span><span class="p">,</span>
+            <span class="s2">&quot;car_status&quot;</span><span class="p">:</span><span class="n">status</span>
+        <span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">car_status_message</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Car.get_assgined_engineer_info"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.car.Car.get_assgined_engineer_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_assgined_engineer_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the informatio nabout the engineer assigned to this car</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;message_type&quot;</span> <span class="p">:</span> <span class="s2">&quot;check_backlog&quot;</span><span class="p">,</span> <span class="s2">&quot;car_id&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">car_id</span><span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">parse_json</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">))</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">message</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">first_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__first_login</span>
+
+    <span class="nd">@first_login</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">first_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_login</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__first_login</span> <span class="o">=</span> <span class="n">first_login</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ap_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ap_addr</span>
+
+    <span class="nd">@ap_addr</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ap_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ap_addr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ap_addr</span> <span class="o">=</span> <span class="n">ap_addr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">car_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__car_id</span>
+
+    <span class="nd">@car_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">car_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">car_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__car_id</span> <span class="o">=</span> <span class="n">car_id</span>
+  
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">booking_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__booking_id</span>
+
+    <span class="nd">@booking_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">booking_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">booking_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter Function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__booking_id</span> <span class="o">=</span> <span class="n">booking_id</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="p">()</span>
+
+<span class="n">car</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Menus.html">Menus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Users%20and%20Cars.html">Users and Cars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Facial%20Recognition.html">Facial Recognition</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
