@@ -269,8 +269,9 @@ Review [MP requirements.txt](https://github.com/tienngthth/car-share-system/blob
 ### Master Pi
 
 1. Go to the mp directory.
-2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
-3. Access to web application at localhost:5000, please use Chromium Browser.</br>
+2. Go to server/server.py and update your server IP as host.
+3. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
+4. Access to web application at localhost:5000, please use Chromium Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
     The admin credential: minh_nguyen | 2@aA3333</br>
     The manager credential: tam_nguyen | 3#aA4444</br>
@@ -370,7 +371,8 @@ Manager can view three type of graphs.
 ### Agent Pi
 
 1. Go to the ap directory.
-2. Run python3 ./source/mainMenu.py in your console to start the console based application.
+2. Go to source/model/client.py and update your server IP as host.
+3. Run python3 ./source/mainMenu.py in your console to start the console based application.
 
 
 #### Authentication flow
