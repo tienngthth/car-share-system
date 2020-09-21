@@ -139,11 +139,7 @@ def execute_queries():
     # select_from_customers(cursor)
     select_from_staffs(cursor)
     # select_from_cars(cursor)
-<<<<<<< HEAD
     # select_from_bookings(cursor)    
-=======
-    select_from_bookings(cursor)    
->>>>>>> origin/mp-sphinx-doc
     # select_from_backlogs(cursor)
     # #Additional queries (for drawing graphs)
     # select_number_of_bookings_per_day(cursor)

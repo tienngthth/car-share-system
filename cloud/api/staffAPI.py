@@ -89,7 +89,6 @@ def get_engineer_mac_address():
     if len(results) == 0:
         return "No mac address found"
     else:
-<<<<<<< HEAD
         return str(results[0]["EngineerMacAddress"])
 
 @staff_api.route("/delete", methods=['GET', 'DELETE'])
@@ -136,6 +135,3 @@ def update():
         return "Success"
     except:
         return "Fail"
-=======
-        return results[0]
->>>>>>> origin/mp-sphinx-doc

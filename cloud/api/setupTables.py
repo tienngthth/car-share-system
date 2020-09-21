@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-=======
->>>>>>> origin/mp-sphinx-doc
 from database import Database
 
 def create_customer_table():
