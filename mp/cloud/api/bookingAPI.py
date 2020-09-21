@@ -219,7 +219,7 @@ def get_all_customer_bookings():
         " Cars.Brand As CarBrand, Cars.ID AS CarID " , 
         " Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID ", 
         " WHERE CarID = %(car_id)s " +
-        " OR CustomerID = %(customer_id)s ",
+        " OR CustomerID = %(customer_id)s ORDER BY Bookings.RentTime DESC",
          {
             "car_id": request.args.get("car_id"),
             "customer_id": request.args.get("customer_id")
@@ -244,7 +244,7 @@ def get_customer_bookings_by_time():
         " Cars INNER JOIN Bookings ON Cars.ID = Bookings.CarID ", 
         " WHERE CarID = %(car_id)s " +
         " OR CustomerID = %(customer_id)s " +
-        " AND RentTime >= %(start)s AND ReturnTime <= %(end)s ",
+        " AND RentTime >= %(start)s AND ReturnTime <= %(end)s ORDER BY Bookings.RentTime DESC",
          {
             "car_id": request.args.get("car_id"),
             "customer_id": request.args.get("customer_id"), 

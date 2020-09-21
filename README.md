@@ -1,4 +1,4 @@
-                    g0@@@@@@@@@@@@@@@@@@@@@8
+                    g0@@@@@@@@@@@@@@@@@@@@@8    
                 $@@@@@@@@@@@@@@@8888888@@@@@@>
              %@@@@X       @@@@@            @@@@%
             @@@^         @@@@@@              @@@g
@@ -417,7 +417,7 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 
 1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
-3. Run python ./cloud/unittest/test_suite.py in your console to run the test suite and view the results.
+3. Run python3 ./cloud/unittest/test_suite.py in your console to run the test suite and view the results.
 
 ## Acknowledgments
 
