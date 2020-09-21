@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+All the control logic for the pages in the customer interface resides here.
+"""
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, url_for, session
 from .auth import login_required
@@ -28,6 +31,9 @@ CLIENT_SECRETS_FILE = "webpage/flaskr/files/client_secret.json"
 @customer.route("/cars", methods=("GET", "POST"))
 @login_required
 def car_view():
+    """
+    This is the customer home page, where they can search for and book cars.
+    """
     if g.type != "Customer":
         return "Access Denied"
     """Customer view car"""
@@ -40,11 +46,20 @@ def car_view():
         return display_no_car(form)
         
 def display_no_car(form):
-    """Display no car"""
+    """Display car search form, with no cars. This is what we do if a customer submits a GET request to their home page"""
     return render_template("/customer/car_view.html", cars=[], form=form, start_date="", end_date="")
 
 def search_car(form):
-    """Search available car by filter"""
+    """Search available cars, and display the result in a table with an option to book each. Parameters:
+    
+    brand: The brand of the car, e.g. Honda
+    car_type = The make of the car, e.g. Civic
+    color = The color of the car -- it's a dropdown select list.
+    seat = Number of seats, also a drop-down select list. Common cars only have a few different number of seats.
+    cost = The max hourly rental cost the user wishes to pay.
+    start_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.
+    end_date = This a HTML5 datetime selector. Works well in Google Chrome but not Firefox. Required field.
+    """
     brand = request.form['brand']
     car_type = request.form['car_type']
     color = request.form['color']
@@ -63,7 +78,7 @@ def search_car(form):
 @customer.route("/book/car", methods=("GET", "POST"))
 @login_required
 def book_car():
-    """Full booking detail"""
+    """Books a car for a customer. It gets the dates from the dates they chose to search for. It also uses these to estimate the total cost of the booking, which is needed by the confirmation page it returns (we round up to nearest hour)."""
     if g.type != "Customer":
         return "Access Denied"
     try:
@@ -79,6 +94,14 @@ def book_car():
 @customer.route("/confirm/booking", methods=("GET", "POST"))
 @login_required
 def confirm_booking():
+    """
+    If a customer clicks 'confirm' on the booking confirmation page, the data will be sent here to create the booking. Then the user will be redirected to a handler for google calendar scheduling. Parameters:
+    
+    car_id: The id of the car being booked
+    start_date: A string with the datetime when the booking begins 
+    end_date: A string with the datetime when the booking ends
+    total_cost: The total estimated cost of the booking, calculated earlier in book_car() 
+    """
     if g.type != "Customer":
         return "Access Denied"
     car_id = request.args['car_id']
@@ -100,6 +123,9 @@ def confirm_booking():
 @customer.route('/send/calendar', methods=("GET", "POST"))
 @login_required
 def send_calendar():
+    """
+    This function issues a Google Calendar event if the user's Calendar credentials exist in the session. If they don't exist, we redirect them to /authorize to fix that. 
+    """
     if g.type != "Customer":
         return "Access Denied"
     if 'credentials' not in flask.session:
@@ -119,6 +145,9 @@ def send_calendar():
     return redirect(url_for("customer.booking_view"))
 
 def insert_event(service):
+    """
+    This is what we send to the Google Calendar API to issue the car booking event.
+    """
     event = {
         "summary": "Your car is ready - Car Share",
         "location": "Car Share Office",
@@ -149,6 +178,9 @@ def insert_event(service):
 @customer.route('/authorize')
 @login_required
 def authorize():
+    """
+    Start OAUTH2 authorization flow, passing it to the next step /oauth2callback
+    """
     if g.type != "Customer":
         return "Access Denied"
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
@@ -172,6 +204,9 @@ def authorize():
 @customer.route('/oauth2callback')
 @login_required
 def oauth2callback():
+    """
+    Finish OAUTH2 Authorization flow, and pass the resulting credentials to be further processed. Take the result and send the calendar invite.
+    """
     if g.type != "Customer":
         return "Access Denied"
     # Specify the state when creating the flow in the callback so that it can
@@ -191,6 +226,9 @@ def oauth2callback():
     return flask.redirect(url_for('customer.send_calendar'))
 
 def credentials_to_dict(credentials):
+  """
+  Covert credentials file to a dictionary, then pass it back to the function that calls this.
+  """
   return {'token': credentials.token,
           'refresh_token': credentials.refresh_token,
           'token_uri': credentials.token_uri,
@@ -201,6 +239,9 @@ def credentials_to_dict(credentials):
 @customer.route("/bookings", methods=("GET", "POST"))
 @login_required
 def booking_view():
+    """
+    On a GET request, we display all of the logged in user's bookings. On a POST request, we expect form data that includes a start time and end time to limit the booking search.
+    """
     if g.type != "Customer":
         return "Access Denied"
     form = UserBookingSearchForm()
@@ -210,11 +251,22 @@ def booking_view():
         return display_all_bookings(form)
 
 def filter_booking(form):
+    """
+    This is where we filter results to a range of time. Parameters:
+    
+    start_date: The start date, format determined by the HTML5 datetime selector
+    end_date: The end date, format determined by the HTML5 datetime selector
+    
+    Returns a results page with just the bookings for the time range. IF no time range is set, it displays all bookings for the current user.
+    """
     start_date = datetime.strptime(request.form['start'], '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(request.form['end'], '%Y-%m-%dT%H:%M')
     return display_match_bookings(start_date, end_date, form)
         
 def display_match_bookings(start_date, end_date, form):
+    """
+    Returns a page with a new search form, along with the bookings that match the time range supplied.
+    """
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/by/time?customer_id={}&start={}&end={}"
@@ -223,6 +275,9 @@ def display_match_bookings(start_date, end_date, form):
     return render_template("customer/booking_view.html", bookings=bookings, form=form)
 
 def display_all_bookings(form):
+    """
+    Returns a page with a new search form, along with all bookings for the current user.
+    """
     user_id = g.user['ID']
     bookings = requests.get(
         "http://127.0.0.1:8080/bookings/get/all?customer_id=" + str(user_id)
@@ -232,6 +287,11 @@ def display_all_bookings(form):
 @customer.route("/bookings/details", methods=("GET", "POST"))
 @login_required
 def view_booking_detail():
+    """
+    If a user click the Details button after searching for their bookings, they end up here. The booking details are displayed. Parameters:
+    
+    booking: The booking id
+    """
     if g.type != "Customer":
         return "Access Denied"
     action = "view"
@@ -253,6 +313,11 @@ def view_booking_detail():
 @customer.route("/bookings/cancel", methods=("GET", "POST"))
 @login_required
 def cancel_booking():
+    """
+    If the user presses the Cancel Booking button, then the booking id is passed here for cancellation, and return them to their bookings page. Parameters:
+    
+    booking_id: the booking id to cancel.
+    """
     if g.type != "Customer":
         return "Access Denied"
     session["booking_id"] = request.args["booking_id"]
@@ -262,6 +327,7 @@ def cancel_booking():
 @customer.route('/delete/calendar')
 @login_required
 def delete_calendar():
+    """ If the user cancels the booking, the booking status will be changed to 'Cancelled'"""
     if g.type != "Customer":
         return "Access Denied"
     if 'credentials' not in flask.session:
@@ -282,6 +348,7 @@ def delete_calendar():
     return redirect(url_for("customer.booking_view"))
 
 def delete_event(service):
+    """ If the user cancels the booking, the calendar event will be removed"""
     eventId =  requests.get("http://127.0.0.1:8080/bookings/read/record?id=" + str(session['booking_id'])).json()[0]["EventID"]
     if eventId == None:
         return "There is no calendar event"
