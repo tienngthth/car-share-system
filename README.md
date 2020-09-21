@@ -420,7 +420,7 @@ If the code has required information, AP will send a message to MP to close all 
 
 ## Unit test
 
-We have around 100 test cases covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
+We have around 100 assertions covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
 
 1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
