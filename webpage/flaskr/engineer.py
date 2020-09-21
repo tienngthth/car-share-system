@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+engineer.py defines the control logic for all the pages the engineer has access to.
+"""
 from flask import Blueprint, flash, g, redirect
 from flask import render_template, request, url_for
 from .auth import login_required
@@ -11,6 +14,9 @@ engineer = Blueprint("engineer", __name__)
 @engineer.route("/backlogs", methods=("GET", "POST"))
 @login_required
 def backlog_view():
+    """
+    This displays all cars requiring repairs. It only responds to GET requests.
+    """
     if g.type != "Engineer":
         return "Access Denied"
     if request.method == "GET":
@@ -20,6 +26,14 @@ def backlog_view():
 @engineer.route("/location", methods=("GET", "POST"))
 @login_required
 def location_map():
+    """
+    Given a car and location identifier, this returns a map for the engineer to follow. Parameters:
+    
+    car_id: the id of the car we're looking for
+    location_id: The id of the location the car is at
+    
+    Returns a HTML render containing a map.
+    """
     if g.type != "Engineer":
         return "Access Denied"
     car = requests.get("http://127.0.0.1:8080/cars/read?id=" + request.args['car_id']).json()[0]
@@ -29,6 +43,13 @@ def location_map():
 @engineer.route("/close/backlog", methods=("POST",))
 @login_required
 def close_backlog():
+    """
+    This allows the engineer to mar a cr as repaired, making it available once again. Parameters:
+    
+    car_id: The id of the car that was repaired.
+    
+    Once done, it redirects the user back to the engineer home page.
+    """
     if g.type != "Engineer":
         return "Access Denied"
     requests.put(
