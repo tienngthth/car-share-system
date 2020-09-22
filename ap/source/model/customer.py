@@ -2,7 +2,7 @@ from .camera import Camera
 from .client import Client
 from .util import Util
 from .account import Account
-from .facialScanner import FacialScanner
+# from .facialScanner import FacialScanner
 from .localDatabase import LocalDatabase
 from .car import car
 from .code import Code
@@ -18,7 +18,8 @@ class Customer():
 
     def __get_credential(self, get_username_option):
         if get_username_option == "f":
-            self.username = FacialScanner.start_scanning() 
+            pass
+            # self.username = FacialScanner.start_scanning() 
         else:
             self.username = Account.get_user_name_input()
         if self.username != "invalid":

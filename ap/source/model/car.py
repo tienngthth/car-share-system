@@ -128,5 +128,5 @@ class Car:
     def booking_id(self, booking_id):
         self.__booking_id = booking_id
 
-car = Car()
+# car = Car()
 
