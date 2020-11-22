@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>model.engineer &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for model.engineer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Each time the engineer login, Engineer class will create a instance which contain all user information</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.car</span> <span class="kn">import</span> <span class="n">car</span>
+<span class="kn">from</span> <span class="nn">.code</span> <span class="kn">import</span> <span class="n">Code</span>
+<span class="kn">from</span> <span class="nn">.camera</span> <span class="kn">import</span> <span class="n">Camera</span>
+<span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">Util</span>
+
+
+<div class="viewcode-block" id="Engineer"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.engineer.Engineer">[docs]</a><span class="k">class</span> <span class="nc">Engineer</span><span class="p">():</span>   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All functions within this file are stored in this class</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">get_assgined_engineer_info</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__mac_address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span><span class="p">[</span><span class="s2">&quot;engineer_mac_address&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span><span class="p">[</span><span class="s2">&quot;engineer_id&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Engineer.scan_code"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.engineer.Engineer.scan_code">[docs]</a>    <span class="k">def</span> <span class="nf">scan_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scan the engineer&#39;s QR code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Camera</span><span class="o">.</span><span class="n">start_camera</span><span class="p">()</span>
+        <span class="c1"># barcodes found thus far</span>
+        <span class="n">found_codes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">Camera</span><span class="o">.</span><span class="n">stop</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">Camera</span><span class="o">.</span><span class="n">scan_code</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">Camera</span><span class="o">.</span><span class="n">stop_camera</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate_code</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">decoded_content</span><span class="p">,</span> <span class="n">found_codes</span><span class="p">)</span>
+            <span class="n">Camera</span><span class="o">.</span><span class="n">stop_camera_key_stroke</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">__validate_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">found_codes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the engineer&#39;s QR code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">found_codes</span><span class="p">:</span>
+            <span class="n">found_codes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">user_info</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">parse_json</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">user_info</span><span class="p">[</span><span class="s2">&quot;user_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;engineer&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">engineer_id</span> <span class="o">=</span> <span class="n">user_info</span><span class="p">[</span><span class="s2">&quot;engineer_id&quot;</span><span class="p">]</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">Util</span><span class="o">.</span><span class="n">log_messages</span><span class="p">(</span><span class="s2">&quot;wrong_code&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    
+<div class="viewcode-block" id="Engineer.close_backlog"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.engineer.Engineer.close_backlog">[docs]</a>    <span class="k">def</span> <span class="nf">close_backlog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Let the master Pi know it has to close an open engineering backlog for this specific car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;message_type&quot;</span> <span class="p">:</span> <span class="s2">&quot;close_backlog&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;engineer_id&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">engineer_id</span><span class="p">,</span>
+            <span class="s2">&quot;car_id&quot;</span> <span class="p">:</span> <span class="n">car</span><span class="o">.</span><span class="n">car_id</span><span class="p">,</span>
+            <span class="s2">&quot;car_status&quot;</span> <span class="p">:</span> <span class="s2">&quot;Available&quot;</span>
+        <span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="n">Util</span><span class="o">.</span><span class="n">log_messages</span><span class="p">(</span><span class="s2">&quot;backlog_closed&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">engineer_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_id</span>
+
+    <span class="nd">@engineer_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">engineer_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engineer_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_id</span> <span class="o">=</span> <span class="n">engineer_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mac_address</span>
+
+    <span class="nd">@mac_address</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mac_address</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mac_address</span> <span class="o">=</span> <span class="n">mac_address</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">engineer_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span>
+
+    <span class="nd">@engineer_info</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">engineer_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engineer_info</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__engineer_info</span> <span class="o">=</span> <span class="n">engineer_info</span></div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Menus.html">Menus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Users%20and%20Cars.html">Users and Cars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Facial%20Recognition.html">Facial Recognition</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

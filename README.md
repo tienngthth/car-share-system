@@ -56,6 +56,10 @@ This document describes:
   
 4. [Acknowledgments](#acknowledgments)
 
+Review the Sphinx documentation for full code overview.
+* Open mp/docs/build/html/index.html for mp Sphinx documention
+* Open ap/docs/build/html/index.html for ap Sphinx documention
+
 ## Activities
 
 This project has been developed for around 6 weeks. Git, git hub, Trello, Google Drive have been used from the beginning of the project to manage the work and help contributors to collaborate with each other. 
@@ -116,6 +120,7 @@ Each card is assigned for the members with their color code, Yellow - Minh, Oran
 
 ![Architecture](images/architecture.png)
 
+Following is the description of the architecture components.
 
 ### Master Pi
 
@@ -264,8 +269,9 @@ Review [MP requirements.txt](https://github.com/tienngthth/car-share-system/blob
 ### Master Pi
 
 1. Go to the mp directory.
-2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
-3. Access to web application at localhost:5000, please use Chromium Browser.</br>
+2. Go to server/server.py and update your server IP as host.
+3. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
+4. Access to web application at localhost:5000, please use Chromium Browser.</br>
     A customer credential: tiennguyen | 2@aA2222</br>
     The admin credential: minh_nguyen | 2@aA3333</br>
     The manager credential: tam_nguyen | 3#aA4444</br>
@@ -365,7 +371,8 @@ Manager can view three type of graphs.
 ### Agent Pi
 
 1. Go to the ap directory.
-2. Run python3 ./source/mainMenu.py in your console to start the console based application.
+2. Go to source/model/client.py and update your server IP as host.
+3. Run python3 ./source/mainMenu.py in your console to start the console based application.
 
 
 #### Authentication flow
@@ -413,7 +420,7 @@ If the code has required information, AP will send a message to MP to close all 
 
 ## Unit test
 
-We have around 100 test cases covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
+We have around 100 assertions covering the CRUD scenarios for all the entities of the cloud database api end points including customers, staffs, cars, bookings, backlogs, locations.
 
 1. Go to the mp directory.
 2. Run ./run.sh in your console to initiate the web application, the cloud database connection, the cloud database APIs and the server socket.
@@ -421,5 +428,12 @@ We have around 100 test cases covering the CRUD scenarios for all the entities o
 
 ## Acknowledgments
 
-* please include acknoledgements for all the technologies: google calendar, cloud, facial, ...
-
+* [Google Calendar Python Quickstart](https://developers.google.com/calendar/quickstart/python)
+* [Google Cloud Database Setup](https://cloud.google.com/sql/docs/mysql/create-manage-databases)
+* [Google Map Setup](https://developers.google.com/maps/documentation/javascript/overview)
+* [Google Data Studio](https://www.seerinteractive.com/blog/google-data-studio-whats-working-whats-missing/)
+* [Graph Configuration Using Chart.js](https://www.chartjs.org/)
+* [Flask app](https://flask.palletsprojects.com/en/1.1.x/tutorial/factory/)
+* [Real time face recognition](https://www.hackster.io/mjrobot/real-time-face-recognition-an-end-to-end-project-a10826)
+* [OAuth 2.0 Web Server](https://developers.google.com/identity/protocols/oauth2/web-server)
+* [Connecting MySQL client using public IP](https://cloud.google.com/sql/docs/mysql/connect-admin-ip)

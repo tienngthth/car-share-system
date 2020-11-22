@@ -12,12 +12,18 @@
 #
 import os
 import sys
+<<<<<<< HEAD
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../source/model'))
 sys.path.insert(0, os.path.abspath('../../source/database'))
 sys.path.insert(0, os.path.abspath('../../source/flaskr'))
 sys.path.insert(0, os.path.abspath('../../source'))
 
+=======
+sys.path.insert(0, os.path.abspath('../../source'))
+
+
+>>>>>>> aafba6aa45cb17fbcc32a2ff06aacafae4da5738
 # -- Project information -----------------------------------------------------
 
 project = 'CloudCar'

@@ -14,7 +14,7 @@ class Server:
     Define the port and interface to listen on, then open the socket.
     """
     #Initialize instance
-    def __init__(self, host = '10.247.169.92', port = 9956):
+    def __init__(self, host = '192.168.1.242', port = 9956):
         self.__address = (host, port)
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__set_up_connection()

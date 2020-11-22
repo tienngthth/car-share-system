@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>model.customer &#8212; CloudCar 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for model.customer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Each time the customer login, Customer class will create a instance which contain all user information</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.camera</span> <span class="kn">import</span> <span class="n">Camera</span>
+<span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">Util</span>
+<span class="kn">from</span> <span class="nn">.account</span> <span class="kn">import</span> <span class="n">Account</span>
+<span class="kn">from</span> <span class="nn">.facialScanner</span> <span class="kn">import</span> <span class="n">FacialScanner</span>
+<span class="kn">from</span> <span class="nn">.localDatabase</span> <span class="kn">import</span> <span class="n">LocalDatabase</span>
+<span class="kn">from</span> <span class="nn">.car</span> <span class="kn">import</span> <span class="n">car</span>
+<span class="kn">from</span> <span class="nn">.code</span> <span class="kn">import</span> <span class="n">Code</span>
+
+
+<div class="viewcode-block" id="Customer"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.customer.Customer">[docs]</a><span class="k">class</span> <span class="nc">Customer</span><span class="p">():</span>    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All functions in this file are contained in this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_username_option</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__username</span> <span class="o">=</span> <span class="s2">&quot;invalid&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__password</span> <span class="o">=</span> <span class="s2">&quot;invalid&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_credential</span><span class="p">(</span><span class="n">get_username_option</span><span class="p">)</span>  
+
+    <span class="k">def</span> <span class="nf">__get_credential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_username_option</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Case where user chooses to scan their face instead of entering a username/password pair.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">get_username_option</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">FacialScanner</span><span class="o">.</span><span class="n">start_scanning</span><span class="p">()</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">get_user_name_input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">get_password_input</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__verify_credential</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__verify_credential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initiates process for logging in a user for the first time -- user credentials need to be recorded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">car</span><span class="o">.</span><span class="n">first_login</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__verify_credential_with_mp</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;invalid&quot;</span> 
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">Account</span><span class="o">.</span><span class="n">verify_credential_locally</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;invalid&quot;</span> 
+
+    <span class="k">def</span> <span class="nf">__verify_credential_with_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify username/password pair with master pi</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_encrypted_password_from_mp</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span>
+            <span class="n">car</span><span class="o">.</span><span class="n">booking_id</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;booking_id&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__first_login_to_car</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;invalid&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__get_encrypted_password_from_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the password hash for a user from the master pi.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_credential_message_to_mp</span><span class="p">()))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Code</span><span class="o">.</span><span class="n">parse_json</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="nf">__get_credential_message_to_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;message_type&quot;</span><span class="p">:</span><span class="s2">&quot;credential&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="s2">&quot;car_id&quot;</span><span class="p">:</span> <span class="n">car</span><span class="o">.</span><span class="n">car_id</span><span class="p">,</span>
+            <span class="s2">&quot;user_type&quot;</span><span class="p">:</span><span class="s2">&quot;customers&quot;</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__first_login_to_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set this as the user&#39;s first login to a car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">car</span><span class="o">.</span><span class="n">first_login_to_car</span><span class="p">()</span>
+        <span class="n">LocalDatabase</span><span class="o">.</span><span class="n">insert_record</span><span class="p">(</span><span class="s2">&quot;Credential&quot;</span><span class="p">,</span> <span class="s2">&quot;((?), (?))&quot;</span><span class="p">,(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Customer.return_car"><a class="viewcode-back" href="../../Users%20and%20Cars.html#model.customer.Customer.return_car">[docs]</a>    <span class="k">def</span> <span class="nf">return_car</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        User is done with this car. Clear them from the local record where they are stored as the active user, and call a function to return the car.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__done_booking</span><span class="p">()</span>
+        <span class="n">car</span><span class="o">.</span><span class="n">return_car</span><span class="p">()</span>
+        <span class="n">LocalDatabase</span><span class="o">.</span><span class="n">delete_record</span><span class="p">(</span><span class="s2">&quot;Credential&quot;</span><span class="p">,</span> <span class="s2">&quot; WHERE Username = (?)&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,))</span></div>
+
+    <span class="k">def</span> <span class="nf">__done_booking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set this car as returned -- the user is done with it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="n">car_status_message</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;message_type&quot;</span><span class="p">:</span><span class="s2">&quot;done_booking&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;booking_id&quot;</span><span class="p">:</span> <span class="n">car</span><span class="o">.</span><span class="n">booking_id</span>
+        <span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">car_status_message</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__username</span>
+
+    <span class="nd">@username</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__username</span> <span class="o">=</span> <span class="n">username</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__password</span>
+
+    <span class="nd">@password</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__password</span> <span class="o">=</span> <span class="n">password</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">booking_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__booking_id</span>
+
+    <span class="nd">@booking_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">booking_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">booking_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__booking_id</span> <span class="o">=</span> <span class="n">booking_id</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Menus.html">Menus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Users%20and%20Cars.html">Users and Cars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Facial%20Recognition.html">Facial Recognition</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Minh Nguyen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
